@@ -9,6 +9,8 @@ import { BlogOverviewComponent } from './pages/blog-overview/blog-overview.compo
 import { BlogEntryComponent } from './pages/blog-entry/blog-entry.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
+import { MarkdownModule} from 'ngx-markdown';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,7 +22,8 @@ import { NavbarComponent } from './components/navbar/navbar.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule  
+    HttpClientModule,
+    MarkdownModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

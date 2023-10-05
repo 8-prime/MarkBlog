@@ -9,7 +9,7 @@ import { BlogService } from 'src/app/services/blog.service';
   styleUrls: ['./blog-entry.component.css']
 })
 export class BlogEntryComponent {
-  entries: BlogEntry = new BlogEntry();
+  entry: BlogEntry = new BlogEntry();
 
   constructor(private blogservice: BlogService, private route: ActivatedRoute){}
 
@@ -17,7 +17,7 @@ export class BlogEntryComponent {
     this.route.params.subscribe(params => {
       let id = params['id'];
       if(id){
-        this.blogservice.getEntryById(id).subscribe(result => this.entries = result);
+        this.blogservice.getEntryById(id).subscribe(result => this.entry = result);
       }
     });
   }
