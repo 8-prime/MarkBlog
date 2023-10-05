@@ -1,0 +1,20 @@
+<div class="flex items-center flex-col gap-4">
+    <div *ngFor="let entry of entries" class="rounded-lg shadow-lg p-4">
+        <a routerLink="/blogEntry/{{entry._id}}">
+            <div class="flex flex-col gap-4">
+                <div>
+                    <h1 class="text-xl">Entry Title:</h1>
+                    <span>{{entry.name}}</span>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <h1 class="text-xl">Entry Tags</h1>
+                    <div class="flex flex-row gap-4">
+                        <div *ngFor="let tag of entry.tags" class="px-4 py-2 rounded-full bg-black text-white">
+                            <span>{{tag}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
