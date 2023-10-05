@@ -1,4 +1,4 @@
-const { ObjectId } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const { getDbClient } = require('../utils/clientUtils');
 
 require('dotenv').config()
@@ -18,7 +18,7 @@ exports.getDisplayEntries = async (req, res) => {
 
         const results = await collection.find({}, displayProjection).toArray();
         client.close();
-    
+
         res.json(results);
 
     } catch (error) {
@@ -38,13 +38,13 @@ exports.getEntryById = async (req, res) => {
 
         client.close();
 
-        if(!result){
-            return res.status(404).json({message: 'Document not found'});
+        if (!result) {
+            return res.status(404).json({ message: 'Document not found' });
         }
 
         res.json(result);
     } catch (error) {
-        res.status(500).json({message: 'Server error'})
+        res.status(500).json({ message: 'Server error' })
     }
 }
 
@@ -61,17 +61,17 @@ exports.findEntries = async (req, res) => {
 
         const query = {
             $and: searchTerms.map(term => ({
-              $or: [
-                { Name: { $regex: term, $options: 'i' } },
-                { tags: { $in: [term] } },
-                { markdowntext: { $regex: term, $options: 'i' } },
-              ],
+                $or: [
+                    { Name: { $regex: term, $options: 'i' } },
+                    { tags: { $in: [term] } },
+                    { markdowntext: { $regex: term, $options: 'i' } },
+                ],
             })),
-          };
-      
+        };
+
         const results = await collection.find(query, displayProjection).toArray();
         client.close();
-    
+
         res.json(results);
 
     } catch (error) {
@@ -110,25 +110,12 @@ exports.editEntry = async (req, res) => {
         const collection = db.collection('blogEntries')
 
         const result = await collection.updateOne({ _id: new ObjectId(updatedData._id) }, { $set: updatedData });
-    
+
         if (result.modifiedCount === 0) {
             return res.status(404).json({ message: 'Document not found or no changes were made' });
-          }
-      
+        }
+
         res.json({ message: 'Document updated successfully' });
-    } catch (error) {
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-}
-
-function isConnected(client) {
-    return !!client && !!client.topology && client.topology.isConnected()
-  }
-
-exports.checkConnection = async (req, res) => {
-    try {
-        const client = getDbClient();
-        res.status(200).json({connectionStatus: isConnected(client)});
     } catch (error) {
         res.status(500).json({ message: 'Internal Server Error' });
     }

@@ -15,7 +15,7 @@ services:
     image: 8prime/markblogapi
     container_name: markblogapi-container
     ports:
-      - 3004:3000
+      - "3004:3000"
     depends_on:
       - mongodb
     environment:
@@ -25,6 +25,6 @@ services:
     image: mongo:latest
     container_name: markblogdb-container
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - ./Data:/data/db
