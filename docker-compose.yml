@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  # angular:
+  #   image: 8prime/markblogclient
+  #   container_name: markbloglient-container
+  #   ports:
+  #     - 3002:80
+  #   depends_on:
+  #     - api
+  #   volumes:
+  #     - ./NginxConfig:/etc/nginx/conf.d
+
+  api:
+    image: 8prime/markblogapi
+    container_name: markblogapi-container
+    ports:
+      - 3004:3000
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_URL=mongodb://mongodb:27017/
+
+  mongodb:
+    image: mongo:latest
+    container_name: markblogdb-container
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./Data:/data/db
