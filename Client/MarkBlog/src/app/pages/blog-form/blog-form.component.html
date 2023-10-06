@@ -1,0 +1,15 @@
+<div class="flex flex-col">
+    <label for="Title">Title</label>
+    <input id="Title" type="text" [(ngModel)]="entry.name" >
+
+    <div>
+        <div *ngFor="let tag of entry.tags; let i = index; trackBy: trackByFn">
+            <input type="text" [(ngModel)]="entry.tags[i]">
+        </div>
+    </div>
+
+    <div class="flex flex-row gap-4 w-full">
+        <textarea [(ngModel)]="entry.markdowntext"></textarea>
+        <markdown [data]="entry.markdowntext"></markdown>
+    </div>
+</div>

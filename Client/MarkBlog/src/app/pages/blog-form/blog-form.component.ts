@@ -22,4 +22,10 @@ export class BlogFormComponent {
       }
     });
   }
+
+
+
+  trackByFn(index: number, item: string): number{
+    return index;
+  }
 }
