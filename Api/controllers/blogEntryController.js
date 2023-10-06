@@ -127,7 +127,7 @@ exports.removeEntry = async (req, res) => {
         const id = req.params.id;
 
 
-        const result = await collection.deleteOne({ _id: ObjectId(id) });
+        const result = await collection.deleteOne({ _id: new ObjectId(id) });
 
         if (result.deletedCount === 1) {
             res.status(200).json({message: "Item has been deleted"});

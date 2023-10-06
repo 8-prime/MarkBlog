@@ -34,4 +34,8 @@ export class BlogService {
   editEntry(entry: BlogEntry){
     return this.http.put<BlogEntry[]>(`${this.baseUrl}/add`, entry);    
   }
+
+  removeEnrty(entryId: string){
+    return this.http.delete<BlogEntry[]>(`${this.baseUrl}/remove/${entryId}`);    
+  }
 }

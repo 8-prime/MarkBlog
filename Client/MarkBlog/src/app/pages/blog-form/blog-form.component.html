@@ -1,15 +1,39 @@
-<div class="flex flex-col items-center h-full">
-    <label for="Title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label>
-    <input id="Title" type="text" [(ngModel)]="entry.name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-
-    <div>
-        <div *ngFor="let tag of entry.tags; let i = index; trackBy: trackByFn" class="flex flex-col gap-2">
-            <input type="text" [(ngModel)]="entry.tags[i]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+<div class="flex flex-col items-center h-full w-full pt-8 bg-slate-100">
+    <div class="flex flex-col w-3/4 items-center h-full gap-6">
+        <div class="w-full">
+            <label for="Title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label>
+            <input id="Title" type="text" [(ngModel)]="entry.name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
         </div>
-    </div>
+    
+        <div class="w-full flex flex-col gap-2">
+            <label for="Title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tags</label>
+            <div *ngFor="let tag of entry.tags; let i = index; trackBy: trackByFn" class="flex flex-row gap-2">
+                <input type="text" [(ngModel)]="entry.tags[i]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <button (click)="removeTag(i)" class="flex flex-row items-center rounded-lg shadow-lg p-2 w-48 bg-white justify-evenly">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                    Delete
+                </button>
+            </div>
+            <button (click)="addTag()" class="flex flex-row items-center rounded-lg shadow-lg p-2 w-48 bg-white justify-evenly">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                Add Tag
+            </button>
+        </div>
+    
+        <div class="flex flex-row gap-4 w-full justify-center p-4 grow overflow-hidden">
+            <textarea class="grow max-w-[50%] h-full" [(ngModel)]="entry.markdowntext"></textarea>
+            <markdown class="grow max-w-[50%] h-full overflow-scroll" [data]="entry.markdowntext"></markdown>
+            <div class="flex flex-col justify-end gap-2 mb-2">
+                <button (click)="back()" class="flex flex-row items-center rounded-lg shadow-lg p-2 w-48 bg-white justify-evenly">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
+                    Cancel
+                </button>
+                <button (click)="save()" class="flex flex-row items-center rounded-lg shadow-lg p-2 w-48 bg-white justify-evenly">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    Save
+                </button>
+            </div>
+        </div>
 
-    <div class="flex flex-row gap-4 w-full justify-center p-4 grow overflow-hidden">
-        <textarea class="grow max-w-[50%] h-full" [(ngModel)]="entry.markdowntext"></textarea>
-        <markdown class="grow max-w-[50%] h-full overflow-scroll" [data]="entry.markdowntext"></markdown>
     </div>
 </div>

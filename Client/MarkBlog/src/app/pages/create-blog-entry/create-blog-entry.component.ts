@@ -12,7 +12,17 @@ export class CreateBlogEntryComponent {
 
   constructor(private blogservice: BlogService){}
 
+  
   ngOnInit(): void {
+    this.loadData();
+  }
+  remove(id?: string): void {
+    if(id){
+      this.blogservice.removeEnrty(id).subscribe(() => this.loadData());
+    }
+  }
+
+  loadData(): void {
     this.blogservice.getAllEntries().subscribe(data => this.entries = data);
   }
 }
