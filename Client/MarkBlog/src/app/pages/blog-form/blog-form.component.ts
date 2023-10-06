@@ -5,6 +5,9 @@ import { BlogService } from 'src/app/services/blog.service';
 
 @Component({
   selector: 'app-blog-form',
+  host: {
+    class:'h-full'
+  },
   templateUrl: './blog-form.component.html',
   styleUrls: ['./blog-form.component.css']
 })
