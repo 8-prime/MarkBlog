@@ -11,32 +11,30 @@ const displayProjection = {
 };
 
 exports.getDisplayEntries = async (req, res) => {
+    const client = getDbClient();
+    const db = client.db('blogs');
+    const collection = db.collection('blogEntries')
     try {
-        const client = getDbClient();
-        const db = client.db('blogs');
-        const collection = db.collection('blogEntries')
 
         const results = await collection.find({}, displayProjection).toArray();
-        client.close();
 
         res.json(results);
-
     } catch (error) {
         res.status(500).json({ message: 'Internal Server Error' });
+    } finally {
+        client.close();
     }
 }
 
 exports.getEntryById = async (req, res) => {
+    const client = getDbClient();
+    const db = client.db('blogs');
+    const collection = db.collection('blogEntries')
     try {
         const id = req.params.id;
 
-        const client = getDbClient();
-        const db = client.db('blogs');
-        const collection = db.collection('blogEntries')
 
         const result = await collection.findOne({ _id: new ObjectId(id) });
-
-        client.close();
 
         if (!result) {
             return res.status(404).json({ message: 'Document not found' });
@@ -45,19 +43,21 @@ exports.getEntryById = async (req, res) => {
         res.json(result);
     } catch (error) {
         res.status(500).json({ message: 'Server error' })
+    } finally {
+        client.close();
     }
 }
 
 exports.findEntries = async (req, res) => {
+    const client = getDbClient();
+    const db = client.db('blogs');
+    const collection = db.collection('blogEntries')
     try {
         const searchTerms = req.query.search.split(',').map(term => term.trim());
         if (searchTerms.length === 0) {
             return res.status(400).json({ message: 'No search terms provided' });
         }
 
-        const client = getDbClient();
-        const db = client.db('blogs');
-        const collection = db.collection('blogEntries')
 
         const query = {
             $and: searchTerms.map(term => ({
@@ -70,44 +70,40 @@ exports.findEntries = async (req, res) => {
         };
 
         const results = await collection.find(query, displayProjection).toArray();
-        client.close();
 
         res.json(results);
-
     } catch (error) {
         res.status(500).json({ message: 'Internal Server Error' });
+    } finally {
+        client.close();
     }
 }
 
 exports.addEntry = async (req, res) => {
+    const client = getDbClient();
+    const db = client.db('blogs');
+    const collection = db.collection('blogEntries')
     try {
-        console.log("Starting to add entry");
-
-        const client = getDbClient();
-        const db = client.db('blogs');
-        const collection = db.collection('blogEntries')
-
-        console.log("Created db instance");
 
         const newEntry = req.body;
         newEntry._id = new ObjectId();
-        console.log(newEntry);
         const result = await collection.insertOne(newEntry);
-        client.close();
-        console.log("Inserted");
-        res.json({ message: 'Entry added successfully', insertedId: result.insertedId });
+
+        res.status(200).json({ message: 'Entry added successfully', insertedId: result.insertedId });
     } catch (error) {
         res.status(500).json({ message: 'Internal Server Error' });
+    } finally {
+        client.close();
     }
 }
 
 exports.editEntry = async (req, res) => {
+    const client = getDbClient();
+    const db = client.db('blogs');
+    const collection = db.collection('blogEntries')
     try {
         const updatedData = req.body;
 
-        const client = getDbClient();
-        const db = client.db('blogs');
-        const collection = db.collection('blogEntries')
 
         const result = await collection.updateOne({ _id: new ObjectId(updatedData._id) }, { $set: updatedData });
 
@@ -118,5 +114,30 @@ exports.editEntry = async (req, res) => {
         res.json({ message: 'Document updated successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Internal Server Error' });
+    } finally {
+        client.close();
+    }
+}
+
+exports.removeEntry = async (req, res) => {
+    const client = getDbClient();
+    const db = client.db('blogs');
+    const collection = db.collection('blogEntries')
+    try {
+        const id = req.params.id;
+
+
+        const result = await collection.deleteOne({ _id: ObjectId(id) });
+
+        if (result.deletedCount === 1) {
+            res.status(200).json({message: "Item has been deleted"});
+        } else {
+            res.status(500).json({message: "There was an error removing the item"});
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: 'Internal Server Error' });
+    } finally {
+        client.close();
     }
 }

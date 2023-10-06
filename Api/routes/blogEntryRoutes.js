@@ -9,5 +9,6 @@ router.get('/byId/:id', blogEntriesController.getEntryById);
 router.get('/find/:search', blogEntriesController.findEntries);
 router.post('/add', blogEntriesController.addEntry);
 router.put('/edit', blogEntriesController.editEntry);
+router.delete('/remove', blogEntriesController.removeEntry);
 
 module.exports = router;

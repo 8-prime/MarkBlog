@@ -1,1 +1,12 @@
-<p>create-blog-entry works!</p>
+<div>
+    <button routerLink="/entryForm/_">Add new Entry</button>
+    <div *ngFor="let entry of entries">
+        <div>
+            <app-blog-info [blogEntry]="entry"></app-blog-info>
+            <div>
+                <button routerLink="/entryForm/{{entry?._id}}">Edit</button>
+                <button>Delete</button>
+            </div>
+        </div>
+    </div>
+</div>

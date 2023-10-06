@@ -10,6 +10,8 @@ import { BlogEntryComponent } from './pages/blog-entry/blog-entry.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
 import { MarkdownModule} from 'ngx-markdown';
+import { BlogFormComponent } from './pages/blog-form/blog-form.component';
+import { BlogInfoComponent } from './components/blog-info/blog-info.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +19,9 @@ import { MarkdownModule} from 'ngx-markdown';
     CreateBlogEntryComponent,
     BlogOverviewComponent,
     BlogEntryComponent,
-    NavbarComponent
+    NavbarComponent,
+    BlogFormComponent,
+    BlogInfoComponent
   ],
   imports: [
     BrowserModule,
