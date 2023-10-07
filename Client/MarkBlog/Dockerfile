@@ -12,4 +12,4 @@ RUN npm run build
 
 FROM nginx:alpine
 
-COPY --from=node /app/dist/essen-gui /usr/share/nginx/html
+COPY --from=node /app/dist/mark-blog /usr/share/nginx/html
