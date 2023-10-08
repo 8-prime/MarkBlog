@@ -1,5 +1,8 @@
-<div class="flex items-center flex-col gap-4">
-    <div *ngFor="let entry of entries">
-        <app-blog-info [blogEntry]="entry"></app-blog-info>
+<div class="flex items-center flex-col gap-4 pt-4 w-full">
+    <div class="w-full p-4 sm:w-full md:w-3/4 lg:w-1/2">
+        <app-searchbar></app-searchbar>
+        <div *ngFor="let entry of entries">
+            <app-blog-info [blogEntry]="entry"></app-blog-info>
+        </div>
     </div>
 </div>

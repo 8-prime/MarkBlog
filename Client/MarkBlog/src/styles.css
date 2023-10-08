@@ -13,27 +13,27 @@ markdown {
 }
 
 markdown h1 {
-    margin-top: 20px;
+    margin: 20px;
     font-size: xx-large;
 }
 markdown h2 {
-    margin-top: 20px;
+    margin: 20px;
     font-size: x-large;
 }
 markdown h3 {
-    margin-top: 20px;
+    margin: 20px;
     font-size: larger;
 }
 markdown h4 {
-    margin-top: 20px;
+    margin: 20px;
     font-size: large;
 }
 markdown h5 {
-    margin-top: 20px;
+    margin: 20px;
     font-size: medium;
 }
 markdown h6 {
-    margin-top: 20px;
+    margin: 20px;
     font-size: small;
 }
 
@@ -46,7 +46,7 @@ markdown a {
 }
 
 markdown hr {
-    margin-top: 20px;
+    margin: 20px;
     margin-bottom: 20px;
 }
 

@@ -13,6 +13,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { MarkdownModule} from 'ngx-markdown';
 import { BlogFormComponent } from './pages/blog-form/blog-form.component';
 import { BlogInfoComponent } from './components/blog-info/blog-info.component';
+import { SearchbarComponent } from './components/searchbar/searchbar.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { BlogInfoComponent } from './components/blog-info/blog-info.component';
     BlogEntryComponent,
     NavbarComponent,
     BlogFormComponent,
-    BlogInfoComponent
+    BlogInfoComponent,
+    SearchbarComponent
   ],
   imports: [
     ReactiveFormsModule,
