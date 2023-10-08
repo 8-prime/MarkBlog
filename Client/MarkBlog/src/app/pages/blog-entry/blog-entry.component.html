@@ -1,13 +1,15 @@
-<div class="w-full flex flex-col gap-4 items-center">
-    <div>
-        <h1 class="text-center text-7xl">{{entry.name}}</h1>
-    </div>
-    <div class="flex flex-row gap-4">
-        <div class="text-white text-2xl rounded-full shadow-lg bg-black px-6 py-3" *ngFor="let tag of entry.tags">
-            <span>{{tag}}</span>
+<div class="w-full flex flex-col  items-center">
+    <div class="w-full p-4 sm:w-full md:w-3/4 lg:w-1/2 flex flex-col gap-4 items-center text-black dark:text-white">
+        <div>
+            <h1 class="text-7xl ">{{entry.name}}</h1>
         </div>
-    </div>
-    <div>
-        <markdown [data]="entry.markdowntext"></markdown>
+        <div class="flex flex-row gap-4">
+            <div class="text-white text-2xl rounded-full shadow-lg bg-black px-6 py-3" *ngFor="let tag of entry.tags">
+                <span>{{tag}}</span>
+            </div>
+        </div>
+        <div>
+            <markdown [data]="entry.markdowntext"></markdown>
+        </div>
     </div>
 </div>

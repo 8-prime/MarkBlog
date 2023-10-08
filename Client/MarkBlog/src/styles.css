@@ -6,34 +6,119 @@
 @import url('https://fonts.googleapis.com/css?family=Quicksand&display=swap');
 
 
+html {
+    font-family: 'Quicksand', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+
 markdown {
-    all: initial;
+    color: white;
+}
+
+markdown h1 {
+    color: white;
+}
+markdown h2 {
+    color: white;
+}
+markdown h3 {
+    color: white;
+}
+markdown h4 {
+    color: white;
+}
+markdown h5 {
+    color: white;
+}
+markdown h6 {
+    color: white;
+}
+markdown strong {
+    color: white;
+}
+markdown a {
+    color: white;
+}
+markdown hr {
+    color: white;
+}
+markdown em {
+    color: white;
+}
+markdown blockquote {
+    color: white;
+}
+markdown ul {
+    color: white;
+}
+markdown ol {
+    color: white;
+}
+markdown code {
+    color: white;
+}
+markdown pre {
+    color: white;
+}
+
+markdown tr {
+    color: white;
+}
+markdown tbody td {
+    color: white;
+}
+markdown tbody tr:nth-child(odd) {
+    color: white;
+}
+markdown del {
+    color: white;
+}
+markdown ins {
+    color: white;
+}
+markdown img {
+    color: white;
+}
+markdown table     {
+    color: white;
+}
+}
+
+markdown {
+    all: initial;    
     font-family: 'Quicksand', sans-serif;
     line-height: 150%;
 }
 
 markdown h1 {
-    margin: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     font-size: xx-large;
 }
 markdown h2 {
-    margin: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     font-size: x-large;
 }
 markdown h3 {
-    margin: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     font-size: larger;
 }
 markdown h4 {
-    margin: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     font-size: large;
 }
 markdown h5 {
-    margin: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     font-size: medium;
 }
 markdown h6 {
-    margin: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     font-size: small;
 }
 
@@ -46,7 +131,8 @@ markdown a {
 }
 
 markdown hr {
-    margin: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     margin-bottom: 20px;
 }
 
