@@ -12,81 +12,17 @@ html {
 
 @media (prefers-color-scheme: dark) {
 
-markdown {
-    color: white;
-}
+    markdown {
+        color: white;
+    }
 
-markdown h1 {
-    color: white;
-}
-markdown h2 {
-    color: white;
-}
-markdown h3 {
-    color: white;
-}
-markdown h4 {
-    color: white;
-}
-markdown h5 {
-    color: white;
-}
-markdown h6 {
-    color: white;
-}
-markdown strong {
-    color: white;
-}
-markdown a {
-    color: white;
-}
-markdown hr {
-    color: white;
-}
-markdown em {
-    color: white;
-}
-markdown blockquote {
-    color: white;
-}
-markdown ul {
-    color: white;
-}
-markdown ol {
-    color: white;
-}
-markdown code {
-    color: white;
-}
-markdown pre {
-    color: white;
-}
-
-markdown tr {
-    color: white;
-}
-markdown tbody td {
-    color: white;
-}
-markdown tbody tr:nth-child(odd) {
-    color: white;
-}
-markdown del {
-    color: white;
-}
-markdown ins {
-    color: white;
-}
-markdown img {
-    color: white;
-}
-markdown table     {
-    color: white;
-}
+    markdown * {
+        color: white;
+    }
 }
 
 markdown {
-    all: initial;    
+    all: initial;
     font-family: 'Quicksand', sans-serif;
     line-height: 150%;
 }
@@ -96,26 +32,31 @@ markdown h1 {
     margin-bottom: 20px;
     font-size: xx-large;
 }
+
 markdown h2 {
     margin-top: 20px;
     margin-bottom: 20px;
     font-size: x-large;
 }
+
 markdown h3 {
     margin-top: 20px;
     margin-bottom: 20px;
     font-size: larger;
 }
+
 markdown h4 {
     margin-top: 20px;
     margin-bottom: 20px;
     font-size: large;
 }
+
 markdown h5 {
     margin-top: 20px;
     margin-bottom: 20px;
     font-size: medium;
 }
+
 markdown h6 {
     margin-top: 20px;
     margin-bottom: 20px;
@@ -187,8 +128,8 @@ markdown tr {
 
 markdown tbody td {
     padding: 5px;
-  }
-  
+}
+
 markdown tbody tr:nth-child(odd) {
     background-color: #bababa;
     color: #fff;
