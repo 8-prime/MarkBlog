@@ -103,9 +103,10 @@ exports.editEntry = async (req, res) => {
     const collection = db.collection('blogEntries')
     try {
         const updatedData = req.body;
-
-
-        const result = await collection.updateOne({ _id: new ObjectId(updatedData._id) }, { $set: updatedData });
+        const updateId = updatedData._id;
+        delete updatedData._id;
+        console.log(updatedData);
+        const result = await collection.updateOne({ _id: new ObjectId(updateId) }, { $set: updatedData });
 
         if (result.modifiedCount === 0) {
             return res.status(404).json({ message: 'Document not found or no changes were made' });
@@ -113,6 +114,7 @@ exports.editEntry = async (req, res) => {
 
         res.json({ message: 'Document updated successfully' });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: 'Internal Server Error' });
     } finally {
         client.close();
