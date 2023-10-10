@@ -12,8 +12,8 @@ app.use(express.json());
 
 app.use('/blog', blogEntryRoutes)
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
+app.get('*', (req, res) => {
+    res.send('There is nothing to be found at: ' + req.protocol + '://' + req.get('host') + req.originalUrl);
 })
 
   // Start the server

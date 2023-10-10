@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    API_URL: 'http://192.168.2.64:3004/blog'
+    API_URL: 'https://hoffmeister.dev/api/blog'
 };

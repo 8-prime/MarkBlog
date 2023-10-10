@@ -32,7 +32,7 @@ export class BlogService {
   }
 
   editEntry(entry: BlogEntry){
-    return this.http.put<BlogEntry[]>(`${this.baseUrl}/add`, entry);    
+    return this.http.put<BlogEntry[]>(`${this.baseUrl}/edit`, entry);    
   }
 
   removeEnrty(entryId: string){
