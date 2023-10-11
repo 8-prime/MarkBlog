@@ -2,6 +2,7 @@ import { Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BlogEntry } from 'src/app/classes/blog-entry';
+import { EditorState } from 'src/app/enums/editor-state';
 import { BlogService } from 'src/app/services/blog.service';
 
 @Component({
@@ -15,6 +16,8 @@ import { BlogService } from 'src/app/services/blog.service';
 export class BlogFormComponent {
 
   entry: BlogEntry = new BlogEntry();  
+  editorState: EditorState = EditorState.Both;
+
 
   constructor(private blogservice: BlogService, private route: ActivatedRoute, private location: Location){}
 
@@ -51,5 +54,9 @@ export class BlogFormComponent {
 
   trackByFn(index: number, item: string): number{
     return index;
+  }
+
+  changeEditMode(state : EditorState) : void {
+    this.editorState = state;
   }
 }

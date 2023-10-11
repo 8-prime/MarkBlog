@@ -150,3 +150,7 @@ markdown img {
 markdown table {
     margin-top: 40px;
 }
+
+markdown p {
+    margin-top: 10px;
+}
