@@ -25,7 +25,6 @@ export class SearchbarComponent {
 
   ngOnInit() {
     const subscription = this.trigger.subscribe(currentValue => {
-      console.log("Val Changed");
       this.textChange.emit(currentValue);
     });
     this.subscriptions.push(subscription);
