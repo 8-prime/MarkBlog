@@ -8,4 +8,9 @@ import { BlogEntry } from 'src/app/classes/blog-entry';
 })
 export class BlogInfoComponent {
   @Input() blogEntry?: BlogEntry
+
+
+  getReadingDuration() : number {
+    return Math.max(Math.round((this.blogEntry?.markdowntext.split(' ').length ?? 0) / 200), 1); 
+  }
 }
