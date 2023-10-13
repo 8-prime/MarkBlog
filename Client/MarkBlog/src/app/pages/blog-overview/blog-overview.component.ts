@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { BlogEntry } from 'src/app/classes/blog-entry';
 import { BlogService } from 'src/app/services/blog.service';
 
@@ -14,5 +14,14 @@ export class BlogOverviewComponent {
 
   ngOnInit(): void {
     this.blogservice.getAllEntries().subscribe(data => this.entries = data);
+  }
+
+  onTextChange(changedText: string) {
+    if(changedText === ''){
+      this.blogservice.getAllEntries().subscribe(data => this.entries = data);
+    }
+    else{
+      this.blogservice.getAllEntriesForSearch(changedText).subscribe(data => this.entries = data);
+    }
   }
 }

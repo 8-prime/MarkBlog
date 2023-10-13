@@ -53,7 +53,10 @@ exports.findEntries = async (req, res) => {
     const db = client.db('blogs');
     const collection = db.collection('blogEntries')
     try {
-        const searchTerms = req.query.search.split(',').map(term => term.trim());
+        console.log("Called Method");
+        console.log(req.params);
+        const searchTerms = req.params.search.split(',').map(term => term.trim());
+        console.log(searchTerms);
         if (searchTerms.length === 0) {
             return res.status(400).json({ message: 'No search terms provided' });
         }

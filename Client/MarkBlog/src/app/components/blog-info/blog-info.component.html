@@ -2,7 +2,7 @@
     <a routerLink="/blogEntry/{{blogEntry?._id}}">
         <div class="flex flex-col gap-2">
             <div class="flex flex-col gap-2">
-                <div class="flex flex-row gap-4">
+                <div class="flex flex-row flex-wrap gap-4">
                     <div *ngFor="let tag of blogEntry?.tags" class="px-3 py-1 rounded-2xl text-black dark:text-white bg-[#e4e4e4] dark:bg-[#282826]">
                         <span>{{tag}}</span>
                     </div>
