@@ -27,13 +27,13 @@
         </div>
         
         <div class="w-full flex flex-row justify-center items-center gap-4">
-            <button (click)="changeEditMode(editorStateEnum.Both)" class="flex flex-row justify-center items-center rounded-lg shadow-lg p-4 bg-white dark:bg-[#151515] text-black dark:text-white">
+            <button (click)="changeEditMode(editorStateEnum.Both)" [ngClass]="{'border-black dark:border-white': editorState === editorStateEnum.Both, 'border-transparent': editorState !== editorStateEnum.Both}" class="border-2 border-solid flex flex-row justify-center items-center rounded-lg shadow-lg p-4 bg-white dark:bg-[#151515] text-black dark:text-white">
                 <svg class="w-6 h-6 stroke-black dark:stroke-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M 3 9 h 18 M 12 21 V 9"/></svg>
             </button>
-            <button (click)="changeEditMode(editorStateEnum.Edit)" class="flex flex-row justify-center items-center rounded-lg shadow-lg p-4 bg-white dark:bg-[#151515] text-black dark:text-white">
+            <button (click)="changeEditMode(editorStateEnum.Edit)" [ngClass]="{'border-black dark:border-white': editorState === editorStateEnum.Edit, 'border-transparent': editorState !== editorStateEnum.Edit}" class="border-2 border-solid flex flex-row justify-center items-center rounded-lg shadow-lg p-4 bg-white dark:bg-[#151515] text-black dark:text-white">
                 <svg class="w-6 h-6 stroke-black dark:stroke-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="14 2 18 6 7 17 3 17 3 13 14 2"></polygon><line x1="3" y1="22" x2="21" y2="22"></line></svg>
             </button>
-            <button (click)="changeEditMode(editorStateEnum.Read)" class="flex flex-row justify-center items-center rounded-lg shadow-lg p-4 bg-white dark:bg-[#151515] text-black dark:text-white">
+            <button (click)="changeEditMode(editorStateEnum.Read)" [ngClass]="{'border-black dark:border-white': editorState === editorStateEnum.Read, 'border-transparent': editorState !== editorStateEnum.Read}" class="border-2 border-solid flex flex-row justify-center items-center rounded-lg shadow-lg p-4 bg-white dark:bg-[#151515] text-black dark:text-white">
                 <svg class="w-6 h-6 stroke-black dark:stroke-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
             </button>
         </div>
@@ -42,8 +42,8 @@
                 <!-- This is just to place items -->
             </div>
 
-            <textarea *ngIf="editorState != editorStateEnum.Read"  [ngClass]="{'col-span-12 lg:col-span-10': editorState === editorStateEnum.Edit, 'col-span-12 lg:col-span-5': editorState === editorStateEnum.Both}" class="h-full min-h-[300px] p-4 text-black dark:text-white bg-white dark:bg-[#151515] rounded-lg" [(ngModel)]="entry.markdowntext"></textarea>
-            <markdown *ngIf="editorState != editorStateEnum.Edit"  [ngClass]="{'col-span-12 lg:col-span-10': editorState === editorStateEnum.Read, 'col-span-12 lg:col-span-5': editorState === editorStateEnum.Both}" class=" min-h-[300px] p-4 overflow-hidden bg-white dark:bg-[#151515] rounded-lg" [data]="entry.markdowntext"></markdown>
+            <textarea *ngIf="editorState !== editorStateEnum.Read"  [ngClass]="{'col-span-12 lg:col-span-10': editorState === editorStateEnum.Edit, 'col-span-12 lg:col-span-5': editorState === editorStateEnum.Both}" class="h-full min-h-[300px] p-4 text-black dark:text-white bg-white dark:bg-[#151515] rounded-lg" [(ngModel)]="entry.markdowntext"></textarea>
+            <markdown *ngIf="editorState !== editorStateEnum.Edit"  [ngClass]="{'col-span-12 lg:col-span-10': editorState === editorStateEnum.Read, 'col-span-12 lg:col-span-5': editorState === editorStateEnum.Both}" class=" min-h-[300px] p-4 overflow-hidden bg-white dark:bg-[#151515] rounded-lg" [data]="entry.markdowntext"></markdown>
             <div class="col-span-12 lg:col-span-1 flex flex-col justify-end gap-2 mb-2">
                 <button (click)="back()" class="flex flex-row justify-center items-center rounded-lg shadow-lg p-4 bg-white dark:bg-[#151515] text-black dark:text-white">
                     <div class="flex flex-row justify-center gap-2">
