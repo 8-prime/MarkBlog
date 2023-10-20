@@ -18,6 +18,8 @@ export class BlogFormComponent {
   entry: BlogEntry = new BlogEntry();  
   editorState: EditorState = EditorState.Both;
 
+  editorStateEnum = EditorState;
+
 
   constructor(private blogservice: BlogService, private route: ActivatedRoute, private location: Location){}
 
