@@ -4,29 +4,32 @@ import { ActivatedRoute } from '@angular/router';
 import { BlogEntry } from 'src/app/classes/blog-entry';
 import { EditorState } from 'src/app/enums/editor-state';
 import { BlogService } from 'src/app/services/blog.service';
+import { ImageService } from 'src/app/services/image.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-blog-form',
   host: {
-    class:'h-full'
+    class: 'h-full'
   },
   templateUrl: './blog-form.component.html',
   styleUrls: ['./blog-form.component.css']
 })
 export class BlogFormComponent {
 
-  entry: BlogEntry = new BlogEntry();  
+  entry: BlogEntry = new BlogEntry();
   editorState: EditorState = EditorState.Both;
 
   editorStateEnum = EditorState;
+  imageApiUrl: string = environment.IMAGE_API;
 
 
-  constructor(private blogservice: BlogService, private route: ActivatedRoute, private location: Location){}
+  constructor(private blogservice: BlogService, private route: ActivatedRoute, private location: Location, private imageService: ImageService) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       let entryId = params['id'];
-      if(entryId !== '_'){
+      if (entryId !== '_') {
         this.blogservice.getEntryById(entryId).subscribe(result => this.entry = result);
       }
     });
@@ -36,16 +39,14 @@ export class BlogFormComponent {
     this.entry.tags.splice(index, 1);
   }
 
-  addTag(): void{
-    console.log("New Entry in theory");
-    
+  addTag(): void {
     this.entry.tags.push('');
   }
 
   save(): void {
-    if(this.entry._id === ''){
+    if (this.entry._id === '') {
       this.blogservice.addEntry(this.entry).subscribe();
-    }else {
+    } else {
       this.blogservice.editEntry(this.entry).subscribe();
     }
   }
@@ -54,11 +55,46 @@ export class BlogFormComponent {
     this.location.back();
   }
 
-  trackByFn(index: number, item: string): number{
+  trackByFn(index: number, item: string): number {
     return index;
   }
 
-  changeEditMode(state : EditorState) : void {
+  changeEditMode(state: EditorState): void {
     this.editorState = state;
+  }
+
+  setTextForImage(value: string): void {
+    let cursorPosition = this.getCursorPosition();
+
+    if (cursorPosition < 0) { cursorPosition = 0 }
+    if (cursorPosition > this.entry.markdowntext.length) { cursorPosition = this.entry.markdowntext.length; }
+
+    const part1 = this.entry.markdowntext.slice(0, cursorPosition);
+    const part2 = this.entry.markdowntext.slice(cursorPosition);
+
+    this.entry.markdowntext =  part1 + value + part2;
+  }
+
+  getCursorPosition(): number {
+    const el = document.activeElement as HTMLTextAreaElement;
+    if (el) {
+      return el.selectionStart;
+    }
+    return -1;
+  }
+
+  onPaste(e: any) {
+    const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+    let blob = null;
+    for (const item of items) {
+      if (item.type.indexOf('image') === 0) {
+        blob = item.getAsFile();
+
+        this.imageService.saveImage(blob).subscribe(res => {
+          const imgstring = `\n![](${this.imageApiUrl}/${res.imageUrl})`;
+          this.setTextForImage(imgstring)
+        });
+      }
+    }
   }
 }

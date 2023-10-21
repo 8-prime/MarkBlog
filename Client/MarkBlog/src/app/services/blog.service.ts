@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { BlogEntry } from '../classes/blog-entry';
@@ -10,7 +11,7 @@ import { BlogEntry } from '../classes/blog-entry';
 export class BlogService {
 
 
-  baseUrl: string = environment.API_URL;
+  baseUrl: string = environment.BLOG_API;
 
   constructor(private http: HttpClient) { }
 

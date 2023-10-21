@@ -1,3 +1,4 @@
 export const environment = {
-    API_URL: 'http://api:3000/blog'
+    BLOG_API: 'http://api:3000/blog',
+    IMAGE_API: 'http://api:3000/images'
 };

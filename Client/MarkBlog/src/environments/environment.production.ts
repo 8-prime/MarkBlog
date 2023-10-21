@@ -1,4 +1,5 @@
 export const environment = {
     production: true,
-    API_URL: 'https://hoffmeister.dev/api/blog'
+    BLOG_API: 'https://hoffmeister.dev/api/blog',
+    IMAGE_API: 'https://hoffmeister.dev/api/images'
 };

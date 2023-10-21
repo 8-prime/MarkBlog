@@ -1,4 +1,5 @@
 export const environment = {
     production: false,
-    API_URL: 'http://localhost:3004/blog'
+    BLOG_API: 'http://localhost:3004/blog',
+    IMAGE_API: 'http://localhost:3004/images'
 };
