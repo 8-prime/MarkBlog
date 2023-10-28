@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from  '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CommonModule } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -11,6 +13,7 @@ import { BlogEntryComponent } from './pages/blog-entry/blog-entry.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
 import { MarkdownModule} from 'ngx-markdown';
+import { ToastrModule } from 'ngx-toastr';
 import { BlogFormComponent } from './pages/blog-form/blog-form.component';
 import { BlogInfoComponent } from './components/blog-info/blog-info.component';
 import { SearchbarComponent } from './components/searchbar/searchbar.component';
@@ -32,7 +35,13 @@ import { SearchbarComponent } from './components/searchbar/searchbar.component';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    MarkdownModule.forRoot()
+    MarkdownModule.forRoot(),
+    CommonModule,
+    BrowserAnimationsModule, // required animations module
+    ToastrModule.forRoot({
+      timeOut: 1000,
+      positionClass: 'toast-bottom-center'
+    }), // ToastrModule added
   ],
   providers: [],
   bootstrap: [AppComponent]

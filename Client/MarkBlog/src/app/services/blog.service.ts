@@ -29,14 +29,14 @@ export class BlogService {
   }
 
   addEntry(entry: BlogEntry){
-    return this.http.post<BlogEntry[]>(`${this.baseUrl}/add`, entry);    
+    return this.http.post<any>(`${this.baseUrl}/add`, entry);    
   }
 
   editEntry(entry: BlogEntry){
-    return this.http.put<BlogEntry[]>(`${this.baseUrl}/edit`, entry);    
+    return this.http.put(`${this.baseUrl}/edit`, entry);    
   }
 
   removeEnrty(entryId: string){
-    return this.http.delete<BlogEntry[]>(`${this.baseUrl}/remove/${entryId}`);    
+    return this.http.delete(`${this.baseUrl}/remove/${entryId}`);    
   }
 }

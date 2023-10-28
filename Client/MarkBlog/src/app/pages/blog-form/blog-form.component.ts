@@ -1,11 +1,12 @@
 import { Location } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BlogEntry } from 'src/app/classes/blog-entry';
 import { EditorState } from 'src/app/enums/editor-state';
 import { BlogService } from 'src/app/services/blog.service';
 import { ImageService } from 'src/app/services/image.service';
 import { environment } from 'src/environments/environment';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-blog-form',
@@ -24,7 +25,7 @@ export class BlogFormComponent {
   imageApiUrl: string = environment.IMAGE_API;
 
 
-  constructor(private blogservice: BlogService, private route: ActivatedRoute, private location: Location, private imageService: ImageService) { }
+  constructor(private blogservice: BlogService, private route: ActivatedRoute, private location: Location, private imageService: ImageService, private toastr: ToastrService, private router: Router) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -45,9 +46,14 @@ export class BlogFormComponent {
 
   save(): void {
     if (this.entry._id === '') {
-      this.blogservice.addEntry(this.entry).subscribe();
+      this.blogservice.addEntry(this.entry).subscribe(res => {
+        this.toastr.success('Entry Saved', '');
+        this.router.navigate([`entryForm/${res.insertedId}`]);
+      });
     } else {
-      this.blogservice.editEntry(this.entry).subscribe();
+      this.blogservice.editEntry(this.entry).subscribe(res => {
+        this.toastr.success('Entry Saved', '');
+      });
     }
   }
 
