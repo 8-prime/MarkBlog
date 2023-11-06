@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "~prismjs/themes/prism-dark.css";
 
 @import url('https://fonts.googleapis.com/css?family=Quicksand&display=swap');
 
@@ -19,6 +20,10 @@ html {
     markdown * {
         color: white;
     }
+}
+
+pre {
+    border: none !important;
 }
 
 markdown {
