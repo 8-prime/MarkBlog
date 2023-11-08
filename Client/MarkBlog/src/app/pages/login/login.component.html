@@ -1,0 +1,42 @@
+<div class="w-full h-full flex flex-col justify-center items-center dark:bg-neutral-800">
+    <div class="w-10/12 p-4 sm:w-3/4 md:w-1/2 lg:w-1/3 rounded-lg bg-[#f3f3f3] dark:bg-black flex flex-col gap-4 shadow-lg">
+        <h1 *ngIf="loginState === loginStateEnum.login"     class="text-black dark:text-white text-3xl">Login</h1>
+        <h1 *ngIf="loginState === loginStateEnum.register"  class="text-black dark:text-white text-3xl">Register</h1>
+        <div class="flex flex-col gap-1">
+            <label class="text-black dark:text-white" for="username">Username</label>
+            <input [(ngModel)]="username" class="bg-white dark:bg-neutral-800 text-black dark:text-white rounded-lg p-4" id="username" type="text">
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-black dark:text-white" for="password">Password</label>
+            <input [(ngModel)]="password" class="bg-white dark:bg-neutral-800 text-black dark:text-white rounded-lg p-4" id="password" type="text">
+        </div>
+        <div class="w-full">
+            <button (click)="login()" *ngIf="loginState === loginStateEnum.login" class="w-full flex flex-row justify-center items-center rounded-lg shadow-lg p-4 bg-white dark:bg-[#151515] text-black dark:text-white">
+                <div class="flex flex-row justify-center gap-2">
+                    Login
+                </div>
+            </button>
+            <button (click)="register()" *ngIf="loginState === loginStateEnum.register" class="w-full flex flex-row justify-center items-center rounded-lg shadow-lg p-4 bg-white dark:bg-[#151515] text-black dark:text-white">
+                <div class="flex flex-row justify-center gap-2">
+                    Register
+                </div>
+            </button>
+        </div>
+        <div *ngIf="loginState === loginStateEnum.login" class="mt-10 flex flex-col gap-2">
+            <h3 class="text-2xl text-black dark:text-white">New Here?</h3>
+            <button (click)="loginState = loginStateEnum.register" class="flex flex-row justify-center items-center rounded-lg shadow-lg p-4 bg-white dark:bg-[#151515] text-black dark:text-white">
+                <div class="flex flex-row justify-center gap-2">
+                    Register
+                </div>
+            </button>
+        </div>
+        <div *ngIf="loginState === loginStateEnum.register" class="mt-10 flex flex-col gap-2">
+            <h3 class="text-2xl text-black dark:text-white">Already have an account?</h3>
+            <button (click)="loginState = loginStateEnum.login" class="flex flex-row justify-center items-center rounded-lg shadow-lg p-4 bg-white dark:bg-[#151515] text-black dark:text-white">
+                <div class="flex flex-row justify-center gap-2">
+                    Login
+                </div>
+            </button>
+        </div>
+    </div>
+</div>

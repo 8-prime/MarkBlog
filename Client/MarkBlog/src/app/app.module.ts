@@ -17,6 +17,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { BlogFormComponent } from './pages/blog-form/blog-form.component';
 import { BlogInfoComponent } from './components/blog-info/blog-info.component';
 import { SearchbarComponent } from './components/searchbar/searchbar.component';
+import { LoginComponent } from './pages/login/login.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { SearchbarComponent } from './components/searchbar/searchbar.component';
     NavbarComponent,
     BlogFormComponent,
     BlogInfoComponent,
-    SearchbarComponent
+    SearchbarComponent,
+    LoginComponent
   ],
   imports: [
     ReactiveFormsModule,
