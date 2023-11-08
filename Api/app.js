@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const blogEntryRoutes = require('./routes/blogEntryRoutes')
 const imageRoutes = require('./routes/imagesRoutes')
+const userRoutes = require('./routes/userRoutes')
 const cors = require('cors');
 const fileUpload = require('express-fileupload')
 
@@ -19,6 +20,7 @@ app.use(fileUpload({
 
 app.use('/blog', blogEntryRoutes)
 app.use('/images', imageRoutes)
+app.use('/user', userRoutes)
 
 app.get('*', (req, res) => {
     res.send('There is nothing to be found at: ' + req.protocol + '://' + req.get('host') + req.originalUrl);
