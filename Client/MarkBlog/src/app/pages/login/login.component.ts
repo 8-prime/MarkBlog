@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { tap } from 'rxjs';
 import { Loginstate } from 'src/app/enums/loginstate';
 import { LoginService } from 'src/app/services/login.service';
 
@@ -23,10 +24,19 @@ export class LoginComponent {
   login(): void {
     console.log("logging in");
     
-    this.loginServe.login(this.username, this.password).subscribe();
+    this.loginServe.login(this.username, this.password).pipe(
+      tap(() => console.log( document.cookie))      
+    ).subscribe( (value) => {
+      localStorage.setItem('jwt', value['jwt'])
+    });
   }
 
   register(): void {
-    this.loginServe.register(this.username, this.password).subscribe();
+    this.loginServe.register(this.username, this.password).pipe(
+      tap(() => console.log("Hi")),
+      tap(() => console.log(document.cookie))      
+    ).subscribe( (value) => {
+      localStorage.setItem('jwt', value['jwt'])
+    });
   }
 }

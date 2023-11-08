@@ -20,6 +20,7 @@ services:
       - mongodb
     environment:
       - MONGODB_URL=mongodb://mongodb:27017/
+      - JWT_SECRET=ee5d8112b15e78cd4f9294029e21b8d791f967396012f9132cc26f07607c7eba
     volumes:
       - ./Uploads:/app/upload
 

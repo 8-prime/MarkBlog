@@ -12,11 +12,11 @@ export class LoginService {
 
   private http = inject(HttpClient)
 
-  login(user: string, password: string): Observable<string>{
-    return this.http.post<string>(`${this.baseUrl}/login`, {user, password});
+  login(user: string, password: string): Observable<any>{
+    return this.http.post<any>(`${this.baseUrl}/login`, {user, password});
   }
 
-  register(user: string, password: string): Observable<string> {
-    return this.http.post<string>(`${this.baseUrl}/register`, {user, password})
+  register(user: string, password: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/register`, {user, password})
   }
 }

@@ -36,7 +36,7 @@ exports.login = async (req, res) => {
         const token = jwt.sign(existing, process.env.JWT_SECRET , { expiresIn: '1h'});
 
         res.cookie('jwt', token);
-        res.status(200).send('Succesfully logged in');
+        res.status(200).send({jwt: token});
         // result == false
     });
 }
@@ -75,5 +75,5 @@ exports.register = async (req, res) => {
     const token = await jwt.sign(newUser, process.env.JWT_SECRET , { expiresIn: '1h'});
 
     res.cookie('jwt', token);
-    res.status(201).send('Registered User');
+    res.status(201).send({jwt:token});
 }
