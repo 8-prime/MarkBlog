@@ -1,5 +1,6 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const { getDbClient } = require('../utils/clientUtils');
+const { userIdFromReq } = require('../utils/authUtils')
 
 require('dotenv').config()
 
@@ -17,6 +18,29 @@ exports.getDisplayEntries = async (req, res) => {
     try {
 
         const results = await collection.find({}, displayProjection).toArray();
+
+        res.json(results);
+    } catch (error) {
+        res.status(500).json({ message: 'Internal Server Error' });
+    } finally {
+        client.close();
+    }
+}
+
+exports.getEntryByUser = async (req, res) => {
+    const client = getDbClient();
+    const db = client.db('blogs');
+    const collection = db.collection('blogEntries')
+
+    
+    try {
+        const userId = userIdFromReq(req);
+        if(!userId){
+            res.status(404).json({ message: 'Missing UserId from Request Token' });
+            return;
+        }
+
+        const results = await collection.find({ userId: userId }, displayProjection).toArray();
 
         res.json(results);
     } catch (error) {
@@ -87,9 +111,17 @@ exports.addEntry = async (req, res) => {
     const db = client.db('blogs');
     const collection = db.collection('blogEntries')
     try {
+        console.log("Starting to get user id");
+        const userId = userIdFromReq(req);
+        console.log("got user id", userId);
+        if(!userId){
+            res.status(404).json({ message: 'Missing UserId from Request Token' });
+            return;
+        }
 
         const newEntry = req.body;
         newEntry._id = new ObjectId();
+        newEntry.userId = userId;
         const result = await collection.insertOne(newEntry);
 
         res.status(200).json({ message: 'Entry added successfully', insertedId: result.insertedId });
@@ -105,10 +137,21 @@ exports.editEntry = async (req, res) => {
     const db = client.db('blogs');
     const collection = db.collection('blogEntries')
     try {
+        const userId = userIdFromReq(req);
+        if(!userId){
+            res.status(404).json({ message: 'Missing UserId from Request Token' });
+            return;
+        }
+
         const updatedData = req.body;
+
+        if(updatedData.userId !== userId){
+            res.status(401).json({ message: 'You are not authorized to edit another users Blog Entry' });
+            return;
+        }
+
         const updateId = updatedData._id;
         delete updatedData._id;
-        console.log(updatedData);
         const result = await collection.updateOne({ _id: new ObjectId(updateId) }, { $set: updatedData });
 
         if (result.modifiedCount === 0) {

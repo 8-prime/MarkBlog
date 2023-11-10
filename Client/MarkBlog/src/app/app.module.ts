@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from  '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from  '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
@@ -18,6 +18,7 @@ import { BlogFormComponent } from './pages/blog-form/blog-form.component';
 import { BlogInfoComponent } from './components/blog-info/blog-info.component';
 import { SearchbarComponent } from './components/searchbar/searchbar.component';
 import { LoginComponent } from './pages/login/login.component';
+import { JwtInterceptor } from './interceptors/auth-interceptor';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,13 @@ import { LoginComponent } from './pages/login/login.component';
       positionClass: 'toast-bottom-center'
     }), // ToastrModule added
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptor,
+      multi: true,
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

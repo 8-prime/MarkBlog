@@ -33,6 +33,7 @@ exports.login = async (req, res) => {
             return;
         }
 
+        delete existing.password;
         const token = jwt.sign(existing, process.env.JWT_SECRET , { expiresIn: '1h'});
 
         res.cookie('jwt', token);
@@ -72,6 +73,7 @@ exports.register = async (req, res) => {
 
     await collection.insertOne(newUser);
 
+    delete newUser.password;
     const token = await jwt.sign(newUser, process.env.JWT_SECRET , { expiresIn: '1h'});
 
     res.cookie('jwt', token);

@@ -3,4 +3,5 @@ export class BlogEntry {
     name: string = '';
     tags: string[] = [];
     markdowntext: string = '';
+    userid: string = '';
 }
