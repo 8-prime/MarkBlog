@@ -5,12 +5,13 @@ import { BlogFormComponent } from './pages/blog-form/blog-form.component';
 import { BlogOverviewComponent } from './pages/blog-overview/blog-overview.component';
 import { CreateBlogEntryComponent } from './pages/create-blog-entry/create-blog-entry.component';
 import { LoginComponent } from './pages/login/login.component';
+import { AuthGuardService } from './routeguards/auth-guard-service';
 
 const routes: Routes = [
   {path: '', component: BlogOverviewComponent},
   {path: 'blogEntry/:id', component: BlogEntryComponent},
-  {path: 'manageEntries', component: CreateBlogEntryComponent},
-  {path: 'entryForm/:id', component: BlogFormComponent},
+  {path: 'manageEntries', component: CreateBlogEntryComponent, canActivate: [AuthGuardService]},
+  {path: 'entryForm/:id', component: BlogFormComponent, canActivate: [AuthGuardService]},
   {path: 'login', component: LoginComponent}
 ];
 

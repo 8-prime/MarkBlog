@@ -19,6 +19,7 @@ import { BlogInfoComponent } from './components/blog-info/blog-info.component';
 import { SearchbarComponent } from './components/searchbar/searchbar.component';
 import { LoginComponent } from './pages/login/login.component';
 import { JwtInterceptor } from './interceptors/auth-interceptor';
+import { AuthGuardService } from './routeguards/auth-guard-service';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { JwtInterceptor } from './interceptors/auth-interceptor';
       provide: HTTP_INTERCEPTORS,
       useClass: JwtInterceptor,
       multi: true,
-    }
+    },
+    AuthGuardService
   ],
   bootstrap: [AppComponent]
 })
