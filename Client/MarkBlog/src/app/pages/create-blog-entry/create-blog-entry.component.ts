@@ -23,6 +23,6 @@ export class CreateBlogEntryComponent {
   }
 
   loadData(): void {
-    this.blogservice.getAllEntries().subscribe(data => this.entries = data);
+    this.blogservice.getAllEntriesForUser().subscribe(data => this.entries = data);
   }
 }

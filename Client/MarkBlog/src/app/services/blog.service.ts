@@ -20,6 +20,10 @@ export class BlogService {
     return this.http.get<BlogEntry[]>(`${this.baseUrl}/`);
   }
 
+  getAllEntriesForUser(): Observable<BlogEntry[]>{
+    return this.http.get<BlogEntry[]>(`${this.baseUrl}/findByCreator`);
+  }
+
   getEntryById(id: string): Observable<BlogEntry>{
     return this.http.get<BlogEntry>(`${this.baseUrl}/byId/${id}`);
   }

@@ -27,7 +27,7 @@ exports.getDisplayEntries = async (req, res) => {
     }
 }
 
-exports.getEntryByUser = async (req, res) => {
+exports.getEntryByCreator = async (req, res) => {
     const client = getDbClient();
     const db = client.db('blogs');
     const collection = db.collection('blogEntries')
