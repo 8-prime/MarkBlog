@@ -1,4 +1,7 @@
+import { Location } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { tap } from 'rxjs';
 import { Loginstate } from 'src/app/enums/loginstate';
 import { LoginService } from 'src/app/services/login.service';
@@ -19,7 +22,9 @@ export class LoginComponent {
   password: string = "";
 
   private loginServe = inject(LoginService);
-
+  private toastr = inject(ToastrService);
+  private router = inject(Router)
+  private location = inject(Location)
 
   login(): void {
     console.log("logging in");
@@ -28,6 +33,8 @@ export class LoginComponent {
       tap(() => console.log( document.cookie))      
     ).subscribe( (value) => {
       localStorage.setItem('jwt', value['jwt'])
+      this.toastr.success('Logged in', '');
+      this.location.back();
     });
   }
 
@@ -37,6 +44,8 @@ export class LoginComponent {
       tap(() => console.log(document.cookie))      
     ).subscribe( (value) => {
       localStorage.setItem('jwt', value['jwt'])
+      this.toastr.success('Registered', '');
+      this.location.back();
     });
   }
 }

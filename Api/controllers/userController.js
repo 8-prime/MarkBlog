@@ -79,3 +79,28 @@ exports.register = async (req, res) => {
     res.cookie('jwt', token);
     res.status(201).send({jwt:token});
 }
+
+exports.checkUserName = async (req, res) => {
+    const client = getDbClient();
+    const db = client.db('users');
+    const collection = db.collection('users')
+
+    try {
+        const user = req.params.user;
+
+        collection.findOne({ user: user }, function(err, result) {
+            if (err) {
+              console.error('Error finding user', err);
+              client.close();
+              return res.status(500).send('Internal Server Error');
+            }
+            // Send the result as a JSON response
+            res.json({ available: !result });
+            // Close the connection
+            client.close();
+        });
+
+    } catch (error) {
+        return res.status(500).send('Internal Server Error');
+    }
+}

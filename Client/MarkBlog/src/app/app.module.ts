@@ -20,6 +20,7 @@ import { SearchbarComponent } from './components/searchbar/searchbar.component';
 import { LoginComponent } from './pages/login/login.component';
 import { JwtInterceptor } from './interceptors/auth-interceptor';
 import { AuthGuardService } from './routeguards/auth-guard-service';
+import { UserComponent } from './pages/user/user.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { AuthGuardService } from './routeguards/auth-guard-service';
     BlogFormComponent,
     BlogInfoComponent,
     SearchbarComponent,
-    LoginComponent
+    LoginComponent,
+    UserComponent
   ],
   imports: [
     ReactiveFormsModule,
