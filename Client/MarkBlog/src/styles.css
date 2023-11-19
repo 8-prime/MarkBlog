@@ -116,7 +116,7 @@ markdown code {
     color: whitesmoke;
     border-radius: 5px;
     padding: 2px 5px 2px 5px;
-    word-break: break-all;
+    word-break: break-word;
     white-space: pre-wrap;
     overflow-wrap: break-word;
 }
