@@ -40,9 +40,18 @@ public class ArticleController : ControllerBase
 
     [HttpPost]
     [Route("create")]
-    public async Task<ActionResult<int>> CreateArticle([FromBody] ArticleModel article)
+    public async Task<ActionResult<ArticleModel>> CreateArticle([FromBody] ArticleModel article)
     {
-        return Ok(await Task.FromResult(1));
+        var authHeader = Request.Headers.Authorization.FirstOrDefault();
+        JwtSecurityToken token;
+        if(!_validator.ValidateToken(authHeader ?? string.Empty, out token)){
+            return Unauthorized("Not logged in");
+        }
+
+        article.UserId = int.Parse(token.Payload["id"].ToString() ?? "0");
+        article = await _repo.AddModel(article);
+
+        return Ok(article);
     }
 
     [HttpPut]
