@@ -42,7 +42,7 @@ public static class PasswordTools
         bool isValid = false;
 
         var configOfPasswordToVerify = new Argon2Config { Password = Encoding.UTF8.GetBytes(password), Threads = Environment.ProcessorCount };
-        SecureArray<byte> hashB = null;
+        SecureArray<byte>? hashB = null;
         try
         {
             if (configOfPasswordToVerify.DecodeString(hashed, out hashB) && hashB != null)

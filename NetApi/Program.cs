@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using NetApi.Contexts;
 using System.Text;
 using NetApi.Tools;
+using NetApi.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<TokenValidator>();
+builder.Services.AddScoped<ArticleDbRepository>();
+builder.Services.AddScoped<UserDbRepository>();
 builder.Services.AddDbContext<BlogContext>(opts => opts.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
 var app = builder.Build();
