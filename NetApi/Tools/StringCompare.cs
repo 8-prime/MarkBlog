@@ -10,6 +10,6 @@ public static class StringCompare
 
     public static bool Cnc(string source, string toCheck)
     {
-        return Contains(source, toCheck, StringComparison.OrdinalIgnoreCase)
+        return Contains(source, toCheck, StringComparison.OrdinalIgnoreCase);
     }
 }
