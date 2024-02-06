@@ -6,6 +6,7 @@ using NetApi.Tools;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using Microsoft.Net.Http.Headers;
 
 
 
@@ -51,7 +52,14 @@ public class AuthController : ControllerBase
             return Unauthorized("Wrong user or password or both or neither?! idk");
         }
 
-        return Ok(TokenForUser(entity!));
+        var token = TokenForUser(entity!);
+        if(token is null) return BadRequest();
+
+
+        return Ok(new AuthToken{
+            JWT = token,
+            Refresh = ""
+        });
     }
 
     [HttpPost]
@@ -64,7 +72,10 @@ public class AuthController : ControllerBase
             Password = hashed,
             UserName = user.UserName
         };
-        await _repo.CreateUser(newUser);
+        var res = await _repo.CreateUser(newUser);
+        if(res is null){
+            return BadRequest("Username already taken");
+        }
 
         return Ok(TokenForUser(newUser));
     }

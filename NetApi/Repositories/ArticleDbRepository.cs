@@ -20,9 +20,11 @@ public class ArticleDbRepository
 
     public async Task<IReadOnlyCollection<ArticleShell>> ArticleShells(string search = "")
     {
-        return await _context.Articles.Include(a => a.User).Where(a => StringCompare.Cnc(a.Title, search)
-                                                                        || a.Tags.Any(t => StringCompare.Cnc(t, search)))
-                                    .Select(a => ArticleFactory.ArticleShell(a)).ToListAsync();
+        return await _context.Articles.Include(a => a.User)
+                                        .Where(a => EF.Functions.Like(a.Title, search) 
+                                            || a.Tags.Any(t => t.Contains(search)) 
+                                            || EF.Functions.Like(a.MarkdownText, search))
+                                        .Select(a => ArticleFactory.ArticleShell(a)).ToListAsync();
     }
 
     public async Task<IReadOnlyCollection<ArticleShell>> GetArticlesForUser(int id){

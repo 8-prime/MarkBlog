@@ -20,8 +20,6 @@ export class SearchbarComponent {
 
   subscriptions: Subscription[] = [];
 
-  constructor() {
-  }
 
   ngOnInit() {
     const subscription = this.trigger.subscribe(currentValue => {

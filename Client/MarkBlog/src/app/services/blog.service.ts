@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { BlogEntry } from '../classes/blog-entry';
+import { ArticleShell } from '../classes/article-shell';
+import { ArticleModel } from '../classes/article-model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,31 +17,32 @@ export class BlogService {
   constructor(private http: HttpClient) { }
 
 
-  getAllEntries(): Observable<BlogEntry[]>{
-    return this.http.get<BlogEntry[]>(`${this.baseUrl}/`);
+  getAllArticles(): Observable<ArticleShell[]>{
+    return this.http.get<ArticleShell[]>(`${this.baseUrl}/shells`)
   }
 
-  getAllEntriesForUser(): Observable<BlogEntry[]>{
-    return this.http.get<BlogEntry[]>(`${this.baseUrl}/findByCreator`);
+  getAllArticlesForUser(id: number): Observable<ArticleShell[]>{
+    return this.http.get<ArticleShell[]>(`${this.baseUrl}/shells/${id}`)
   }
 
-  getEntryById(id: string): Observable<BlogEntry>{
-    return this.http.get<BlogEntry>(`${this.baseUrl}/byId/${id}`);
+  getArticleById(id: string): Observable<ArticleModel>{
+    return this.http.get<ArticleModel>(`${this.baseUrl}/${id}`);
   }
 
-  getAllEntriesForSearch(search: string): Observable<BlogEntry[]>{
-    return this.http.get<BlogEntry[]>(`${this.baseUrl}/find/${search}`);
+  getAllEntriesForSearch(search: string): Observable<ArticleShell[]>{
+    const options = search ? { params: new HttpParams().set('searchTerm', search)} : {};
+    return this.http.get<ArticleShell[]>(`${this.baseUrl}/shells`, options);
   }
 
-  addEntry(entry: BlogEntry){
-    return this.http.post<any>(`${this.baseUrl}/add`, entry);    
+  addEntry(entry: ArticleModel): Observable<ArticleModel>{
+    return this.http.post<ArticleModel>(`${this.baseUrl}/create`, entry);    
   }
 
-  editEntry(entry: BlogEntry){
-    return this.http.put(`${this.baseUrl}/edit`, entry);    
+  editEntry(entry: ArticleModel): Observable<ArticleModel>{
+    return this.http.put<ArticleModel>(`${this.baseUrl}/update`, entry);    
   }
 
-  removeEnrty(entryId: string){
-    return this.http.delete(`${this.baseUrl}/remove/${entryId}`);    
+  removeEntry(entryId: number){
+    return this.http.delete(`${this.baseUrl}/delete/${entryId}`);    
   }
 }

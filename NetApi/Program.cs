@@ -36,6 +36,7 @@ builder.Services.AddSingleton<TokenValidator>();
 builder.Services.AddScoped<ArticleDbRepository>();
 builder.Services.AddScoped<UserDbRepository>();
 builder.Services.AddDbContext<BlogContext>(opts => opts.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
+builder.Services.AddCors(opts => opts.AddDefaultPolicy(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
 
 var app = builder.Build();
 
@@ -47,9 +48,16 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 
 // app.UseAuthentication();
 // app.UseAuthorization();
+
+using (var scope = app.Services.CreateScope())
+using (var context = scope.ServiceProvider.GetRequiredService<BlogContext>())
+{
+    context.Database.EnsureCreated();
+}
 
 app.MapControllers();
 

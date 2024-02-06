@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { BlogEntry } from 'src/app/classes/blog-entry';
+import { ArticleShell } from 'src/app/classes/article-shell';
 
 @Component({
   selector: 'app-blog-info',
@@ -7,10 +7,10 @@ import { BlogEntry } from 'src/app/classes/blog-entry';
   styleUrls: ['./blog-info.component.css']
 })
 export class BlogInfoComponent {
-  @Input() blogEntry?: BlogEntry
+  @Input() blogEntry?: ArticleShell
 
 
-  getReadingDuration() : number {
-    return Math.max(Math.round((this.blogEntry?.markdowntext.split(' ').length ?? 0) / 200), 1); 
-  }
+  // getReadingDuration() : number {
+  //   return Math.max(Math.round((this.blogEntry?.markdowntext.split(' ').length ?? 0) / 200), 1); 
+  // }
 }

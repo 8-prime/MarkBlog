@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Inject, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BlogEntry } from 'src/app/classes/blog-entry';
+import { ArticleModel } from 'src/app/classes/article-model';
 import { BlogService } from 'src/app/services/blog.service';
 
 @Component({
@@ -9,15 +9,17 @@ import { BlogService } from 'src/app/services/blog.service';
   styleUrls: ['./blog-entry.component.css']
 })
 export class BlogEntryComponent {
-  entry: BlogEntry = new BlogEntry();
+  entry: ArticleModel | undefined = undefined;
 
-  constructor(private blogservice: BlogService, private route: ActivatedRoute){}
+  blogservice = inject(BlogService);
+  route = inject(ActivatedRoute)
+
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       let id = params['id'];
       if(id){
-        this.blogservice.getEntryById(id).subscribe(result => this.entry = result);
+        this.blogservice.getArticleById(id).subscribe(result => this.entry = result);
       }
     });
   }

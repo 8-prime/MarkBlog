@@ -20,9 +20,9 @@ public class ArticleController : ControllerBase
 
     [HttpGet]
     [Route("shells")]
-    public async Task<ActionResult<ArticleShell>> GetArticleShells()
+    public async Task<ActionResult<ArticleShell>> GetArticleShells([FromQuery]string? searchTerm)
     {
-        return Ok(await _repo.ArticleShells());
+        return Ok(await _repo.ArticleShells(searchTerm ?? string.Empty));
     }
 
     [HttpGet]
@@ -44,7 +44,8 @@ public class ArticleController : ControllerBase
     {
         var authHeader = Request.Headers.Authorization.FirstOrDefault();
         JwtSecurityToken token;
-        if(!_validator.ValidateToken(authHeader ?? string.Empty, out token)){
+
+        if(authHeader is null || !_validator.ValidateToken(authHeader.Replace("Bearer ", ""), out token)){
             return Unauthorized("Not logged in");
         }
 

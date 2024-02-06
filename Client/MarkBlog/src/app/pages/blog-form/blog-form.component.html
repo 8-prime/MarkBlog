@@ -3,7 +3,7 @@
         <div id="SettingsContainer" class="flex flex-col p-8 w-full md:w-3/4 items-center gap-6">
             <div class="w-full">
                 <label for="Title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label>
-                <input id="Title" type="text" [(ngModel)]="entry.name" class="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg block w-full p-2.5 dark:bg-[#151515] dark:border-[#0f0e0e] dark:placeholder-gray-400 dark:text-white">
+                <input id="Title" type="text" [(ngModel)]="entry.title" class="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg block w-full p-2.5 dark:bg-[#151515] dark:border-[#0f0e0e] dark:placeholder-gray-400 dark:text-white">
             </div>
         
             <div class="w-full flex flex-col gap-4">
@@ -42,8 +42,8 @@
                 <!-- This is just to place items -->
             </div>
 
-            <textarea (paste)="onPaste($event)" *ngIf="editorState !== editorStateEnum.Read"  [ngClass]="{'col-span-12 lg:col-span-10': editorState === editorStateEnum.Edit, 'col-span-12 lg:col-span-5': editorState === editorStateEnum.Both}" class="h-full min-h-[300px] p-4 text-black dark:text-white bg-white dark:bg-[#151515] rounded-lg" [(ngModel)]="entry.markdowntext"></textarea>
-            <markdown *ngIf="editorState !== editorStateEnum.Edit"  [ngClass]="{'col-span-12 lg:col-span-10': editorState === editorStateEnum.Read, 'col-span-12 lg:col-span-5': editorState === editorStateEnum.Both}" class=" min-h-[300px] p-4 overflow-hidden bg-white dark:bg-[#151515] rounded-lg" [data]="entry.markdowntext"></markdown>
+            <textarea *ngIf="editorState !== editorStateEnum.Read"  [ngClass]="{'col-span-12 lg:col-span-10': editorState === editorStateEnum.Edit, 'col-span-12 lg:col-span-5': editorState === editorStateEnum.Both}" class="h-full min-h-[300px] p-4 text-black dark:text-white bg-white dark:bg-[#151515] rounded-lg" [(ngModel)]="entry.markdownText"></textarea>
+            <markdown *ngIf="editorState !== editorStateEnum.Edit"  [ngClass]="{'col-span-12 lg:col-span-10': editorState === editorStateEnum.Read, 'col-span-12 lg:col-span-5': editorState === editorStateEnum.Both}" class=" min-h-[300px] p-4 overflow-hidden bg-white dark:bg-[#151515] rounded-lg" [data]="entry.markdownText"></markdown>
             <div class="col-span-12 lg:col-span-1 flex flex-col justify-end gap-2 mb-2">
                 <button (click)="back()" class="flex flex-row justify-center items-center rounded-lg shadow-lg p-4 bg-white dark:bg-[#151515] text-black dark:text-white">
                     <div class="flex flex-row justify-center gap-2">

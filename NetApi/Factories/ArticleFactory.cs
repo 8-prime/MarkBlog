@@ -20,6 +20,7 @@ public static class ArticleFactory
     }
 
     public static ArticleModel ArticleModel(Article article){
+        Console.WriteLine(article);
         return new ArticleModel
         {
             Id = article.Id,
@@ -37,8 +38,8 @@ public static class ArticleFactory
         return new Article
         {
             Id = model.Id,
-            CreatedAt = model.CreatedAt,
-            LastChanged = model.LastChanged,
+            CreatedAt = model.CreatedAt ?? DateTime.UtcNow,
+            LastChanged = model.LastChanged ?? DateTime.UtcNow,
             MarkdownText = model.MarkdownText,
             Tags = model.Tags,
             Title = model.Title,

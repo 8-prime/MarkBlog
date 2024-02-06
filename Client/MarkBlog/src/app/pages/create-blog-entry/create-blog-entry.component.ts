@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { BlogEntry } from 'src/app/classes/blog-entry';
+import { Component, inject } from '@angular/core';
+import { ArticleShell } from 'src/app/classes/article-shell';
 import { BlogService } from 'src/app/services/blog.service';
+import { LoginService } from 'src/app/services/login.service';
 
 @Component({
   selector: 'app-create-blog-entry',
@@ -8,21 +9,23 @@ import { BlogService } from 'src/app/services/blog.service';
   styleUrls: ['./create-blog-entry.component.css']
 })
 export class CreateBlogEntryComponent {
-  entries: BlogEntry[] = []
+  entries: ArticleShell[] = []
 
+  loginService = inject(LoginService);
+  
   constructor(private blogservice: BlogService){}
-
+  
   
   ngOnInit(): void {
     this.loadData();
   }
-  remove(id?: string): void {
+  remove(id?: number): void {
     if(id){
-      this.blogservice.removeEnrty(id).subscribe(() => this.loadData());
+      this.blogservice.removeEntry(id).subscribe(() => this.loadData());
     }
   }
 
   loadData(): void {
-    this.blogservice.getAllEntriesForUser().subscribe(data => this.entries = data);
+    this.blogservice.getAllArticlesForUser(this.loginService.getUserId()).subscribe(data => this.entries = data);
   }
 }

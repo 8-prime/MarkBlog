@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BlogEntry } from 'src/app/classes/blog-entry';
+import { ArticleShell } from 'src/app/classes/article-shell';
 import { BlogService } from 'src/app/services/blog.service';
 
 @Component({
@@ -8,17 +8,17 @@ import { BlogService } from 'src/app/services/blog.service';
   styleUrls: ['./blog-overview.component.css']
 })
 export class BlogOverviewComponent {
-  entries: BlogEntry[] = []
+  entries: ArticleShell[] = []
 
   constructor(private blogservice: BlogService){}
 
   ngOnInit(): void {
-    this.blogservice.getAllEntries().subscribe(data => this.entries = data);
+    this.blogservice.getAllArticles().subscribe(data => this.entries = data);
   }
 
   onTextChange(changedText: string) {
     if(changedText === ''){
-      this.blogservice.getAllEntries().subscribe(data => this.entries = data);
+      this.blogservice.getAllArticles().subscribe(data => this.entries = data);
     }
     else{
       this.blogservice.getAllEntriesForSearch(changedText).subscribe(data => this.entries = data);
