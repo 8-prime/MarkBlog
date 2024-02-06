@@ -24,8 +24,8 @@ public static class ArticleFactory
         return new ArticleModel
         {
             Id = article.Id,
-            CreatedAt = article.CreatedAt,
-            LastChanged = article.LastChanged,
+            CreatedAt = article.CreatedAt.ToString(),
+            LastChanged = article.LastChanged.ToString(),
             MarkdownText = article.MarkdownText,
             Tags = article.Tags,
             Title = article.Title,
@@ -38,8 +38,20 @@ public static class ArticleFactory
         return new Article
         {
             Id = model.Id,
-            CreatedAt = model.CreatedAt ?? DateTime.UtcNow,
-            LastChanged = model.LastChanged ?? DateTime.UtcNow,
+            CreatedAt = DateTime.UtcNow,
+            LastChanged = DateTime.UtcNow,
+            MarkdownText = model.MarkdownText,
+            Tags = model.Tags,
+            Title = model.Title,
+            UserId = model.UserId
+        };
+    }
+    public static Article Article(ArticleModel model, Article entity){
+        return new Article
+        {
+            Id = model.Id,
+            CreatedAt = entity.CreatedAt,
+            LastChanged = DateTime.UtcNow,
             MarkdownText = model.MarkdownText,
             Tags = model.Tags,
             Title = model.Title,

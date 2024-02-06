@@ -10,8 +10,8 @@ public class ArticleModel
     public string Title { get; set; }
     public List<string> Tags { get; set; }
     public string MarkdownText { get; set; }
-    public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? LastChanged { get; set; } = DateTime.UtcNow;
+    public string? CreatedAt { get; set; }
+    public string? LastChanged { get; set; }
     public int UserId { get; set; }
     public string UserName { get; set; }
 }

@@ -78,6 +78,7 @@ public class ArticleController : ControllerBase
     [Route("delete/{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        return Ok(await Task.FromResult(() => {}));
+        await _repo.RemoveModel(id);
+        return Ok();
     }
 }
