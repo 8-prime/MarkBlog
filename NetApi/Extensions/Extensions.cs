@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using NetApi.Contexts;
 using NetApi.Repositories;
-using NetApi.Tools;
 
 namespace NetApi.Extensions
 {
@@ -18,7 +17,6 @@ namespace NetApi.Extensions
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddSingleton<TokenValidator>();
             builder.Services.AddScoped<ArticleDbRepository>();
             builder.Services.AddScoped<UserDbRepository>();
             builder.Services.AddDbContext<BlogContext>(opts => opts.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));

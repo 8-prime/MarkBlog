@@ -2,10 +2,10 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace NetApi.Tools;
 
-public class TokenValidator
+public class TokenHelper
 {
     private readonly JwtSecurityToken _jwt;
-    public TokenValidator(string token)
+    public TokenHelper(string token)
     {
         var handler = new JwtSecurityTokenHandler();
         var jsonToken = handler.ReadToken(token);

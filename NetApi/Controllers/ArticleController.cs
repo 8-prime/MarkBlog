@@ -11,12 +11,10 @@ namespace NetApi.Controllers;
 public class ArticleController : ControllerBase
 {
     private readonly ArticleDbRepository _repo;
-    private readonly TokenValidator _validator;
 
-    public ArticleController(ArticleDbRepository repo, TokenValidator tokenValidator)
+    public ArticleController(ArticleDbRepository repo)
     {
         _repo = repo;
-        _validator = tokenValidator;
     }
 
     [HttpGet]
@@ -48,7 +46,7 @@ public class ArticleController : ControllerBase
         var authHeader = Request.Headers.Authorization.FirstOrDefault();
 
 
-        article.UserId = TokenValidator.GetPayloadValue<int>(authHeader!.Replace("Bearer ", ""), "id");
+        article.UserId = TokenHelper.GetPayloadValue<int>(authHeader!.Replace("Bearer ", ""), "id");
         article = await _repo.AddModel(article);
 
         return Ok(article);
@@ -61,7 +59,7 @@ public class ArticleController : ControllerBase
     {
         var authHeader = Request.Headers.Authorization.FirstOrDefault();
 
-        var userId = TokenValidator.GetPayloadValue<int>(authHeader!.Replace("Bearer ", ""), "id");
+        var userId = TokenHelper.GetPayloadValue<int>(authHeader!.Replace("Bearer ", ""), "id");
 
         if (article.UserId != userId)
         {

@@ -119,7 +119,7 @@ public class AuthController : ControllerBase
 
         var refresh = RefreshToken();
 
-        int? userId = TokenValidator.GetPayloadValue<int>(tokens.JWT, "id");
+        int? userId = TokenHelper.GetPayloadValue<int>(tokens.JWT, "id");
         if (userId is null) return BadRequest("Invalid JWT");
         var dbUser = await _repo.GetUserById((int)userId);
         if (dbUser is null) return BadRequest("Cant find User for request");
