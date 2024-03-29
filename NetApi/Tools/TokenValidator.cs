@@ -1,49 +1,40 @@
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 
 namespace NetApi.Tools;
 
 public class TokenValidator
 {
-
-
-    private readonly IConfiguration _configuration;
-
-    public TokenValidator(IConfiguration configuration)
+    private readonly JwtSecurityToken _jwt;
+    public TokenValidator(string token)
     {
-        _configuration = configuration;
+        var handler = new JwtSecurityTokenHandler();
+        var jsonToken = handler.ReadToken(token);
+        _jwt = jsonToken as JwtSecurityToken ?? throw new ArgumentException("Token is not valid JWT");
     }
 
-    public bool ValidateToken(string token, out JwtSecurityToken jwt)
+
+    public static T? GetPayloadValue<T>(string token, string key)
     {
-        var jwtIssuer = _configuration.GetSection("Jwt:Issuer").Get<string>();
-        var jwtKey = _configuration.GetSection("Jwt:Key").Get<string>();
+        var handler = new JwtSecurityTokenHandler();
+        var jsonToken = handler.ReadToken(token);
+        var jwt = jsonToken as JwtSecurityToken ?? throw new ArgumentException("Token is not valid JWT");
 
-        var validationParameters = new TokenValidationParameters
+        if (jwt.Payload.TryGetValue(key, out var payload))
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtIssuer,
-            ValidAudience = jwtIssuer,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey ?? string.Empty))
-        };
-
-        try
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
-            jwt = (JwtSecurityToken)validatedToken;
-
-            return true;
+            return (T)payload;
         }
-        catch (SecurityTokenValidationException)
+
+        return default!;
+    }
+
+    public T? GetPayloadVlaue<T>(string key)
+    {
+        if (_jwt.Payload.TryGetValue(key, out var payload))
         {
-            jwt = null!;
-            return false;
+            return (T)payload;
         }
+
+        return default!;
     }
 
 }

@@ -33,4 +33,15 @@ public class UserDbRepository
     {
         return await _context.Users.FirstOrDefaultAsync(u => u.UserName == name);
     }
+
+    public async Task<RefreshToken?> GetRefreshTokenAsync(string token)
+    {
+        return await _context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == token);
+    }
+
+    public async Task DeleteExpiredToken(RefreshToken token)
+    {
+        _context.Remove(token);
+        await _context.SaveChangesAsync();
+    }
 }

@@ -7,8 +7,6 @@ using NetApi.Tools;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
-
-
 namespace NetApi.Controllers;
 
 [ApiController]
@@ -25,7 +23,6 @@ public class AuthController : ControllerBase
 
     }
 
-
     private string TokenForUser(User user)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"] ?? string.Empty));
@@ -38,6 +35,21 @@ public class AuthController : ControllerBase
           signingCredentials: credentials);
         sectoken.Payload["userName"] = user.UserName;
         sectoken.Payload["id"] = user.Id;
+
+        return new JwtSecurityTokenHandler().WriteToken(sectoken);
+    }
+    private string RefreshToken()
+    {
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"] ?? string.Empty));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+        var sectoken = new JwtSecurityToken(
+            _config["Jwt:Issuer"],
+            _config["Jwt:Issuer"],
+            expires: DateTime.Now.AddDays(14),
+            signingCredentials: credentials);
+
+        sectoken.Payload["id"] = Guid.NewGuid();
 
         return new JwtSecurityTokenHandler().WriteToken(sectoken);
     }
@@ -93,8 +105,31 @@ public class AuthController : ControllerBase
 
     [HttpPost]
     [Route("refresh")]
-    public async Task<ActionResult<AuthToken>> Refresh()
+    public async Task<ActionResult<AuthToken>> Refresh([FromBody] AuthToken tokens)
     {
-        return Ok(await Task.FromResult(new AuthToken()));
+        if (tokens.Refresh is null) return BadRequest("Must supply refresh token on refresh request");
+
+        var existingToken = await _repo.GetRefreshTokenAsync(tokens.Refresh);
+        if (existingToken is null) return BadRequest("Invalid refresh token Please login again");
+        if (existingToken.Expiry < DateTime.UtcNow)
+        {
+            await _repo.DeleteExpiredToken(existingToken);
+            return BadRequest("Invalid refresh token. Please login again");
+        }
+
+        var refresh = RefreshToken();
+
+        int? userId = TokenValidator.GetPayloadValue<int>(tokens.JWT, "id");
+        if (userId is null) return BadRequest("Invalid JWT");
+        var dbUser = await _repo.GetUserById((int)userId);
+        if (dbUser is null) return BadRequest("Cant find User for request");
+
+        var token = TokenForUser(dbUser);
+
+        return Ok(new AuthToken
+        {
+            JWT = token,
+            Refresh = refresh
+        });
     }
 }

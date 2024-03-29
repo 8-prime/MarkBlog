@@ -1,8 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetApi.Models;
 using NetApi.Repositories;
 using NetApi.Tools;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace NetApi.Controllers;
 
@@ -41,35 +41,27 @@ public class ArticleController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     [Route("create")]
     public async Task<ActionResult<ArticleModel>> CreateArticle([FromBody] ArticleModel article)
     {
         var authHeader = Request.Headers.Authorization.FirstOrDefault();
-        JwtSecurityToken token;
 
-        if (authHeader is null || !_validator.ValidateToken(authHeader.Replace("Bearer ", ""), out token))
-        {
-            return Unauthorized("Not logged in");
-        }
 
-        article.UserId = int.Parse(token.Payload["id"].ToString() ?? "0");
+        article.UserId = TokenValidator.GetPayloadValue<int>(authHeader!.Replace("Bearer ", ""), "id");
         article = await _repo.AddModel(article);
 
         return Ok(article);
     }
 
     [HttpPut]
+    [Authorize]
     [Route("update")]
     public async Task<ActionResult<int>> UpdateArticle([FromBody] ArticleModel article)
     {
         var authHeader = Request.Headers.Authorization.FirstOrDefault();
-        JwtSecurityToken token;
-        if (!_validator.ValidateToken(authHeader ?? string.Empty, out token))
-        {
-            return Unauthorized("Not logged in");
-        }
 
-        var userId = int.Parse(token.Payload["id"].ToString() ?? "0");
+        var userId = TokenValidator.GetPayloadValue<int>(authHeader!.Replace("Bearer ", ""), "id");
 
         if (article.UserId != userId)
         {
@@ -80,10 +72,11 @@ public class ArticleController : ControllerBase
     }
 
     [HttpDelete]
+    [Authorize]
     [Route("delete/{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        await _repo.RemoveModel(id);
+        await _repo.RemoveArticle(id);
         return Ok();
     }
 }

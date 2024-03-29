@@ -56,7 +56,7 @@ public class ArticleDbRepository
         return ArticleFactory.ArticleModel(updated);
     }
 
-    public async Task RemoveModel(int id)
+    public async Task RemoveArticle(int id)
     {
         var article = _context.Articles.Find(id);
         if (article is not null)
