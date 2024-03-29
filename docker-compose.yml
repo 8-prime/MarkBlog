@@ -38,6 +38,8 @@ services:
     ports:
       - 5432:5432
     user: postgres
+    volumes:
+      - ./Data:/var/lib/postgresql
     environment:
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: db

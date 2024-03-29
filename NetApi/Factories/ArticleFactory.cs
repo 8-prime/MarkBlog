@@ -1,4 +1,3 @@
-using Microsoft.OpenApi.Services;
 using NetApi.Entities;
 using NetApi.Models;
 
@@ -19,7 +18,8 @@ public static class ArticleFactory
         };
     }
 
-    public static ArticleModel ArticleModel(Article article){
+    public static ArticleModel ArticleModel(Article article)
+    {
         Console.WriteLine(article);
         return new ArticleModel
         {
@@ -34,7 +34,8 @@ public static class ArticleFactory
         };
     }
 
-    public static Article Article(ArticleModel model){
+    public static Article Article(ArticleModel model)
+    {
         return new Article
         {
             Id = model.Id,
@@ -46,7 +47,8 @@ public static class ArticleFactory
             UserId = model.UserId
         };
     }
-    public static Article Article(ArticleModel model, Article entity){
+    public static Article Article(ArticleModel model, Article entity)
+    {
         return new Article
         {
             Id = model.Id,

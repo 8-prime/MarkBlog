@@ -8,7 +8,8 @@ namespace NetApi.Contexts
         public DbSet<Article> Articles { get; set; }
         public DbSet<User> Users { get; set; }
 
-        public BlogContext(DbContextOptions opts): base(opts){
+        public BlogContext(DbContextOptions opts) : base(opts)
+        {
 
         }
 

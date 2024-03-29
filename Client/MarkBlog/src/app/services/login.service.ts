@@ -26,9 +26,11 @@ export class LoginService {
   }
 
   register(user: string, password: string) : Observable<AuthToken>{
-    return this.http.post<AuthToken>(`${this.baseUrl}/register`, {user, password}).pipe(
+    return this.http.post<AuthToken>(`${this.baseUrl}/register`, {userName: user,password: password}).pipe(
       tap((data) => {
         localStorage.setItem('jwt', data.jwt);
+        console.log("set jwt");
+        console.log(data.jwt);        
     }));
   }
 

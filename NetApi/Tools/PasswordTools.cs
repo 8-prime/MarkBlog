@@ -1,7 +1,7 @@
-using System.Security.Cryptography;
-using System.Text;
 using Isopoh.Cryptography.Argon2;
 using Isopoh.Cryptography.SecureArray;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace NetApi.Tools;
 
@@ -15,7 +15,7 @@ public static class PasswordTools
         byte[] salt = new byte[saltLength];
         Rng.GetBytes(salt);
 
-    
+
         var config = new Argon2Config
         {
             Type = Argon2Type.DataIndependentAddressing,
@@ -30,7 +30,7 @@ public static class PasswordTools
         };
         var argon2A = new Argon2(config);
         string hashString;
-        using(SecureArray<byte> hashA = argon2A.Hash())
+        using (SecureArray<byte> hashA = argon2A.Hash())
         {
             hashString = config.EncodeString(hashA.Buffer);
         }
@@ -38,7 +38,8 @@ public static class PasswordTools
         return hashString;
     }
 
-    public static bool Verify(string password, string hashed){
+    public static bool Verify(string password, string hashed)
+    {
         bool isValid = false;
 
         var configOfPasswordToVerify = new Argon2Config { Password = Encoding.UTF8.GetBytes(password), Threads = Environment.ProcessorCount };
@@ -48,7 +49,7 @@ public static class PasswordTools
             if (configOfPasswordToVerify.DecodeString(hashed, out hashB) && hashB != null)
             {
                 var argon2ToVerify = new Argon2(configOfPasswordToVerify);
-                using(var hashToVerify = argon2ToVerify.Hash())
+                using (var hashToVerify = argon2ToVerify.Hash())
                 {
                     if (Argon2.FixedTimeEquals(hashB, hashToVerify))
                     {

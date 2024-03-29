@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using NetApi.Entities;
 using NetApi.Models;
 using NetApi.Repositories;
 using NetApi.Tools;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using Microsoft.Net.Http.Headers;
 
 
 
@@ -27,7 +26,8 @@ public class AuthController : ControllerBase
     }
 
 
-    private string TokenForUser(User user){
+    private string TokenForUser(User user)
+    {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"] ?? string.Empty));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -48,15 +48,17 @@ public class AuthController : ControllerBase
     {
         var entity = await _repo.GetUserByName(user.UserName);
 
-        if(!PasswordTools.Verify(user.Password, entity?.Password ?? string.Empty)){
+        if (!PasswordTools.Verify(user.Password, entity?.Password ?? string.Empty))
+        {
             return Unauthorized("Wrong user or password or both or neither?! idk");
         }
 
         var token = TokenForUser(entity!);
-        if(token is null) return BadRequest();
+        if (token is null) return BadRequest();
 
 
-        return Ok(new AuthToken{
+        return Ok(new AuthToken
+        {
             JWT = token,
             Refresh = ""
         });
@@ -73,11 +75,20 @@ public class AuthController : ControllerBase
             UserName = user.UserName
         };
         var res = await _repo.CreateUser(newUser);
-        if(res is null){
+        if (res is null)
+        {
             return BadRequest("Username already taken");
         }
 
-        return Ok(TokenForUser(newUser));
+        var token = TokenForUser(res!);
+        if (token is null) return BadRequest();
+
+
+        return Ok(new AuthToken
+        {
+            JWT = token,
+            Refresh = ""
+        });
     }
 
     [HttpPost]

@@ -2,6 +2,6 @@ namespace NetApi.Models;
 
 public class UserModel
 {
-    public string UserName {get; set;} = null!;
-    public string Password {get; set;} = null!;
+    public required string UserName { get; set; }
+    public required string Password { get; set; }
 }

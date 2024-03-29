@@ -1,10 +1,7 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using NetApi.Contexts;
-using System.Text;
-using NetApi.Tools;
 using NetApi.Repositories;
+using NetApi.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
 
