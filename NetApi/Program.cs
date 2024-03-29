@@ -1,42 +1,10 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using NetApi.Contexts;
-using NetApi.Repositories;
-using NetApi.Tools;
-using System.Text;
+using NetApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-
-var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
-var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
- .AddJwtBearer(options =>
- {
-     options.TokenValidationParameters = new TokenValidationParameters
-     {
-         ValidateIssuer = true,
-         ValidateAudience = true,
-         ValidateLifetime = true,
-         ValidateIssuerSigningKey = true,
-         ValidIssuer = jwtIssuer,
-         ValidAudience = jwtIssuer,
-         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey ?? string.Empty))
-     };
- });
-
 // Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<TokenValidator>();
-builder.Services.AddScoped<ArticleDbRepository>();
-builder.Services.AddScoped<UserDbRepository>();
-builder.Services.AddDbContext<BlogContext>(opts => opts.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
-builder.Services.AddCors(opts => opts.AddDefaultPolicy(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
+builder.AddServiceDefaults();
+builder.AddJwtConfiguration();
 
 var app = builder.Build();
 
@@ -52,13 +20,15 @@ if (app.Environment.IsDevelopment())
     }
 }
 
-app.UseHttpsRedirection();
+
 app.UseCors();
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-
+app.MapDefaultEndpoints();
 app.MapControllers();
+
 
 app.Run();
