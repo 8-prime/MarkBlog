@@ -5,7 +5,7 @@ public class User
 {
     public int Id { get; set; }
 
-    public string UserName { get; set; }
-    public string Password { get; set; }
-    List<Article> Articles = new List<Article>();
+    public required string UserName { get; set; }
+    public required string Password { get; set; }
+    public List<Article> Articles { get; set; } = new List<Article>();
 }
