@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AuthToken } from '../classes/auth-token';
 import { jwtDecode } from "jwt-decode";
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -12,32 +13,47 @@ export class LoginService {
 
   baseUrl: string = environment.LOGIN_API;
 
+  loggedInUserSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+
   private http = inject(HttpClient)
+  private router = inject(Router);
+
+
+  constructor() {
+    const token = localStorage.getItem('jwt');
+    if(!token) return;
+    this.setLoggedInUser(token);
+  }
 
   login(user: string, password: string) : Observable<AuthToken>{
     return this.http.post<AuthToken>(`${this.baseUrl}/login`, {userName: user,password: password}).pipe(
       tap((data) => {
         localStorage.setItem('jwt', data.jwt);
-        console.log("set jwt");
-        console.log(data.jwt);
-        
-        
+        this.setLoggedInUser(data.jwt);
     }));
+  }
+
+  logout(){
+    localStorage.removeItem('jwt');
+    this.loggedInUserSubject.next(null);
+    this.router.navigate(['login']);
   }
 
   register(user: string, password: string) : Observable<AuthToken>{
     return this.http.post<AuthToken>(`${this.baseUrl}/register`, {userName: user,password: password}).pipe(
       tap((data) => {
         localStorage.setItem('jwt', data.jwt);
-        console.log("set jwt");
-        console.log(data.jwt);        
     }));
   }
 
   getUserId(){
     const token = localStorage.getItem('jwt');
     const decoded = jwtDecode(token ?? "") as any;
-    console.log(decoded);
     return decoded.id;
+  }
+
+  setLoggedInUser(token: string){
+    const decoded = jwtDecode(token) as any;
+    this.loggedInUserSubject.next(decoded.userName)
   }
 }

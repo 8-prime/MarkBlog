@@ -8,7 +8,16 @@
         </li>
     </ul>
     <div class="flex justify-center items-center p-2">
-        <div routerLink="/user" class="cursor-pointer rounded-full w-10 h-10 bg-neutral-600">
+        <div (click)="showUserSettings = !showUserSettings" class="cursor-pointer rounded-full w-10 h-10 bg-neutral-700 flex items-center justify-center">
+            <p class="flex items-center justify-center text-white text-3xl text-center">
+                {{userNameStart}}
+            </p>
+            <div class="relative">
+                <div *ngIf="showUserSettings" class="absolute top-12 right-0 p-4 bg-black dark:bg-neutral-300 rounded-lg shadow-lg">
+                    <app-user >
+                    </app-user>
+                </div>
+            </div>
         </div>
     </div>
 </nav>

@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { LoginService } from 'src/app/services/login.service';
 
 @Component({
   selector: 'app-user',
@@ -7,13 +7,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./user.component.css']
 })
 export class UserComponent {
-
-  private router = inject(Router);
+  private loginService = inject(LoginService);
 
   logout(): void {
-    console.log("Hi");
-    
-    localStorage.removeItem('jwt');
-    this.router.navigate(['login']);
+    this.loginService.logout();
   }
 }
