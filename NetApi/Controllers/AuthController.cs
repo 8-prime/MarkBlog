@@ -49,7 +49,7 @@ public class AuthController : ControllerBase
             expires: DateTime.Now.AddDays(14),
             signingCredentials: credentials);
 
-        sectoken.Payload["id"] = Guid.NewGuid();
+        sectoken.Payload["id"] = Guid.NewGuid().ToString();
 
         return new JwtSecurityTokenHandler().WriteToken(sectoken);
     }
@@ -72,7 +72,7 @@ public class AuthController : ControllerBase
         return Ok(new AuthToken
         {
             JWT = token,
-            Refresh = ""
+            Refresh = RefreshToken()
         });
     }
 
@@ -99,7 +99,7 @@ public class AuthController : ControllerBase
         return Ok(new AuthToken
         {
             JWT = token,
-            Refresh = ""
+            Refresh = RefreshToken()
         });
     }
 
