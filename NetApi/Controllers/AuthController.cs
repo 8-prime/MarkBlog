@@ -38,7 +38,7 @@ public class AuthController : ControllerBase
 
         return new JwtSecurityTokenHandler().WriteToken(sectoken);
     }
-    private string RefreshToken()
+    private string RefreshToken(int userId)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"] ?? string.Empty));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -50,6 +50,7 @@ public class AuthController : ControllerBase
             signingCredentials: credentials);
 
         sectoken.Payload["id"] = Guid.NewGuid().ToString();
+        sectoken.Payload["user"] = userId;
 
         return new JwtSecurityTokenHandler().WriteToken(sectoken);
     }
@@ -72,7 +73,7 @@ public class AuthController : ControllerBase
         return Ok(new AuthToken
         {
             JWT = token,
-            Refresh = RefreshToken()
+            Refresh = RefreshToken(entity?.Id ?? 0)
         });
     }
 
@@ -87,19 +88,18 @@ public class AuthController : ControllerBase
             UserName = user.UserName
         };
         var res = await _repo.CreateUser(newUser);
-        if (res is null)
+        if (res == 0)
         {
             return BadRequest("Username already taken");
         }
 
-        var token = TokenForUser(res!);
+        var token = TokenForUser(newUser);
         if (token is null) return BadRequest();
-
 
         return Ok(new AuthToken
         {
             JWT = token,
-            Refresh = RefreshToken()
+            Refresh = RefreshToken(newUser.Id)
         });
     }
 
@@ -116,14 +116,12 @@ public class AuthController : ControllerBase
             await _repo.DeleteExpiredToken(existingToken);
             return BadRequest("Invalid refresh token. Please login again");
         }
-
-        var refresh = RefreshToken();
-
-        int? userId = TokenHelper.GetPayloadValue<int>(tokens.JWT, "id");
+        int? userId = TokenHelper.GetPayloadValue<int>(tokens.JWT, "user");
         if (userId is null) return BadRequest("Invalid JWT");
         var dbUser = await _repo.GetUserById((int)userId);
         if (dbUser is null) return BadRequest("Cant find User for request");
 
+        var refresh = RefreshToken((int)userId);
         var token = TokenForUser(dbUser);
 
         return Ok(new AuthToken

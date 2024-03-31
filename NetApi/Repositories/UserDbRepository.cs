@@ -13,16 +13,15 @@ public class UserDbRepository
         _context = context;
     }
 
-    public async Task<User?> CreateUser(User newUser)
+    public async Task<int> CreateUser(User newUser)
     {
         if (_context.Users.Any(u => u.UserName == newUser.UserName))
         {
-            return null;
+            return 0;
         }
 
         _context.Users.Add(newUser);
-        await _context.SaveChangesAsync();
-        return newUser;
+        return await _context.SaveChangesAsync(); ;
     }
 
     public async Task<User?> GetUserById(int id)

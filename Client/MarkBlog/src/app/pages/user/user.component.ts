@@ -9,6 +9,19 @@ import { LoginService } from 'src/app/services/login.service';
 export class UserComponent {
   private loginService = inject(LoginService);
 
+  isLoggedIn = false;
+
+  constructor(){
+    this.loginService.loggedInUserSubject.subscribe(d => {
+      if(d){
+        this.isLoggedIn = true
+      }
+      else{
+        this.isLoggedIn = false
+      }
+    })
+  } 
+
   logout(): void {
     this.loginService.logout();
   }

@@ -1,14 +1,20 @@
 <div class="w-full h-full flex flex-col gap-2">
     <button class="flex flex-row justify-center items-center rounded-lg shadow-lg py-4 px-2 bg-white dark:bg-[#151515] text-black dark:text-white">
-        <div (click)="logout()" class="flex flex-row justify-center gap-2">
+        <div class="flex flex-row justify-center gap-2">
             <svg class="w-6 h-6 stroke-black dark:stroke-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#e8e8e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             Profile
         </div>
     </button>
-    <button class="flex flex-row justify-center items-center rounded-lg shadow-lg py-4 px-2 bg-white dark:bg-[#151515] text-black dark:text-white">
+    <button *ngIf="isLoggedIn" class="flex flex-row justify-center items-center rounded-lg shadow-lg py-4 px-2 bg-white dark:bg-[#151515] text-black dark:text-white">
         <div (click)="logout()" class="flex flex-row justify-center gap-2">
             <svg class="w-6 h-6 stroke-black dark:stroke-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 17l5-5-5-5M19.8 12H9M10 3H4v18h6"/></svg>
             Logout
+        </div>
+    </button>
+    <button *ngIf="!isLoggedIn" class="flex flex-row justify-center items-center rounded-lg shadow-lg py-4 px-2 bg-white dark:bg-[#151515] text-black dark:text-white">
+        <div routerLink="/login" class="flex flex-row justify-center gap-2">
+            <svg class="w-6 h-6 stroke-black dark:stroke-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 17l5-5-5-5M19.8 12H9M10 3H4v18h6"/></svg>
+            Login
         </div>
     </button>
 </div>
