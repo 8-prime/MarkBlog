@@ -10,7 +10,7 @@ public static class ArticleFactory
     {
         return new ArticleShell
         {
-            ArticleId = article.Id,
+            Id = article.Id,
             Author = article.User.UserName,
             CreatedAt = article.CreatedAt,
             Tags = article.Tags,

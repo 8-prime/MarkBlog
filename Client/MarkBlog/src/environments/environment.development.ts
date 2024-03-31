@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    BLOG_API: 'http://localhost:5000/Article',
-    IMAGE_API: 'http://localhost:5000/images',
-    LOGIN_API: 'http://localhost:5000/Auth'
+    BLOG_API: 'https://localhost:7263/Article',
+    IMAGE_API: 'https://localhost:7263/images',
+    LOGIN_API: 'https://localhost:7263/Auth'
 };

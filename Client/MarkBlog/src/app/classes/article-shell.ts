@@ -1,5 +1,5 @@
 export interface ArticleShell {
-    articleId: number,
+    id: number,
     title: string,
     tags: string[],
     createdAt: Date,
