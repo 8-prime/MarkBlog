@@ -13,13 +13,13 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    using (var scope = app.Services.CreateScope())
-    using (var context = scope.ServiceProvider.GetRequiredService<BlogContext>())
-    {
-        context.Database.EnsureCreated();
-    }
 }
 
+using (var scope = app.Services.CreateScope())
+using (var context = scope.ServiceProvider.GetRequiredService<BlogContext>())
+{
+    context.Database.EnsureCreated();
+}
 
 app.UseCors();
 app.UseHttpsRedirection();

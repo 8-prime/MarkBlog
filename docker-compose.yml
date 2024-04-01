@@ -6,10 +6,10 @@ services:
     container_name: markbloglient-container
     ports:
       - 3002:80
-    depends_on:
-      - api
-    volumes:
-      - ./ClientNginx:/etc/nginx/conf.d
+    # depends_on:
+    #   - api
+    # volumes:
+    #   - ./ClientNginx:/etc/nginx/conf.d
 
   api:
     image: 8prime/markblogapi
