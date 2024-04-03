@@ -1,4 +1,4 @@
-FROM node:16 AS node
+FROM node:18 AS node
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build
+RUN npm run deploy
 
 FROM nginx:alpine
 
