@@ -1,5 +1,13 @@
 # Ignore all Data folders
 **/Data/
+**/.vs/
+**/bin/
+**/obj/
+
+
+**/*.db
+**/*.db-shm
+**/*.db-wal
 
 # Ignore the node_modules folder
 **/node_modules/
