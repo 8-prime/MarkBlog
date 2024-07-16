@@ -43,11 +43,6 @@ namespace Markblog.Infrastructure.Backgroundservices
             using var scope = _serviceProvider.CreateScope();
             var logger = scope.ServiceProvider.GetService<ILogger<FileWatcherService>>();
             logger.LogInformation("Starting watcher service");
-
-            //while (!stoppingToken.IsCancellationRequested)
-            //{
-            //    await Task.Delay(1000);
-            //}
         }
 
         private async void OnChanged(object sender, FileSystemEventArgs e)
@@ -128,13 +123,20 @@ namespace Markblog.Infrastructure.Backgroundservices
                     await context.SaveChangesAsync();
                     break;
                 case ChangeType.Update:
-                    await context.Articles
-                        .Where(a => a.FilePath == e.FullPath)
-                        .ExecuteUpdateAsync(a => a
-                                .SetProperty(u => u.UpdatedDate, DateTime.UtcNow)
-                                .SetProperty(u => u.ReadDurationSeconds, readTimeSeconds)
-                                .SetProperty(u => u.Description, descriptionBuilder.ToString())
-                        );
+                    var existing = await context.Articles.FirstOrDefaultAsync(a => a.FilePath == e.FullPath);
+                    existing = new Entities.ArticleEntity
+                    {
+                        FilePath = e.FullPath,
+                        Title = title,
+                        CreatedDate = DateTime.UtcNow,
+                        Id = existing?.Id ?? Guid.NewGuid(),
+                        ReadDurationSeconds = readTimeSeconds,
+                        UpdatedDate = DateTime.UtcNow,
+                        Description = descriptionBuilder.ToString()
+
+                    };
+                    context.Articles.Add(existing);
+                    await context.SaveChangesAsync();
                     break;
                 case ChangeType.Deletion:
                     await context.Articles.Where(a => a.FilePath.Equals(e.FullPath)).ExecuteDeleteAsync();
