@@ -1,4 +1,4 @@
-﻿@page "/article-overview/{page}"
+﻿@page "/article-overview/{page?}"
 @using Markblog.Infrastructure.Contexts
 @using Markblog.Infrastructure.Entities
 @using Microsoft.EntityFrameworkCore
@@ -19,7 +19,10 @@ else
     {
         @if (i == PageSize - 2)
         {
-            <div>
+            <div hx-get="/article-overview/?page=@(Page + 1)"
+                 hx-trigger="revealed"
+                 hx-swap="afterend"
+                 class="p-12 bg-[#575e62] rounded-lg shadow-2xl">
                 <h2> @articles[i].Title </h2>
                 <p> @articles[i].Description </p>
                 <p> @articles[i].CreatedDate </p>
@@ -28,7 +31,7 @@ else
         }
         else
         {
-            <div>
+            <div class="p-12 bg-[#575e62] rounded-lg shadow-2xl">
                 <h2> @articles[i].Title </h2>
                 <p> @articles[i].Description </p>
                 <p> @articles[i].CreatedDate </p>
@@ -41,6 +44,7 @@ else
 
 @code
 {
+    [SupplyParameterFromQuery]
     [Parameter]
     public int? Page { get; set; }
 
@@ -55,9 +59,10 @@ else
             pageSize = 10;
         }
         PageSize = pageSize;
+        var skipPage = Math.Max(0, (Page ?? 0) - 1);
         articles = await context.Articles
                             .AsNoTracking()
-                            .Skip(pageSize * Page ?? 0)
+                            .Skip(pageSize * skipPage)
                             .Take(pageSize)
                             .ToArrayAsync();
     }

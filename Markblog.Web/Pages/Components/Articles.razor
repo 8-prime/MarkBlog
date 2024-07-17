@@ -1,33 +1,13 @@
 ﻿@page "/articles"
 @using Markblog.Infrastructure.Contexts
 @using Markblog.Infrastructure.Entities
-@using Microsoft.EntityFrameworkCore
-@inject ArticleContext context;
 
-<div>
-    @if(articles is null)
-    {
-        <div>
-            <h1>No articles yet ..</h1>
-        </div>
-    }
-    @foreach(var article in articles ?? [])
-    {
-        <div>
-            <h2>@article.Title</h2>
-            <p>@article.Description</p>
-            <p>@article.CreatedDate</p>
-            <p>Read duration: @article.ReadDurationSeconds</p>
-        </div>
-    }
+<div class="w-full h-full flex justify-center items-center">
+    <div class="flex flex-col gap-4">
+        <ArticlesOverview Page="1"></ArticlesOverview>
+    </div>
 </div>
 
 @code {
-    private ArticleEntity[]? articles;
-
-    protected override async Task OnInitializedAsync()
-    {
-        articles = await context.Articles.ToArrayAsync();
-        Console.WriteLine(articles.Length);
-    }
+    
 }
