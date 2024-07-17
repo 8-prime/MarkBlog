@@ -1,5 +1,6 @@
 ﻿using Markblog.Infrastructure.Backgroundservices;
 using Markblog.Infrastructure.Contexts;
+using Markblog.Infrastructure.Services;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -16,6 +17,7 @@ namespace Markblog.Web.Extensions
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddScoped<UpdateHandlerService>();
             builder.Services.AddHostedService<FileWatcherService>();
             if (builder.Environment.IsDevelopment())
             {
