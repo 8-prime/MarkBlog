@@ -1,0 +1,64 @@
+﻿@page "/article-overview/{page}"
+@using Markblog.Infrastructure.Contexts
+@using Markblog.Infrastructure.Entities
+@using Microsoft.EntityFrameworkCore
+@layout EmptyLayout
+@inject ArticleContext context
+@inject IConfiguration config
+
+
+@if (articles?.Length == 0)
+{
+    <div>
+        <h2>You have reached the end. Thanks for scrolling :D </h2>
+    </div>
+}
+else
+{
+    @for (int i = 0; i < articles?.Length; i++)
+    {
+        @if (i == PageSize - 2)
+        {
+            <div>
+                <h2> @articles[i].Title </h2>
+                <p> @articles[i].Description </p>
+                <p> @articles[i].CreatedDate </p>
+                <p> Read duration: @articles[i].ReadDurationSeconds </p>
+            </div>
+        }
+        else
+        {
+            <div>
+                <h2> @articles[i].Title </h2>
+                <p> @articles[i].Description </p>
+                <p> @articles[i].CreatedDate </p>
+                <p> Read duration: @articles[i].ReadDurationSeconds </p>
+            </div>
+        }
+    }
+}
+
+
+@code
+{
+    [Parameter]
+    public int? Page { get; set; }
+
+    private int PageSize { get; set; }
+
+    private ArticleEntity[]? articles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!int.TryParse(config.GetRequiredSection("PageSize").Value, out int pageSize))
+        {
+            pageSize = 10;
+        }
+        PageSize = pageSize;
+        articles = await context.Articles
+                            .AsNoTracking()
+                            .Skip(pageSize * Page ?? 0)
+                            .Take(pageSize)
+                            .ToArrayAsync();
+    }
+}
