@@ -1,0 +1,69 @@
+﻿@page "/article/{article}"
+@using Markblog.Infrastructure.Contexts
+@using Markblog.Infrastructure.Entities
+@using Markblog.Infrastructure.Services
+@using Markdig
+@using Microsoft.EntityFrameworkCore
+@inject ArticleContext context
+@layout MainLayout
+
+
+@if(ArticleText is null)
+{
+    <h1>This article does not exist</h1>
+}
+else
+{
+    <div>
+        <h1>
+            @ArticleEntity?.Title
+        </h1>
+        <div class="flex flex-row justify-between w-full">
+            <div class="flex flex-row">
+                <img src="icons/tags.svg" />
+                <span style="line-height: 32px">@ArticleEntity?.Tags?.Replace("\n", ", ")</span>
+            </div>
+            <div class="flex flex-row">
+                <img src="icons/timer.svg" />
+                <span style="line-height: 32px" class="text-nowrap">@ReadDuration(ArticleEntity?.ReadDurationSeconds ?? 0)</span>
+            </div>
+        </div>
+        <div>
+            @((MarkupString)ArticleText)
+        </div>
+    </div>
+}
+
+
+
+
+@code {
+    [Parameter]
+    public string? Article { get; set; }
+
+    private string? ArticleText { get; set; }
+    private ArticleEntity? ArticleEntity { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Article is null) return;
+
+        ArticleEntity= await context.Articles.FirstOrDefaultAsync(a => a.Id == Guid.Parse(Article));
+        if (ArticleEntity is null) return;
+
+
+        var parsed = await ArticleFileParser.ParseArticleText(ArticleEntity.FilePath);
+        if (parsed is null) return;
+        ArticleText = Markdown.ToHtml(parsed);
+    }
+
+
+    private string ReadDuration(int seconds)
+    {
+        if (seconds > 60)
+        {
+            return $"{seconds / 60} min read";
+        }
+        return $"{seconds} sec read";
+    }
+}

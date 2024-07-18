@@ -1,6 +1,6 @@
 ﻿namespace Markblog.Infrastructure.Models
 {
-    internal class ArticleModel
+    public class ArticleModel
     {
         public required string FilePath { get; set; }
         public required string Title { get; set; }

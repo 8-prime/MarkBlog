@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Markblog.Infrastructure.Services
 {
-    internal static class ArticleFileParser
+    public static class ArticleFileParser
     {
         private const int WordsPerSecond = 3;
 
@@ -58,6 +58,34 @@ namespace Markblog.Infrastructure.Services
                 Tags = GetSectionSafely(nameof(ArticleModel.Tags), data),
                 Title = GetSectionSafely(nameof(ArticleModel.Title), data)!,
             };
+        }
+
+        public static async Task<string?> ParseArticleText(string filePath)
+        {
+            if (!filePath.EndsWith(".md")) return null;
+            if (!Path.Exists(filePath)) return null;
+
+            var builder = new StringBuilder();
+            string? currentSection = null;
+
+            using var reader = new StreamReader(filePath);
+            string? line;
+
+            while ((line = await reader.ReadLineAsync()) != null)
+            {
+                line = line.Trim();
+
+                if (line.StartsWith('[') && line.EndsWith(']'))
+                {
+                    currentSection = line[1..^1];
+                }
+                else if (currentSection?.Equals("Article") ?? false)
+                {
+                    builder.AppendLine(line);
+                }
+            }
+
+            return builder.ToString();
         }
 
         private static string? GetSectionSafely(string SectionName, Dictionary<string, StringBuilder> data)
