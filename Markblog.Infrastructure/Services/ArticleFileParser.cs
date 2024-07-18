@@ -54,7 +54,7 @@ namespace Markblog.Infrastructure.Services
                 FilePath = filePath,
                 Description = GetSectionSafely(nameof(ArticleModel.Description), data),
                 Image = GetSectionSafely(nameof(ArticleModel.Image), data),
-                ReadingDurationSeconds = words / 3,
+                ReadingDurationSeconds = words / WordsPerSecond,
                 Tags = GetSectionSafely(nameof(ArticleModel.Tags), data),
                 Title = GetSectionSafely(nameof(ArticleModel.Title), data)!,
             };
@@ -68,7 +68,8 @@ namespace Markblog.Infrastructure.Services
             var builder = new StringBuilder();
             string? currentSection = null;
 
-            using var reader = new StreamReader(filePath);
+            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var reader = new StreamReader(fs);
             string? line;
 
             while ((line = await reader.ReadLineAsync()) != null)

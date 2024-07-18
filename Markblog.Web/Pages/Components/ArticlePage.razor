@@ -8,7 +8,7 @@
 @layout MainLayout
 
 
-@if(ArticleText is null)
+@if (ArticleText is null)
 {
     <h1>This article does not exist</h1>
 }
@@ -48,11 +48,23 @@ else
     {
         if (Article is null) return;
 
-        ArticleEntity= await context.Articles.FirstOrDefaultAsync(a => a.Id == Guid.Parse(Article));
+        ArticleEntity = await context.Articles.FirstOrDefaultAsync(a => a.Id == Guid.Parse(Article));
         if (ArticleEntity is null) return;
 
-
-        var parsed = await ArticleFileParser.ParseArticleText(ArticleEntity.FilePath);
+        int tries = 0;
+        string? parsed = null;
+        while (tries < 5)
+        {
+            try
+            {
+                parsed = await ArticleFileParser.ParseArticleText(ArticleEntity.FilePath);
+                break;
+            }
+            catch
+            {
+                tries++;
+            }
+        }
         if (parsed is null) return;
         ArticleText = Markdown.ToHtml(parsed);
     }

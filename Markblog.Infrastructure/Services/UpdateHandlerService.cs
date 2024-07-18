@@ -32,7 +32,24 @@ namespace Markblog.Infrastructure.Services
             }
             logger.LogInformation("Parsing new article {filePath}", filePath);
 
-            var article = await ArticleFileParser.ParseArticle(filePath);
+            ArticleModel? article = null;
+
+            int tries = 0;
+            while (tries < 5)
+            {
+                try
+                {
+                    article = await ArticleFileParser.ParseArticle(filePath);
+                    break;
+                }
+                catch
+                {
+                    tries++;
+                    continue;
+                }
+            }
+
+
             if (article is null) return;
 
             var existing = await context.Articles.AsNoTracking().FirstOrDefaultAsync(a => a.FilePath == filePath);
