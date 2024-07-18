@@ -49,13 +49,10 @@ namespace Markblog.Infrastructure.Backgroundservices
             while (!stoppingToken.IsCancellationRequested)
             {
                 await _updateChannel.Reader.WaitToReadAsync(stoppingToken);
-                using (var scope = _serviceProvider.CreateScope())
-                {
-                    var update = await _updateChannel.Reader.ReadAsync(stoppingToken);
-                    await Console.Out.WriteLineAsync("Writing changes");
-                    var handler = scope.ServiceProvider.GetRequiredService<UpdateHandlerService>();
-                    await handler.HandleChanges(update);
-                }
+                using var scope = _serviceProvider.CreateScope();
+                var update = await _updateChannel.Reader.ReadAsync(stoppingToken);
+                var handler = scope.ServiceProvider.GetRequiredService<UpdateHandlerService>();
+                await handler.HandleChanges(update);
             }
         }
 

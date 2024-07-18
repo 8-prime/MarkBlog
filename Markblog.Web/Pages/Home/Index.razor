@@ -1,7 +1,12 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
-
-<div class="space-y-4">
-	<h1>Hi</h1>
+<div class="w-full h-full flex flex-col justify-start items-center">
+    <div>
+        <div class="rounded-full overflow-hidden w-24 h-24 object-cover">
+            <img src="me.webp" />
+        </div>
+    </div>
+    <div class="flex flex-col gap-4">
+        <ArticlesOverview Page="1"></ArticlesOverview>
+    </div>
 </div>

@@ -3,15 +3,11 @@ using Markblog.Infrastructure.Enums;
 using Markblog.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Text;
 
 namespace Markblog.Infrastructure.Services
 {
     public class UpdateHandlerService(ArticleContext context, ILogger<UpdateHandlerService> logger)
     {
-        private const int WordsPerMinute = 183;
-
-
         public async Task CheckDirectory(string directory)
         {
             if (!Directory.Exists(directory)) return;
@@ -29,67 +25,33 @@ namespace Markblog.Infrastructure.Services
 
         private async Task ComputeChanges(ChangeType type, string filePath)
         {
+            if (type == ChangeType.Deletion)
+            {
+                await context.Articles.Where(a => a.FilePath.Equals(filePath)).ExecuteDeleteAsync();
+                return;
+            }
             logger.LogInformation("Parsing new article {filePath}", filePath);
-            var lines = await File.ReadAllLinesAsync(filePath);
 
-            if (lines.Length < 1) return;
+            var article = await ArticleFileParser.ParseArticle(filePath);
+            if (article is null) return;
 
-            string? title;
+            var existing = await context.Articles.AsNoTracking().FirstOrDefaultAsync(a => a.FilePath == filePath);
+            bool isnew = existing is null;
 
-            if (!lines[0].StartsWith('#')) return;
-
-            title = lines[0][1..^0];
-
-            StringBuilder descriptionBuilder = new StringBuilder();
-
-            string? currentLine = null;
-
-            bool buildDescription = true;
-
-            int totalWords = 0;
-
-            char[] delimiters = [' ', '\r', '\n'];
-
-            for (int i = 1; i < lines.Length; i++)
+            existing = new Entities.ArticleEntity
             {
-                currentLine = lines[i];
-                if (buildDescription && (currentLine.StartsWith("//")))
-                {
-                    descriptionBuilder.Append(currentLine[2..^0]);
-                }
-                else
-                {
-                    buildDescription = false;
-                }
-                totalWords += currentLine.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Length;
-            }
-
-            int readTimeSeconds = totalWords / WordsPerMinute;
-
-            switch (type)
-            {
-                case ChangeType.Creation:
-                case ChangeType.Update:
-                    var existing = await context.Articles.AsNoTracking().FirstOrDefaultAsync(a => a.FilePath == filePath);
-                    bool isnew = existing is null;
-
-                    existing = new Entities.ArticleEntity
-                    {
-                        Id = existing?.Id ?? Guid.NewGuid(),
-                        CreatedDate = existing?.CreatedDate ?? DateTime.UtcNow,
-                        UpdatedDate = DateTime.UtcNow,
-                        FilePath = filePath,
-                        Title = title,
-                        Description = descriptionBuilder.ToString(),
-                        ReadDurationSeconds = readTimeSeconds,
-                    };
-                    if (isnew) context.Articles.Add(existing);
-                    await context.SaveChangesAsync();
-                    break;
-                case ChangeType.Deletion:
-                    await context.Articles.Where(a => a.FilePath.Equals(filePath)).ExecuteDeleteAsync();
-                    break;
-            }
+                Id = existing?.Id ?? Guid.NewGuid(),
+                CreatedDate = existing?.CreatedDate ?? DateTime.UtcNow,
+                UpdatedDate = DateTime.UtcNow,
+                FilePath = filePath,
+                Title = article.Title,
+                Description = article.Description,
+                Tags = article.Tags,
+                Image = article.Image,
+                ReadDurationSeconds = article.ReadingDurationSeconds,
+            };
+            if (isnew) context.Articles.Add(existing);
+            await context.SaveChangesAsync();
         }
     }
 }
