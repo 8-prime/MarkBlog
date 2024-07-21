@@ -55,11 +55,13 @@ namespace Markblog.Infrastructure.Services
             var existing = await context.Articles.AsNoTracking().FirstOrDefaultAsync(a => a.FilePath == filePath);
             bool isnew = existing is null;
 
+            var updateTime = DateTime.UtcNow;
+
             existing = new Entities.ArticleEntity
             {
                 Id = existing?.Id ?? Guid.NewGuid(),
-                CreatedDate = existing?.CreatedDate ?? DateTime.UtcNow,
-                UpdatedDate = DateTime.UtcNow,
+                CreatedDate = existing?.CreatedDate ?? updateTime,
+                UpdatedDate = updateTime,
                 FilePath = filePath,
                 Title = article.Title,
                 Description = article.Description,

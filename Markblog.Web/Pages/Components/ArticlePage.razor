@@ -15,11 +15,17 @@
 else
 {
     <div class="w-full flex flex-col items-center justify-start">
-        <div class="w-full sm:w-full md:w-8/12 flex flex-col justify-start items-center gap-6">
-            <h1 class="font-bold text-4xl">
+        <div class="w-full sm:w-full md:w-8/12">
+            <h1 class="font-bold text-4xl mb-8">
                 @ArticleEntity?.Title
             </h1>
-            <div class="flex flex-row justify-between w-full">
+            <div>
+                <span>@ArticleEntity?.CreatedDate</span>
+                @if(ArticleEntity?.CreatedDate != ArticleEntity?.UpdatedDate){
+                    <span> - Edited: @ArticleEntity?.UpdatedDate</span>
+                }
+            </div>
+            <div class="flex flex-row justify-between w-full mb-3">
                 <div class="flex flex-row">
                     <img src="icons/tags.svg" />
                     <span style="line-height: 32px">@ArticleEntity?.Tags?.Replace("\n", ", ")</span>
