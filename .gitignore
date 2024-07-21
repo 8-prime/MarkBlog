@@ -13,3 +13,7 @@
 **/node_modules/
 
 **/Uploads
+
+# ignore node generated files
+**/app.js
+**/app.min.css

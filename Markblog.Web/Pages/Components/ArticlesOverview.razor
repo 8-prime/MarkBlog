@@ -49,6 +49,7 @@
         var skipPage = Math.Max(0, (Page ?? 0) - 1);
         articles = await context.Articles
                             .AsNoTracking()
+                            .OrderByDescending(a => a.CreatedDate)
                             .Skip(pageSize * skipPage)
                             .Take(pageSize)
                             .ToArrayAsync();
