@@ -16,4 +16,4 @@
 
 # ignore node generated files
 **/app.js
-**/app.min.css
+**/app.css
