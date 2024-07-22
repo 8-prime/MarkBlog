@@ -2,7 +2,7 @@ const postCssPlugin = require('esbuild-style-plugin')
 
 require('esbuild')
   .build({
-    entryPoints: ['src/app.js',],
+    entryPoints: ['./src/app.js',],
     outdir: 'wwwroot',
     bundle: true,
     minify: true,
