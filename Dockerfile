@@ -12,13 +12,17 @@ RUN apt-get update && apt-get install -y \
 RUN npm install npm@latest -g && \
     npm install n -g && \
     n latest
-RUN npm install ./Markblog.Web/
 
-RUN node  ./Markblog.Web/esbuild.build.js
+WORKDIR "/App/Markblog.Web/"
+RUN npm install
+
+RUN node  ./esbuild.build.js
 
 # Restore as distinct layers
-RUN dotnet restore ./Markblog.Web/Markblog.Web.csproj
+RUN dotnet restore ./Markblog.Web.csproj
 # Build and publish a release
+
+WORKDIR /App
 RUN dotnet publish -c Release -o out ./Markblog.Web/Markblog.Web.csproj
 
 # Build runtime image
