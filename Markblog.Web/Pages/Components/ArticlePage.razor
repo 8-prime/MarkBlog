@@ -74,7 +74,7 @@ else
             }
         }
         if (parsed is null) return;
-        ArticleText = Markdown.ToHtml(parsed).Replace("<pre>", "<pre class=\"overflow-x-auto\">");
+        ArticleText = Markdown.ToHtml(parsed).Replace("<pre>", "<pre class=\"overflow-x-auto\">").Replace("language-csharp", "csharp");
     }
 
 

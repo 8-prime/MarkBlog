@@ -74,11 +74,11 @@ namespace Markblog.Infrastructure.Services
 
             while ((line = await reader.ReadLineAsync()) != null)
             {
-                line = line.Trim();
+                var trimmedLine = line.Trim();
 
                 if (line.StartsWith('[') && line.EndsWith(']'))
                 {
-                    currentSection = line[1..^1];
+                    currentSection = trimmedLine[1..^1];
                 }
                 else if (currentSection?.Equals("Article") ?? false)
                 {
