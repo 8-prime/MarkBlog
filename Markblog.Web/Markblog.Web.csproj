@@ -17,4 +17,8 @@
 		<ProjectReference Include="..\Markblog.Infrastructure\Markblog.Infrastructure.csproj" />
 	</ItemGroup>
 
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+		<Exec Command="node ./esbuild.build.js" />
+	</Target>
+
 </Project>

@@ -11,32 +11,55 @@
 
 @if (ArticleText is null)
 {
+    <PageTitle>:/ Nothing here</PageTitle>
     <h1 class="font-bold text-4xl">This article does not exist</h1>
 }
 else
 {
-    <div class="w-full flex flex-col items-center justify-start">
+    <PageTitle>@ArticleEntity.Title</PageTitle>
+    <div
+        class="fixed bg-gray-100 dark:bg-neutral-900 md:bg-transparent md:dard:bg-transparent md:absolute top-0 left-0 p-6 w-screen md:w-auto">
+        <a href="/">
+            <svg class="w-8 h-8 stroke-black dark:stroke-white fill-none" xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H6M12 5l-7 7 7 7" />
+            </svg>
+        </a>
+    </div>
+    <div class="w-full flex flex-col items-center justify-start text-neutral-900 dark:text-neutral-300">
         <div class="w-full sm:w-full md:w-8/12">
             <h1 class="font-bold text-4xl mb-8">
                 @ArticleEntity?.Title
             </h1>
             <div>
                 <span>@ArticleEntity?.CreatedDate</span>
-                @if(ArticleEntity?.CreatedDate != ArticleEntity?.UpdatedDate){
+                @if (ArticleEntity?.CreatedDate != ArticleEntity?.UpdatedDate)
+                {
                     <span> - Edited: @ArticleEntity?.UpdatedDate</span>
                 }
             </div>
             <div class="flex flex-row justify-between w-full mb-3">
-                <div class="flex flex-row flex-grow">
-                    <img src="icons/tags.svg" />
+                <div class="flex flex-row flex-grow gap-1">
+                    <svg class="w-6 h-8  fill-none  stroke-neutral-900 dark:stroke-neutral-50"
+                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                        <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                    </svg>
                     <span style="line-height: 32px">@ArticleEntity?.Tags?.Replace("\n", ", ")</span>
                 </div>
-                <div class="flex flex-row">
-                    <img src="icons/timer.svg" />
-                    <span style="line-height: 32px" class="text-nowrap">@ReadDuration(ArticleEntity?.ReadDurationSeconds ?? 0)</span>
+                <div class="flex flex-row gap-1">
+                    <svg class="w-6 h-8  fill-none  stroke-neutral-900 dark:stroke-neutral-50"
+                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span style="line-height: 32px" class="text-nowrap">@ReadDuration(ArticleEntity?.ReadDurationSeconds ??
+                    0)</span>
                 </div>
             </div>
-            <div class="text-xl">
+            <div id="article" class="text-xl">
                 @((MarkupString)ArticleText)
             </div>
         </div>
@@ -78,25 +101,21 @@ else
 
         HtmlDocument doc = new HtmlDocument();
         doc.LoadHtml(Markdown.ToHtml(parsed));
-        var pres = doc.DocumentNode.SelectNodes("//pre");
         var images = doc.DocumentNode.SelectNodes("//img");
-        if(pres is not null){
-            foreach(var preNode in pres){
-                AddClass(preNode, "overflow-x-auto");
-            }
-        }
-
-        if(images is not null){
-            foreach(var image in images){
+        if (images is not null)
+        {
+            foreach (var image in images)
+            {
                 var srcAttribute = image.GetAttributeValue("src", "");
-                if(string.IsNullOrEmpty(srcAttribute) || srcAttribute.StartsWith("//") || srcAttribute.StartsWith("http")){
+                if (string.IsNullOrEmpty(srcAttribute) || srcAttribute.StartsWith("//") || srcAttribute.StartsWith("http"))
+                {
                     continue;
                 }
                 string newSource = $"/api/images/{srcAttribute}";
                 image.SetAttributeValue("src", newSource);
             }
         }
-        
+
 
         ArticleText = doc.DocumentNode.OuterHtml;
     }
