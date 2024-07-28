@@ -34,6 +34,7 @@ namespace Markblog.Web.Extensions
 
         public static WebApplication MapDefaultEndpoints(this WebApplication app)
         {
+            app.MapControllers();
             app.MapHealthChecks("/health");
 
             app.MapHealthChecks("/alive", new HealthCheckOptions

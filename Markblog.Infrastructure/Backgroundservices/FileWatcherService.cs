@@ -10,7 +10,7 @@ namespace Markblog.Infrastructure.Backgroundservices
 {
     public class FileWatcherService : BackgroundService
     {
-        private const string FileKey = "ArticleFiles";
+        public const string FileKey = "ArticleFiles";
 
         private FileSystemWatcher _watcher;
         private readonly IServiceProvider _serviceProvider;

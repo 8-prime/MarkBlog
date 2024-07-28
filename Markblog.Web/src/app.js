@@ -2,6 +2,11 @@ import hljs from 'highlight.js/lib/core';
 import 'highlight.js/styles/default.css';
 import './styles.css'
 import 'htmx.org'
+import javascript from 'highlight.js/lib/languages/javascript';
+
+// Then register the languages you need
+hljs.registerLanguage('javascript', javascript);
+
 
 hljs.highlightAll();
 
