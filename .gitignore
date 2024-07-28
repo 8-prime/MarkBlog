@@ -15,5 +15,5 @@
 **/Uploads
 
 # ignore node generated files
-**/app.js
-**/app.css
+**/wwwroot/app.js
+**/wwwroot/app.css
