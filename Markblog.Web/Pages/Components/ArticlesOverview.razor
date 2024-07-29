@@ -16,9 +16,12 @@
                 <h2 class="font-bold text-2xl"> @articles[i].Title </h2>
                 <span style="line-height: 32px">@articles[i].CreatedDate.ToShortDateString()</span>
             </div>
+            <div>
+                <img class="w-52" src="@articles[i].Image" alt="">
+            </div>
             <p> @articles[i].Description </p>
             <div class="flex flex-row justify-between w-full">
-                <div class="flex flex-row">
+                <div class="flex flex-row gap-1">
                     <svg class="w-6 h-8  fill-none  stroke-neutral-900 dark:stroke-neutral-50"
                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round">
