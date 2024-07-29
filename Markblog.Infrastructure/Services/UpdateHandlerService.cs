@@ -30,7 +30,7 @@ namespace Markblog.Infrastructure.Services
                 await context.Articles.Where(a => a.FilePath.Equals(filePath)).ExecuteDeleteAsync();
                 return;
             }
-            logger.LogInformation("Parsing new article {filePath}", filePath);
+            logger.LogInformation("Parsing new article {FilePath}", filePath);
 
             ArticleModel? article = null;
 
@@ -45,7 +45,6 @@ namespace Markblog.Infrastructure.Services
                 catch
                 {
                     tries++;
-                    continue;
                 }
             }
 
