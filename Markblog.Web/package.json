@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "esbuild index.js --minify --bundle --outfile=./wwwroot/app.js",
-    "tailwind": "npx tailwindcss -i wwwroot/app.css -o wwwroot/app.min.css --watch"
+    "start": "node -e \"require('./esbuild.build.js')({ watch: true })\"",    
+    "build": "node -e \"require('./esbuild.build.js')({})\""
   },
   "keywords": [],
   "author": "",

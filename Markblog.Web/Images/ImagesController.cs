@@ -12,7 +12,7 @@ public class ImagesController(IConfiguration configuration) : ControllerBase
     public async Task<IActionResult> GetImage(string image)
     {
         var basePath = configuration.GetRequiredSection(FileWatcherService.FileKey).Value;
-        var imagePath = Path.Combine(basePath, image);
+        var imagePath = Path.Combine(basePath ?? string.Empty, image);
         if(!Path.Exists(imagePath) || System.IO.File.GetAttributes(imagePath).HasFlag(FileAttributes.Directory)){
             return BadRequest();
         }
