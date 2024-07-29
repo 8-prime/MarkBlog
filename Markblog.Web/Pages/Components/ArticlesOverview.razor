@@ -16,9 +16,11 @@
                 <h2 class="font-bold text-2xl"> @articles[i].Title </h2>
                 <span style="line-height: 32px">@articles[i].CreatedDate.ToShortDateString()</span>
             </div>
-            <div>
-                <img class="w-52" src="@articles[i].Image" alt="">
-            </div>
+            @if(articles[i].Image is not null){
+                <div>
+                    <img class="w-52" src="@articles[i].Image" alt="">
+                </div>
+            }
             <p> @articles[i].Description </p>
             <div class="flex flex-row justify-between w-full">
                 <div class="flex flex-row gap-1">
