@@ -1,6 +1,7 @@
 using Markblog.Infrastructure.Contexts;
 using Markblog.Web.Extensions;
 using Markblog.Web.Pages;
+using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +23,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-//app.UseHttpsRedirection();
 app.MapDefaultEndpoints();
 app.UseStaticFiles();
 app.UseSession();
@@ -33,8 +33,7 @@ app.MapRazorComponents<App>();
 using (var scope = app.Services.CreateScope())
 using (var ctx = scope.ServiceProvider.GetRequiredService<ArticleContext>())
 {
-    ctx.Database.EnsureDeleted();
-    ctx.Database.EnsureCreated();
+    await ctx.Database.MigrateAsync();
 }
 
-app.Run();
+await app.RunAsync();

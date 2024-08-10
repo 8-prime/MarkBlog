@@ -19,16 +19,8 @@ namespace Markblog.Web.Extensions
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddScoped<UpdateHandlerService>();
             builder.Services.AddHostedService<FileWatcherService>();
-            builder.Services.AddDbContext<ArticleContext>(opts => opts.UseSqlite(builder.Configuration.GetConnectionString("Sqlite")));
-            // if (builder.Environment.IsDevelopment())
-            // {
-            // }
-            // else
-            // {
-            //     builder.Services.AddDbContext<ArticleContext>(opts => opts.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
-            // }
-            builder.Services.AddCors(opts => opts.AddDefaultPolicy(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
-
+            builder.Services.AddDbContext<ArticleContext>(opts => opts
+            .UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
             return builder;
         }
 
