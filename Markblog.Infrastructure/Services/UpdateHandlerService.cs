@@ -51,24 +51,37 @@ namespace Markblog.Infrastructure.Services
 
             if (article is null) return;
 
-            var existing = await context.Articles.AsNoTracking().FirstOrDefaultAsync(a => a.FilePath == filePath);
-            bool isnew = existing is null;
+            var existing = await context.Articles.FirstOrDefaultAsync(a => a.FilePath == filePath);
 
             var updateTime = DateTime.UtcNow;
 
-            existing = new Entities.ArticleEntity
+
+
+            if (existing is null)
             {
-                Id = existing?.Id ?? Guid.NewGuid(),
-                CreatedDate = existing?.CreatedDate ?? updateTime,
-                UpdatedDate = updateTime,
-                FilePath = filePath,
-                Title = article.Title,
-                Description = article.Description,
-                Tags = article.Tags,
-                Image = article.Image,
-                ReadDurationSeconds = article.ReadingDurationSeconds,
-            };
-            if (isnew) context.Articles.Add(existing);
+                existing = new Entities.ArticleEntity
+                {
+                    Id = Guid.NewGuid(),
+                    CreatedDate = updateTime,
+                    UpdatedDate = updateTime,
+                    FilePath = filePath,
+                    Title = article.Title,
+                    Description = article.Description,
+                    Tags = article.Tags,
+                    Image = article.Image,
+                    ReadDurationSeconds = article.ReadingDurationSeconds,
+                };
+                context.Articles.Add(existing);
+            }
+            else
+            {
+                existing.UpdatedDate = updateTime;
+                existing.Title = article.Title;
+                existing.Description = article.Description;
+                existing.Tags = article.Tags;
+                existing.Image = article.Image;
+                existing.ReadDurationSeconds = article.ReadingDurationSeconds;
+            }
             await context.SaveChangesAsync();
         }
     }
