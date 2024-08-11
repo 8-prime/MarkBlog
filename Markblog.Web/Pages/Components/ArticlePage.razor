@@ -7,8 +7,29 @@
 @using Markdig
 @using Microsoft.EntityFrameworkCore
 @inject ArticleContext context
+@inject NavigationManager NavigationManager
 @layout MainLayout
 
+<HeadContent>
+    <!-- HTML Meta Tags -->
+    <title>Stefans Blog</title>
+    <meta name="description" content="Personal Blog of Stefan">
+
+    <!-- Facebook Meta Tags -->
+    <meta property="og:url" content="https://hoffmeister.dev/article/@Article">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="@ArticleEntity?.Title">
+    <meta property="og:description" content="@ArticleEntity?.Description">
+    <meta property="og:image" content="@MetaImage">
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="hoffmeister.dev">
+    <meta property="twitter:url" content="https://hoffmeister.dev/article/@Article">
+    <meta name="twitter:title" content="@ArticleEntity?.Title">
+    <meta name="twitter:description" content="@ArticleEntity?.Description">
+    <meta name="twitter:image" content="@MetaImage">
+</HeadContent>
 
 @if (ArticleText is null)
 {
@@ -18,11 +39,10 @@
 else
 {
     <PageTitle>@ArticleEntity.Title</PageTitle>
-    <div
-        class="fixed bg-gray-100 dark:bg-neutral-900 md:bg-transparent md:dard:bg-transparent md:absolute top-0 left-0 p-6 w-screen md:w-auto">
+    <div class="fixed bg-gray-100 dark:bg-neutral-900 md:bg-transparent md:dard:bg-transparent md:absolute top-0 left-0 p-6 w-screen md:w-auto">
         <a href="/">
             <svg class="w-8 h-8 stroke-black dark:stroke-white fill-none" xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                 viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M19 12H6M12 5l-7 7 7 7" />
             </svg>
         </a>
@@ -42,8 +62,8 @@ else
             <div class="flex flex-row justify-between w-full mb-3">
                 <div class="flex flex-row flex-grow gap-1">
                     <svg class="w-6 h-8  fill-none  stroke-neutral-900 dark:stroke-neutral-50"
-                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
+                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
                         <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
                         <line x1="7" y1="7" x2="7.01" y2="7"></line>
                     </svg>
@@ -51,13 +71,15 @@ else
                 </div>
                 <div class="flex flex-row gap-1">
                     <svg class="w-6 h-8  fill-none  stroke-neutral-900 dark:stroke-neutral-50"
-                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
+                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
                         <polyline points="12 6 12 12 16 14"></polyline>
                     </svg>
-                    <span style="line-height: 32px" class="text-nowrap">@ReadDuration(ArticleEntity?.ReadDurationSeconds ??
-                    0)</span>
+                    <span style="line-height: 32px" class="text-nowrap">
+                        @ReadDuration(ArticleEntity?.ReadDurationSeconds ??
+                                 0)
+                    </span>
                 </div>
             </div>
             <div id="article" class="text-xl">
@@ -76,6 +98,8 @@ else
 
     private string? ArticleText { get; set; }
     private ArticleEntity? ArticleEntity { get; set; }
+
+    private string? MetaImage { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -114,6 +138,7 @@ else
 
 
         ArticleText = doc.DocumentNode.OuterHtml;
+        MetaImage = GetOpenGraphImage();
     }
 
 
@@ -137,5 +162,12 @@ else
         {
             node.SetAttributeValue("class", className);
         }
+    }
+
+    private string GetOpenGraphImage()
+    {
+        Uri baseUri = new Uri(NavigationManager.BaseUri);
+        Uri myUri = new Uri(baseUri, ArticleEntity?.Image is not null ? ImagePathUtils.GetImageUrl(ArticleEntity.Image) : "/icons/default.png");
+        return myUri.ToString();
     }
 }
