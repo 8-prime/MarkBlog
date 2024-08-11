@@ -17,3 +17,4 @@
 # ignore node generated files
 **/wwwroot/app.js
 **/wwwroot/app.css
+/markblog.tar

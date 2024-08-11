@@ -3,6 +3,7 @@
 @using Markblog.Infrastructure.Contexts
 @using Markblog.Infrastructure.Entities
 @using Markblog.Infrastructure.Services
+@using Markblog.Web.Images
 @using Markdig
 @using Microsoft.EntityFrameworkCore
 @inject ArticleContext context
@@ -27,11 +28,6 @@ else
         </a>
     </div>
     <div class="w-full flex flex-col items-center justify-start text-neutral-900 dark:text-neutral-300">
-        @if(ArticleEntity.Image is not null){
-            <div class="mb-5">
-                <img class="max-h-72" src="@ArticleEntity.Image" alt="TitleImage">
-            </div>
-        }
         <div class="w-full sm:w-full md:w-8/12">
             <h1 class="font-bold text-4xl mb-8">
                 @ArticleEntity?.Title
@@ -112,12 +108,7 @@ else
             foreach (var image in images)
             {
                 var srcAttribute = image.GetAttributeValue("src", "");
-                if (string.IsNullOrEmpty(srcAttribute) || srcAttribute.StartsWith("//") || srcAttribute.StartsWith("http"))
-                {
-                    continue;
-                }
-                string newSource = $"/api/images/{srcAttribute}";
-                image.SetAttributeValue("src", newSource);
+                image.SetAttributeValue("src", ImagePathUtils.GetImageUrl(srcAttribute));
             }
         }
 
