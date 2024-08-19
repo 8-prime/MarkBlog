@@ -51,13 +51,13 @@
 
 #article a {
     all: revert;
-    text-decoration: none;
+    text-decoration: underline;
     color: #1a4da9;
 }
 
 @media (prefers-color-scheme: dark) {
     #article a {
-        color: #4d6ba3;
+        color: #92A7CE;
     }
 }
 

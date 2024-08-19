@@ -10,7 +10,7 @@
             }
             if (input.StartsWith("./"))
             {
-                input = input[2..^1];
+                input = input[2..^0];
             }
             string newSource = $"/api/images/{input}";
             return newSource;
