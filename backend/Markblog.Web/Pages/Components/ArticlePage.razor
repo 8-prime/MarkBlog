@@ -2,11 +2,10 @@
 @using HtmlAgilityPack
 @using Markblog.Infrastructure.Contexts
 @using Markblog.Infrastructure.Entities
-@using Markblog.Infrastructure.Services
 @using Markblog.Web.Images
 @using Markdig
 @using Microsoft.EntityFrameworkCore
-@inject ArticleContext context
+@inject BlogContext context
 @inject NavigationManager NavigationManager
 @layout MainLayout
 
@@ -114,7 +113,7 @@ else
         {
             try
             {
-                parsed = await ArticleFileParser.ParseArticleText(ArticleEntity.FilePath);
+                parsed = ""; //todo replace this await ArticleFileParser.ParseArticleText(ArticleEntity.FilePath);
                 break;
             }
             catch

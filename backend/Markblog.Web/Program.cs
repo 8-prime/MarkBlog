@@ -31,7 +31,7 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>();
 
 using (var scope = app.Services.CreateScope())
-using (var ctx = scope.ServiceProvider.GetRequiredService<ArticleContext>())
+using (var ctx = scope.ServiceProvider.GetRequiredService<BlogContext>())
 {
     await ctx.Database.MigrateAsync();
 }

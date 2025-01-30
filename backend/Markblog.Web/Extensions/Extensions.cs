@@ -1,6 +1,4 @@
-﻿using Markblog.Infrastructure.Backgroundservices;
-using Markblog.Infrastructure.Contexts;
-using Markblog.Infrastructure.Services;
+﻿using Markblog.Infrastructure.Contexts;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -17,9 +15,7 @@ namespace Markblog.Web.Extensions
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddScoped<UpdateHandlerService>();
-            builder.Services.AddHostedService<FileWatcherService>();
-            builder.Services.AddDbContext<ArticleContext>(opts => opts
+            builder.Services.AddDbContext<BlogContext>(opts => opts
             .UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
             return builder;
         }

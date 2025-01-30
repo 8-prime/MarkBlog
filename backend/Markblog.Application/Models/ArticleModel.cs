@@ -1,11 +1,9 @@
-﻿namespace Markblog.Infrastructure.Entities
+﻿namespace Markblog.Application.Models
 {
-    public class ArticleEntity
+    public class ArticleModel
     {
-        public Guid Id { get; set; }
         public required string Title { get; set; }
         public required string ArticleText { get; set; }
-        public required string ArticleFilePath { get; set; }
         public string? Description { get; set; }
         public string? Tags { get; set; }
         public string? Image { get; set; }
