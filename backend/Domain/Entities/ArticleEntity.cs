@@ -1,4 +1,4 @@
-﻿namespace Markblog.Infrastructure.Entities
+﻿namespace Domain.Entities
 {
     public class ArticleEntity
     {

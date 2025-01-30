@@ -6,4 +6,5 @@ public interface IArticlePageService
 {
     public Task<string> CreateArticlePage(ArticleModel article);
     public Task UpdateArticlePage(ArticleModel article);
+    public Task DeleteArticlePage(Guid articleId);
 }

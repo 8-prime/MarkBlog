@@ -1,0 +1,40 @@
+﻿using Domain.Entities;
+using Markblog.Application.Models;
+
+namespace Markblog.Application.Mappings;
+
+public static class ArticleModelArticleEntityMapping
+{
+    public static ArticleEntity MapToEntity(this ArticleModel model, string filePath)
+    {
+        return new ArticleEntity
+        {
+            Id = model.Id ?? Guid.NewGuid(),
+            Title = model.Title,
+            Tags = model.Tags,
+            Description = model.Description,
+            ArticleText = model.ArticleText,
+            ArticleFilePath = filePath,
+            Image = model.Image,
+            CreatedDate = model.CreatedDate,
+            UpdatedDate = model.UpdatedDate,
+            ReadDurationSeconds = model.ReadDurationSeconds
+        };
+    }
+
+    public static ArticleModel MapToModel(this ArticleEntity entity)
+    {
+        return new ArticleModel
+        {
+            Id = entity.Id,
+            Title = entity.Title,
+            Tags = entity.Tags,
+            Description = entity.Description,
+            ArticleText = entity.ArticleText,
+            Image = entity.Image,
+            CreatedDate = entity.CreatedDate,
+            UpdatedDate = entity.UpdatedDate,
+            ReadDurationSeconds = entity.ReadDurationSeconds
+        };
+    }
+}

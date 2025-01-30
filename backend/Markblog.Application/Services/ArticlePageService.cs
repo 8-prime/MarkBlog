@@ -14,4 +14,9 @@ public class ArticlePageService : IArticlePageService
     {
         throw new NotImplementedException();
     }
+
+    public Task DeleteArticlePage(Guid articleId)
+    {
+        throw new NotImplementedException();
+    }
 }
