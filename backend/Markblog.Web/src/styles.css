@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+#article h1 {
+    all: revert;
+    font-size: 2.125rem;
+}
+
+#article h2 {
+    all: revert;
+    font-size: 1.875rem;
+}
+
+#article h3 {
+    all: revert;
+    font-size: 1.5rem;
+}
+
+#article h4 {
+    all: revert;
+    font-size: 1.25rem;
+}
+
+#article h5 {
+    all: revert;
+    font-size: 1.125rem;
+}
+
+#article h6 {
+    font-size: 1rem;
+}
+
+#article blockquote {
+    padding-left: 1rem;
+    border-left: solid 2px;
+    border-color: rgb(93, 93, 93);
+}
+
+#article ul {
+    padding-left: 40px;
+    list-style-type: disc;
+}
+
+#article ol {
+    list-style-type: decimal;
+    padding-left: 40px;
+}
+
+#article a {
+    all: revert;
+    text-decoration: underline;
+    color: #1a4da9;
+}
+
+@media (prefers-color-scheme: dark) {
+    #article a {
+        color: #92A7CE;
+    }
+}
+
+#article p {
+    margin-bottom: 12px;
+}
+
+#article hr {
+    margin-bottom: 12px;
+}
+
+#article img {
+    max-height: 300px;
+}
+
+#article pre {
+    border-radius: 10px;
+    margin-bottom: 10px;
+    overflow-x: auto;
+}
+
+
+body {
+    --sb-track-color: #f3f4f6;
+    --sb-thumb-color: #606060;
+    --sb-size: 14px;
+}
+
+body::-webkit-scrollbar {
+    width: var(--sb-size);
+}
+
+body::-webkit-scrollbar-track {
+    background: var(--sb-track-color);
+    border-radius: 1px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background: var(--sb-thumb-color);
+    border-radius: 1px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+    body {
+        scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+    }
+}
+
+
+@media (prefers-color-scheme: dark) {
+    body {
+        --sb-track-color: #171717;
+        --sb-thumb-color: #3e4e6b;
+        --sb-size: 14px;
+      }
+      
+      body::-webkit-scrollbar {
+        width: var(--sb-size);
+      }
+      
+      body::-webkit-scrollbar-track {
+        background: var(--sb-track-color);
+        border-radius: 1px;
+      }
+      
+      body::-webkit-scrollbar-thumb {
+        background: var(--sb-thumb-color);
+        border-radius: 1px;
+      }
+      
+      @supports not selector(::-webkit-scrollbar) {
+        body {
+            scrollbar-color: var(--sb-thumb-color)
+                           var(--sb-track-color);
+        }
+      }
+}

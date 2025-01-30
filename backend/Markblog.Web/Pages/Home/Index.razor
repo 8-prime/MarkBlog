@@ -1,0 +1,43 @@
+﻿@page "/"
+
+<PageTitle>Stefans Blog</PageTitle>
+
+<HeadContent>
+    <!-- HTML Meta Tags -->
+    <title>Stefans Blog</title>
+    <meta name="description" content="Personal Blog of Stefan">
+
+    <!-- Facebook Meta Tags -->
+    <meta property="og:url" content="https://hoffmeister.dev">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Stefans Blog">
+    <meta property="og:description" content="Personal Blog of Stefan">
+    <meta property="og:image" content="/icons/default.png">
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="hoffmeister.dev">
+    <meta property="twitter:url" content="https://hoffmeister.dev">
+    <meta name="twitter:title" content="Stefans Blog">
+    <meta name="twitter:description" content="Personal Blog of Stefan">
+    <meta name="twitter:image" content="/icons/default.png">
+</HeadContent>
+
+<div class="w-full h-full flex flex-col justify-start items-center text-neutral-900 dark:text-neutral-100">
+    <div class="flex flex-col gap-2 items-center mb-10">
+        <div class="rounded-full overflow-hidden w-32 h-32 object-cover">
+            <img src="me.webp" alt="Photo of Stefan" />
+        </div>
+        <div class="flex flex-col items-center">
+            <h1 class="font-semibold text-2xl">
+                Stefan's Blog
+            </h1>
+            <h2 class="text-xl">
+                Tech, Photograpyh, Blender and other stuff
+            </h2>
+        </div>
+    </div>
+    <div class="flex flex-col gap-4 w-full p-0 md:p-8 lg:p-24">
+        <ArticlesOverview Page="1"></ArticlesOverview>
+    </div>
+</div>
