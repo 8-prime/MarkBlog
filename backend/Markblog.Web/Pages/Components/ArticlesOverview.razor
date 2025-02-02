@@ -1,49 +1,49 @@
-﻿@page "/article-overview/{page?}"
-@using Domain.Entities
+﻿@using Domain.Entities
 @using Markblog.Infrastructure.Contexts
 @using Markblog.Web.Images
 @using Microsoft.EntityFrameworkCore
 @layout EmptyLayout
-@inject BlogContext context
-@inject IConfiguration config
 
 
-@for (int i = 0; i < articles?.Length; i++)
+@for (int i = 0; i < Articles?.Count; i++)
 {
-    <div @attributes="@GetAttribute(i)" class="flex flex-col items-center">
-        <a href="/article/@articles[i].Id"
-            class="flex flex-col items-center bg-white rounded-lg shadow md:flex-row w-full hover:bg-gray-100  dark:bg-neutral-950 dark:hover:bg-neutral-800">
-            @if (articles[i].Image is not null)
+    <div class="flex flex-col items-center">
+        <a href="/article/@Articles[i].Id"
+           class="flex flex-col items-center bg-white rounded-lg shadow md:flex-row w-full hover:bg-gray-100  dark:bg-neutral-950 dark:hover:bg-neutral-800">
+            @if (Articles[i].Image is not null)
             {
                 <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-64 md:rounded-none md:rounded-s-lg"
-                    src="@ImagePathUtils.GetImageUrl(articles[i].Image)" alt="Title Image">
+                     src="articles[i].Image" alt="Title Image">
             }
 
             <div class="flex flex-col justify-between p-4 leading-normal w-full">
                 <div class="flex flex-col md:flex-row justify-between">
-                    <h2 class="font-bold text-2xl"> @articles[i].Title </h2>
-                    <span style="line-height: 32px">@articles[i].CreatedDate.ToShortDateString()</span>
+                    <h2 class="font-bold text-2xl"> @Articles[i].Title </h2>
+                    <span style="line-height: 32px">@Articles[i].CreatedDate.ToShortDateString()</span>
                 </div>
-                <p> @articles[i].Description </p>
+                <p> @Articles[i].Description </p>
                 <div class="flex flex-row justify-between w-full">
                     <div class="flex flex-row gap-1">
                         <svg class="w-6 h-8  fill-none  stroke-neutral-900 dark:stroke-neutral-50"
-                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <path
+                                d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
                             <line x1="7" y1="7" x2="7.01" y2="7"></line>
                         </svg>
-                        <span style="line-height: 32px">@articles[i].Tags?.Replace("\n", ", ")</span>
+                        <span style="line-height: 32px">@Articles[i].Tags?.Replace("\n", ", ")</span>
                     </div>
                     <div class="flex flex-row gap-1">
                         <svg class="w-6 h-8  fill-none  stroke-neutral-900 dark:stroke-neutral-50"
-                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round">
+                             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
                             <circle cx="12" cy="12" r="10"></circle>
                             <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
                         <span style="line-height: 32px"
-                            class="text-nowrap">@ReadDuration(articles[i].ReadDurationSeconds)</span>
+                              class="text-nowrap">@ReadDuration(Articles[i].ReadDurationSeconds)</span>
                     </div>
                 </div>
             </div>
@@ -53,52 +53,12 @@
 
 
 @code
+
 {
-    [SupplyParameterFromQuery]
-    [Parameter]
-    public int? Page { get; set; }
-
-    private int PageSize { get; set; }
-
-    private ArticleEntity[]? articles;
-
-    protected override async Task OnInitializedAsync()
-    {
-        if (!int.TryParse(config.GetRequiredSection("PageSize").Value, out int pageSize))
-        {
-            pageSize = 10;
-        }
-        PageSize = pageSize;
-        var skipPage = Math.Max(0, (Page ?? 0) - 1);
-        articles = await context.Articles
-        .AsNoTracking()
-        .OrderByDescending(a => a.CreatedDate)
-        .Skip(pageSize * skipPage)
-        .Take(pageSize)
-        .ToArrayAsync();
-    }
-
-    private Dictionary<string, object> GetAttribute(int index)
-    {
-        var attrs = new Dictionary<string, object>();
-        if (articles.Length < PageSize || index - 2 != articles?.Length && index - 2 > 0)
-        {
-            return attrs;
-        }
-
-        attrs.Add("hx-get", $"/article-overview/?page={Page + 1}");
-        attrs.Add("hx-trigger", "revealed");
-        attrs.Add("hx-swap", "afterend");
-
-        return attrs;
-    }
+    [Parameter] public List<ArticleEntity> Articles { get; set; } = [];
 
     private string ReadDuration(int seconds)
     {
-        if (seconds > 60)
-        {
-            return $"{seconds / 60} min read";
-        }
-        return $"{seconds} sec read";
+        return seconds > 60 ? $"{seconds / 60} min read" : $"{seconds} sec read";
     }
 }

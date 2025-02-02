@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Markblog.Web.Endpoints;
 
-public static class ArticleEndpoints
+public static class ArticleAdminEndpoints
 {
-    public static WebApplication MapArticleEndpoints(this WebApplication app)
+    public static WebApplication MapArticleAdminEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("articles");
+        var group = app.MapGroup("articles-admin");
         group.MapPost("/", CreateArticle);
         group.MapPut("/{id:guid}", UpdateArticle);
         group.MapDelete("/{id:guid}", DeleteArticle);

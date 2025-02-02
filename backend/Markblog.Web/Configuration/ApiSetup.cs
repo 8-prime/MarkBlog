@@ -6,6 +6,6 @@ public static class ApiSetup
 {
     public static WebApplication MapApi(this WebApplication app)
     {
-        return app.MapArticleEndpoints().MapImageEndpoints();
+        return app.MapBlogEndpoints().MapImageEndpoints().MapArticleAdminEndpoints();
     }
 }
