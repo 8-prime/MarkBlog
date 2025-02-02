@@ -1,12 +1,26 @@
-﻿using Markblog.Application.Models;
+﻿using Markblog.Application.Interfaces;
+using Markblog.Application.Mappings;
+using Markblog.Application.Models;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Markblog.Application.Queries;
 
-public class ArticleModelHandler : IRequestHandler<ArticleModelQuery, ArticleModel>
+public class ArticleModelHandler : IRequestHandler<ArticleModelQuery, ArticleModel?>
 {
-    public Task<ArticleModel> Handle(ArticleModelQuery request, CancellationToken cancellationToken)
+    private readonly IBlogDbContext _context;
+
+    public ArticleModelHandler(IBlogDbContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
+    }
+
+    public async Task<ArticleModel?> Handle(ArticleModelQuery request, CancellationToken cancellationToken)
+    {
+        var article =
+            await _context.Articles.FirstOrDefaultAsync(a => a.Id == request.ArticleId,
+                cancellationToken: cancellationToken);
+
+        return article?.MapToModel();
     }
 }

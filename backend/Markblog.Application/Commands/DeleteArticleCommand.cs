@@ -2,4 +2,4 @@
 
 namespace Markblog.Application.Commands;
 
-public record DeleteArticleCommand(Guid ArticleId) : IRequest;
+public record DeleteArticleCommand(Guid ArticleId) : IRequest<bool>;

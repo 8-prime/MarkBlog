@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Markblog.Application.Interfaces;
 
-public interface IArticleDbContext
+public interface IBlogDbContext
 {
     public DbSet<ArticleEntity> Articles { get; set; }
     public DbSet<ImageEntity> Images { get; set; }

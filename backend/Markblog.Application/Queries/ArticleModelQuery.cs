@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Markblog.Application.Queries;
 
-public class ArticleModelQuery(Guid ArticleId) : IRequest<ArticleModel>;
+public record ArticleModelQuery(Guid ArticleId) : IRequest<ArticleModel?>;

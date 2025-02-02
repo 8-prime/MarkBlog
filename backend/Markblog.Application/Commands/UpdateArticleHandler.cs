@@ -7,32 +7,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Markblog.Application.Commands;
 
-public class UpdateArticleHandler : IRequestHandler<UpdateArticleCommand, ArticleModel>
+public class UpdateArticleHandler : IRequestHandler<UpdateArticleCommand, ArticleModel?>
 {
-    private readonly IArticlePageService _articlePageService;
-    private readonly IArticleDbContext _articleDbContext;
+    private readonly IBlogDbContext _blogDbContext;
 
-    public UpdateArticleHandler(IArticleDbContext articleDbContext, IArticlePageService articlePageService)
+    public UpdateArticleHandler(IBlogDbContext blogDbContext)
     {
-        _articleDbContext = articleDbContext;
-        _articlePageService = articlePageService;
+        _blogDbContext = blogDbContext;
     }
-    
-    public async Task<ArticleModel> Handle(UpdateArticleCommand request, CancellationToken cancellationToken)
+
+    public async Task<ArticleModel?> Handle(UpdateArticleCommand request, CancellationToken cancellationToken)
     {
-        await _articlePageService.UpdateArticlePage(request.Article);
-        var readDuration = ReadDurationService.GetReadDurationSeconds(request.Article.ArticleText); 
-        
-        await _articleDbContext.Articles.Where(a => a.Id == request.Article.Id)
-            .ExecuteUpdateAsync(setters => setters
-                .SetProperty(a => a.Title, request.Article.Title)
-                .SetProperty(a => a.ArticleText, request.Article.ArticleText)
-                .SetProperty(a => a.Description, request.Article.Description)
-                .SetProperty(a => a.Tags, request.Article.Tags)
-                .SetProperty(a => a.Image, request.Article.Image)
-                .SetProperty(a => a.UpdatedDate, DateTime.UtcNow)
-                .SetProperty(a => a.ReadDurationSeconds, readDuration)
-            , cancellationToken);
+        var readDuration = ReadDurationService.GetReadDurationSeconds(request.Article.ArticleText);
+        if (await _blogDbContext.Articles.Where(a => a.Id == request.Article.Id)
+                .ExecuteUpdateAsync(setters => setters
+                        .SetProperty(a => a.Title, request.Article.Title)
+                        .SetProperty(a => a.ArticleText, request.Article.ArticleText)
+                        .SetProperty(a => a.Description, request.Article.Description)
+                        .SetProperty(a => a.Tags, request.Article.Tags)
+                        .SetProperty(a => a.Image, request.Article.Image)
+                        .SetProperty(a => a.UpdatedDate, DateTime.UtcNow)
+                        .SetProperty(a => a.ReadDurationSeconds, readDuration)
+                    , cancellationToken) == 0)
+        {
+            return null;
+        }
+
         request.Article.ReadDurationSeconds = readDuration;
         return request.Article;
     }

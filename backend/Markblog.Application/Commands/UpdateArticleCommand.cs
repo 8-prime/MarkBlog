@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Markblog.Application.Commands;
 
-public record UpdateArticleCommand(ArticleModel Article) : IRequest<ArticleModel>;
+public record UpdateArticleCommand(ArticleModel Article) : IRequest<ArticleModel?>;

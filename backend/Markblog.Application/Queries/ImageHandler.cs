@@ -1,12 +1,27 @@
-﻿using MediatR;
+﻿using Markblog.Application.Interfaces;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Markblog.Application.Queries;
 
-public class ImageHandler : IRequestHandler<ImageQuery, byte[]>
+public class ImageHandler : IRequestHandler<ImageQuery, byte[]?>
 {
-    public Task<byte[]> Handle(ImageQuery request, CancellationToken cancellationToken)
+    private readonly IBlogDbContext _context;
+
+    public ImageHandler(IBlogDbContext context)
     {
-        // read image from disk (or cache?)
-        return Task.FromResult(Array.Empty<byte>());
+        _context = context;
+    }
+
+    public async Task<byte[]?> Handle(ImageQuery request, CancellationToken cancellationToken)
+    {
+        var imagePath = await _context.Images.Where(i => i.Id == request.Id).Select(i => i.Path)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (!Path.Exists(imagePath))
+        {
+            return null;
+        }
+
+        return await File.ReadAllBytesAsync(imagePath, cancellationToken);
     }
 }

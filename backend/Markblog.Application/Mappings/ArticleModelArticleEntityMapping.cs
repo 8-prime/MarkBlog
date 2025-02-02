@@ -5,7 +5,7 @@ namespace Markblog.Application.Mappings;
 
 public static class ArticleModelArticleEntityMapping
 {
-    public static ArticleEntity MapToEntity(this ArticleModel model, string filePath)
+    public static ArticleEntity MapToEntity(this ArticleModel model)
     {
         return new ArticleEntity
         {
@@ -14,7 +14,6 @@ public static class ArticleModelArticleEntityMapping
             Tags = model.Tags,
             Description = model.Description,
             ArticleText = model.ArticleText,
-            ArticleFilePath = filePath,
             Image = model.Image,
             CreatedDate = model.CreatedDate,
             UpdatedDate = model.UpdatedDate,

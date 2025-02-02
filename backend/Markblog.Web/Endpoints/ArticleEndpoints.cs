@@ -10,15 +10,40 @@ public static class ArticleEndpoints
 {
     public static WebApplication MapArticleEndpoints(this WebApplication app)
     {
-        app.MapGroup("articles")
-            .MapPost("/articles", CreateArticle);
+        var group = app.MapGroup("articles");
+        group.MapPost("/", CreateArticle);
+        group.MapPut("/{id:guid}", UpdateArticle);
+        group.MapDelete("/{id:guid}", DeleteArticle);
         return app;
     }
 
-    public static async Task<Ok<ArticleModel>> CreateArticle([FromBody] ArticleModel article, [FromServices] IMediator mediator)
+    private static async Task<Ok<ArticleModel>> CreateArticle([FromBody] ArticleModel article,
+        [FromServices] IMediator mediator)
     {
         var res = await mediator.Send(new CreateArticleCommand(article));
         return TypedResults.Ok(res);
     }
-    
+
+    private static async Task<Results<Ok<ArticleModel>, NotFound>> UpdateArticle(Guid id,
+        [FromBody] ArticleModel article,
+        [FromServices] IMediator mediator)
+    {
+        var res = await mediator.Send(new UpdateArticleCommand(article));
+        if (res is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        return TypedResults.Ok(res);
+    }
+
+    private static async Task<Results<Ok, NotFound>> DeleteArticle(Guid id, [FromServices] IMediator mediator)
+    {
+        if (!await mediator.Send(new DeleteArticleCommand(id)))
+        {
+            return TypedResults.NotFound();
+        }
+
+        return TypedResults.Ok();
+    }
 }

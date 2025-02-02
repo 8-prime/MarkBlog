@@ -4,22 +4,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Markblog.Application.Commands;
 
-public class DeleteArticleHandler : IRequestHandler<DeleteArticleCommand>
+public class DeleteArticleHandler : IRequestHandler<DeleteArticleCommand, bool>
 {
-    private readonly IArticlePageService _articlePageService;
-    private readonly IArticleDbContext _articleDbContext;
+    private readonly IBlogDbContext _blogDbContext;
 
-    public DeleteArticleHandler(IArticlePageService articlePageService, IArticleDbContext articleDbContext)
+    public DeleteArticleHandler(IBlogDbContext blogDbContext)
     {
-        _articlePageService = articlePageService;
-        _articleDbContext = articleDbContext;
+        _blogDbContext = blogDbContext;
     }
-    
-    public async Task Handle(DeleteArticleCommand request, CancellationToken cancellationToken)
+
+    public async Task<bool> Handle(DeleteArticleCommand request, CancellationToken cancellationToken)
     {
-        await _articleDbContext.Articles
+        return await _blogDbContext.Articles
             .Where(a => a.Id == request.ArticleId)
-            .ExecuteDeleteAsync(cancellationToken);
-        await _articlePageService.DeleteArticlePage(request.ArticleId);
+            .ExecuteDeleteAsync(cancellationToken) != 0;
     }
 }
