@@ -1,21 +1,17 @@
 using Markblog.Infrastructure.Contexts;
-using Markblog.Web.Extensions;
-using Markblog.Web.Pages;
+using Markblog.Web.Configuration;
 using Microsoft.EntityFrameworkCore;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
-builder.Services.AddRazorComponents();
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.Cookie.Name = ".blazorcrud";
-    options.IdleTimeout = TimeSpan.FromMinutes(1);
-});
-
+builder.Services
+    .AddMediatRSetup()
+    .AddHealthChecksSetup()
+    .AddCacheSetup()
+    .AddApplicationServices();
 var app = builder.Build();
+
+app.MapHealthEndpoints().MapApi();
 
 if (!app.Environment.IsDevelopment())
 {
@@ -23,15 +19,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.MapDefaultEndpoints();
-app.UseStaticFiles();
-app.UseSession();
 app.UseAntiforgery();
 
-app.MapRazorComponents<App>();
-
 using (var scope = app.Services.CreateScope())
-using (var ctx = scope.ServiceProvider.GetRequiredService<BlogContext>())
+await using (var ctx = scope.ServiceProvider.GetRequiredService<BlogContext>())
 {
     await ctx.Database.MigrateAsync();
 }
