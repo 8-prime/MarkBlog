@@ -4,11 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.SetupDatabase();
 builder.Services
     .AddMediatRSetup()
     .AddHealthChecksSetup()
     .AddCacheSetup()
-    .AddApplicationServices();
+    .AddApplicationServices()
+    .AddAntiforgery();
 var app = builder.Build();
 
 app.MapHealthEndpoints().MapApi();
