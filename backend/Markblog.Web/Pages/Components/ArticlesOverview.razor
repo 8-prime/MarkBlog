@@ -1,7 +1,4 @@
 ﻿@using Domain.Entities
-@using Markblog.Infrastructure.Contexts
-@using Markblog.Web.Images
-@using Microsoft.EntityFrameworkCore
 @layout EmptyLayout
 
 
@@ -52,13 +49,29 @@
 }
 
 
-@code
-
-{
+@code{
     [Parameter] public List<ArticleEntity> Articles { get; set; } = [];
+    [Parameter] public int PageSize { get; set; }
+    [Parameter] public int Page { get; set; }
 
     private string ReadDuration(int seconds)
     {
         return seconds > 60 ? $"{seconds / 60} min read" : $"{seconds} sec read";
     }
+    
+    private Dictionary<string, object> GetAttribute(int index)
+    {
+        var attrs = new Dictionary<string, object>();
+        if (Articles.Count < PageSize || index - 2 != Articles?.Count && index - 2 > 0)
+        {
+            return attrs;
+        }
+
+        attrs.Add("hx-get", $"/article-overview/?page={Page + 1}");
+        attrs.Add("hx-trigger", "revealed");
+        attrs.Add("hx-swap", "afterend");
+
+        return attrs;
+    }
+
 }

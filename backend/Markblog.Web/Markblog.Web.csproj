@@ -40,4 +40,8 @@
         <_ContentIncludedByDefault Remove="wwwroot\me.webp"/>
         <_ContentIncludedByDefault Remove="wwwroot\site.webmanifest"/>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\" />
+    </ItemGroup>
 </Project>
