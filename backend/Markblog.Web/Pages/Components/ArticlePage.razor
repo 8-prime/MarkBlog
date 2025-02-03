@@ -7,25 +7,6 @@
 @using Microsoft.EntityFrameworkCore
 @layout MainLayout
 
-<HeadContent>
-    <!-- HTML Meta Tags -->
-    <title>Stefans Blog</title>
-    <meta name="description" content="Personal Blog of Stefan">
-
-    <!-- Facebook Meta Tags -->
-    <meta property="og:url" content="https://hoffmeister.dev/article/@Article">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="@Article?.Title">
-    <meta property="og:description" content="@Article?.Description">
-
-    <!-- Twitter Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta property="twitter:domain" content="hoffmeister.dev">
-    <meta property="twitter:url" content="https://hoffmeister.dev/article/@Article">
-    <meta name="twitter:title" content="@Article?.Title">
-    <meta name="twitter:description" content="@Article?.Description">
-</HeadContent>
-
 @if (ArticleText is null)
 {
     <PageTitle>:/ Nothing here</PageTitle>

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Markblog.Application.Mappings;
-using Index = Markblog.Web.Pages.Home.Index;
+using Markblog.Web.Pages.Home;
 
 namespace Markblog.Web.Endpoints;
 
@@ -48,7 +48,7 @@ public static class BlogEndpoints
         [FromServices] IBlogDbContext dbContext)
     {
         var articles = await GetArticlesForPage(0, dbContext);
-        var landingHtml = new ComponentRenderer<Index>()
+        var landingHtml = new ComponentRenderer<Home>()
             .Set(c => c.Articles, articles)
             .Set(c => c.PageSize, PageSize)
             .Render();

@@ -13,7 +13,10 @@ builder.Services
     .AddAntiforgery();
 var app = builder.Build();
 
-app.MapHealthEndpoints().MapApi();
+app
+.MapHealthEndpoints()
+.MapApi()
+.MapStaticAssets();
 
 if (!app.Environment.IsDevelopment())
 {
