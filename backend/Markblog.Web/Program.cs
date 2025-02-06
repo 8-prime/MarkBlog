@@ -5,18 +5,23 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.SetupDatabase();
+
 builder.Services
+    .AddApiDocumentation()
     .AddMediatRSetup()
     .AddHealthChecksSetup()
     .AddCacheSetup()
-    .AddApplicationServices()
+    .AddAuthenticationSetup()
     .AddAntiforgery();
 var app = builder.Build();
 
 app
-.MapHealthEndpoints()
-.MapApi()
-.MapStaticAssets();
+    .MapHealthEndpoints()
+    .MapApi()
+    .MapAuthentication()
+    .MapStaticAssets();
+
+app.MapApiDocumentation();
 
 if (!app.Environment.IsDevelopment())
 {
@@ -28,8 +33,10 @@ app.UseAntiforgery();
 
 using (var scope = app.Services.CreateScope())
 await using (var ctx = scope.ServiceProvider.GetRequiredService<BlogContext>())
+await using (var identityContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>())
 {
     await ctx.Database.MigrateAsync();
+    await identityContext.Database.MigrateAsync();
 }
 
 await app.RunAsync();
