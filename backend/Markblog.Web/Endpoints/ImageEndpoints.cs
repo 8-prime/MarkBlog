@@ -8,7 +8,7 @@ namespace Markblog.Web.Endpoints;
 
 public static class ImageEndpoints
 {
-    private const string groupPrefix = "images";
+    private const string groupPrefix = "api/images";
 
     public static WebApplication MapImageEndpoints(this WebApplication app)
     {

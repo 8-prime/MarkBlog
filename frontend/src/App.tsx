@@ -3,8 +3,8 @@ import { Management } from "./pages/Management"
 import { ArticleEdit } from "./pages/ArticleEdit"
 import { ArticleOverview } from "./pages/ArticleOverview"
 import { Analytics } from "./pages/Analytics"
-import { Login } from "./pages/Login"
-import { ChangePassword } from "./pages/ChangePassword"
+import ChangePassword from "./pages/ChangePassword"
+import Login from "./pages/Login"
 
 function App() {
 
