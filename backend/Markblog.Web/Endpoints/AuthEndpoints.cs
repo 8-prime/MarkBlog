@@ -57,14 +57,14 @@ public static class AuthEndpoints
         }
 
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
-        return TypedResults.Ok(new PasswordResetInformation { ResetToken = token, Email = loginRequest.Username });
+        return TypedResults.Ok(new PasswordResetInformation { ResetToken = token, User = loginRequest.Username });
     }
 
     private static async Task<Results<Ok<AccessTokenResponse>, ValidationProblem, EmptyHttpResult>>
-        ChangePassword([FromBody] ResetPasswordRequest request, [FromServices] UserManager<User> userManager)
+        ChangePassword([FromBody] PasswordChangeRequest request, [FromServices] UserManager<User> userManager)
     {
-        var user = await userManager.FindByEmailAsync(request.Email);
-        if (user is null || !(await userManager.IsEmailConfirmedAsync(user)))
+        var user = await userManager.FindByNameAsync(request.User);
+        if (user is null)
         {
             // Don't reveal that the user does not exist or is not confirmed, so don't return a 200 if we had
             // returned a 400 for an invalid code given a valid user email.
@@ -74,8 +74,8 @@ public static class AuthEndpoints
         IdentityResult result;
         try
         {
-            var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.ResetCode));
-            result = await userManager.ResetPasswordAsync(user, code, request.NewPassword);
+            // var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.ResetCode));
+            result = await userManager.ResetPasswordAsync(user, request.ResetCode, request.NewPassword);
         }
         catch (FormatException)
         {
@@ -87,6 +87,9 @@ public static class AuthEndpoints
             return CreateValidationProblem(result);
         }
 
+        user.IsInitialized = true;
+        await userManager.UpdateAsync(user);
+        
         return TypedResults.Empty;
     }
 
