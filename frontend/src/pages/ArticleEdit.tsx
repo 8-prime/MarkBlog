@@ -1,7 +1,8 @@
 import { ArrowLeft } from "phosphor-react";
-import { useState } from "react";
-import { NavLink, useNavigate, useParams } from "react-router"
+import { useEffect } from "react";
+import { NavLink, useNavigate, useParams } from "react-router";
 import ImageUploader from "../components/ImageUploader";
+import { useBlogStore } from "../state/Store";
 
 
 function Tag({ label, index, onRemove }: { label: string, index: number, onRemove: (index: string) => void }) {
@@ -14,12 +15,70 @@ function Tag({ label, index, onRemove }: { label: string, index: number, onRemov
 }
 
 export function ArticleEdit() {
+    const { id } = useParams();
     const navigate = useNavigate();
 
-    const [tags, setTags] = useState<string[]>(["Machine learning", "Ai"]);
-    const removeItem = (tag: string) => {
-        setTags(tags.filter(t => t != tag))
+    const selectedArticle = useBlogStore((store) => store.currentArticle)
+    const updateLocal = useBlogStore((store) => store.updateLocal)
+    const fetchArticle = useBlogStore((store) => store.fetchArticle)
+    const updateArticle = useBlogStore((store) => store.updateArticle)
+    const createArticle = useBlogStore((store) => store.createArticle)
+
+    const handleTextChanged = (newContent: string) => {
+        if (!selectedArticle) return;
+        updateLocal({
+            ...selectedArticle,
+            articleText: newContent,
+        })
     }
+    const handleDescriptionChanged = (newContent: string) => {
+        if (!selectedArticle) return;
+        updateLocal({
+            ...selectedArticle,
+            description: newContent
+        })
+    }
+
+    const handleTitleChanged = (newContent: string) => {
+        if (!selectedArticle) return;
+        updateLocal({
+            ...selectedArticle,
+            title: newContent
+        })
+    }
+
+    const handleSave = () => {
+        if (!selectedArticle) return;
+        if (selectedArticle.id) {
+            updateArticle(selectedArticle);
+            return;
+        }
+        createArticle(selectedArticle);
+    }
+
+    useEffect(() => {
+        if (id) {
+            fetchArticle(id)
+        } else {
+            updateLocal({
+                id: undefined,
+                title: '',
+                articleText: '',
+                description: '',
+                tags: '',
+                image: '',
+                createdDate: undefined,
+                updatedDate: undefined,
+                readDurationSeconds: 0
+            });
+        }
+    }, [])
+
+    useEffect(() => {
+        if (selectedArticle?.id && !id) {
+            window.history.replaceState(null, "New Page Title", `/edit/${selectedArticle.id}`)
+        }
+    }, [selectedArticle])
 
     return (
         <div className="max-w-4xl mx-auto px-4 py-8">
@@ -28,10 +87,15 @@ export function ArticleEdit() {
                     <NavLink to="/" className="flex justify-start items-center h-full">
                         <ArrowLeft size={30} />
                     </NavLink>
-                    <h1 className="flex-grow text-3xl font-light tracking-tight">Edit Article</h1>
+                    {id == undefined &&
+                        <h1 className="flex-grow text-3xl font-light tracking-tight">Save new Article</h1>
+                    }
+                    {id != undefined &&
+                        <h1 className="flex-grow text-3xl font-light tracking-tight">Edit Article</h1>
+                    }
                     <div className="space-x-4">
                         <button onClick={() => navigate(-1)} className="px-4 py-2 text-neutral-600 hover:bg-neutral-100 rounded-md">Cancel</button>
-                        <button className="px-4 py-2 bg-neutral-900 text-white rounded-md hover:bg-neutral-700">Save</button>
+                        <button onClick={handleSave} className="px-4 py-2 bg-neutral-900 text-white rounded-md hover:bg-neutral-700">Save</button>
                     </div>
                 </div>
             </header>
@@ -43,7 +107,8 @@ export function ArticleEdit() {
                         id="title"
                         type="text"
                         className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-neutral-500"
-                        value="Machine Learning Fundamentals"
+                        value={selectedArticle?.title ?? ''}
+                        onChange={(e) => handleTitleChanged(e.target.value)}
                     />
                 </div>
 
@@ -52,7 +117,9 @@ export function ArticleEdit() {
                     <textarea
                         id="description"
                         className="w-full px-3 py-2 border border-neutral-300 rounded-md h-24 focus:outline-none focus:ring-2 focus:ring-neutral-500"
-                    >A comprehensive introduction to machine learning concepts and techniques for beginners.</textarea>
+                        value={selectedArticle?.description ?? ''}
+                        onChange={(e) => handleDescriptionChanged(e.target.value)}
+                    />
                 </div>
 
                 <div>
@@ -60,28 +127,23 @@ export function ArticleEdit() {
                 </div>
 
                 <div>
-                    <div className="flex flex-wrap gap-2">
+                    Tags
+                    {/* <div className="flex flex-wrap gap-2">
                         {tags.map((t, i) => {
                             return <Tag key={t} label={t} index={i} onRemove={removeItem} />
                         })}
-                    </div>
+                    </div> */}
                 </div>
 
                 <div>
-                    <label className="block text-neutral-700 mb-2">Content (Markdown)</label>
+                    <label htmlFor="articleText" className="block text-neutral-700 mb-2">Content (Markdown)</label>
                     <textarea
+                        id="articleText"
                         className="w-full px-3 py-2 border border-neutral-300 rounded-md min-h-[400px] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-neutral-500"
                         placeholder="Write your article in Markdown..."
-                    ># Machine Learning Fundamentals
-
-                        Machine learning is a subset of artificial intelligence that focuses on the use of data and algorithms to imitate the way that humans learn.
-
-                        ## Key Concepts
-
-                        - Supervised Learning: Learning with labeled training data
-                        - Unsupervised Learning: Finding patterns in unlabeled data
-                        - Reinforcement Learning: Learning through interaction with an
-                        environment
+                        value={selectedArticle?.articleText ?? ''}
+                        onChange={(e) => handleTextChanged(e.target.value)}
+                    >
                     </textarea>
                 </div>
             </div>

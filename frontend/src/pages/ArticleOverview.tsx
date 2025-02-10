@@ -15,7 +15,7 @@ function ArticleDetail({ article }: Readonly<ArticleDetailProps>) {
                 <p className="text-neutral-500 text-sm">Published on {article.updatedDate}</p>
             </div>
             <div className="space-x-4">
-                <NavLink to={`edit/${43456456456}`} className="text-neutral-600 hover:text-neutral-900">Edit</NavLink>
+                <NavLink to={`edit/${article.id}`} className="text-neutral-600 hover:text-neutral-900">Edit</NavLink>
                 <button className="text-red-600 hover:text-red-800">Delete</button>
             </div>
         </div>

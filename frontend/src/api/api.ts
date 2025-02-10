@@ -1,12 +1,17 @@
 import { ArticleModel, ArticleShell } from "../models/Articles"
 import { isLoginInfo, LoginInfo, LoginRequest, PasswordChangeRequest, PasswordResetInformation } from "../models/Authentication"
 
+const requestHeaders = {
+    "Content-Type": "application/json; charset=utf-8",
+}
+
 const login = async (login: LoginRequest): Promise<LoginInfo | PasswordResetInformation | undefined> => {
     const response = await fetch('/api/login', {
         method: 'POST',
+        headers: requestHeaders,
         body: JSON.stringify({
-            username: '',
-            password: ''
+            username: login.username,
+            password: login.password
         })
     })
 
@@ -24,6 +29,7 @@ const login = async (login: LoginRequest): Promise<LoginInfo | PasswordResetInfo
 const changePassword = async (changeRequest: PasswordChangeRequest): Promise<boolean> => {
     const response = await fetch('/api/change-password', {
         method: 'POST',
+        headers: requestHeaders,
         body: JSON.stringify(changeRequest)
     })
 
@@ -33,6 +39,7 @@ const changePassword = async (changeRequest: PasswordChangeRequest): Promise<boo
 const refresh = async (refreshToken: string): Promise<LoginInfo | undefined> => {
     const response = await fetch('/api/refresh', {
         method: 'POST',
+        headers: requestHeaders,
         body: JSON.stringify({ refreshToken })
     })
 
@@ -48,6 +55,7 @@ const uploadImage = async (image: File): Promise<string | undefined> => {
 
     const response = await fetch('/api/images', {
         method: 'POST',
+        headers: requestHeaders,
         body: data
     })
     if (!response.ok) {
@@ -85,6 +93,7 @@ const deleteArticle = (id: string) => {
 const updateArticle = async (article: ArticleModel): Promise<ArticleModel | undefined> => {
     const response = await fetch(`/api/articles-admin/${article.id}`, {
         method: 'PUT',
+        headers: requestHeaders,
         body: JSON.stringify(article)
     })
     if (!response.ok) {
@@ -94,8 +103,9 @@ const updateArticle = async (article: ArticleModel): Promise<ArticleModel | unde
 }
 
 const createArticle = async (article: ArticleModel): Promise<ArticleModel | undefined> => {
-    const response = await fetch(`/api/articles-admin/${article.id}`, {
+    const response = await fetch(`/api/articles-admin/`, {
         method: 'POST',
+        headers: requestHeaders,
         body: JSON.stringify(article)
     })
     if (!response.ok) {

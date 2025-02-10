@@ -10,6 +10,7 @@ import { adminArticle, articleShells, createArticle, deleteArticle, updateArticl
 interface BlogState {
     currentArticle: ArticleModel | undefined,
     articleList: ArticleShell[],
+    updateLocal: (value: ArticleModel) => void,
     createArticle: (value: ArticleModel) => Promise<void>,
     updateArticle: (value: ArticleModel) => Promise<void>,
     deleteArticle: (id: string) => Promise<void>,
@@ -20,6 +21,9 @@ interface BlogState {
 export const useBlogStore = create<BlogState>((set) => ({
     currentArticle: undefined,
     articleList: [],
+    updateLocal: (value: ArticleModel) => {
+        set({ currentArticle: value })
+    },
     createArticle: async (article: ArticleModel) => {
         // create article in backend and set for currentArticle once returned
         const response = await createArticle(article);

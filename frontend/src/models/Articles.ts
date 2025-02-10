@@ -1,5 +1,7 @@
 export type ArticleModel = {
     id: string | undefined;
+    title: string,
+    articleText: string
     description: string | undefined;
     tags: string | undefined;
     image: string | undefined;
