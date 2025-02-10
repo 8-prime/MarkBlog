@@ -1,15 +1,16 @@
 export type ArticleModel = {
-    id: string | null;
-    description: string | null;
-    tags: string | null;
-    image: string | null;
-    createdDate: string;
-    updatedDate: string;
+    id: string | undefined;
+    description: string | undefined;
+    tags: string | undefined;
+    image: string | undefined;
+    createdDate: string | undefined;
+    updatedDate: string | undefined;
     readDurationSeconds: number;
 }
 
 export type ArticleShell = {
+    id: string | undefined,
     title: string,
-    createdDate: Date,
-    updatedDate: Date
+    createdDate: string,
+    updatedDate: string
 }

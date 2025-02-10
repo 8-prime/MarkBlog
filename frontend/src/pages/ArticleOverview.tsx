@@ -1,11 +1,18 @@
+import { useEffect } from "react";
 import { NavLink } from "react-router";
+import { useBlogStore } from "../state/Store";
+import { ArticleShell } from "../models/Articles";
 
-function ArticleDetail() {
+type ArticleDetailProps = {
+    article: ArticleShell
+}
+
+function ArticleDetail({ article }: Readonly<ArticleDetailProps>) {
     return (
         <div className="flex items-center justify-between p-6 hover:bg-neutral-50 transition-colors">
             <div>
-                <h3 className="text-lg font-medium">Machine Learning Fundamentals</h3>
-                <p className="text-neutral-500 text-sm">Published on Jan 15, 2024</p>
+                <h3 className="text-lg font-medium">{article.title}</h3>
+                <p className="text-neutral-500 text-sm">Published on {article.updatedDate}</p>
             </div>
             <div className="space-x-4">
                 <NavLink to={`edit/${43456456456}`} className="text-neutral-600 hover:text-neutral-900">Edit</NavLink>
@@ -17,6 +24,14 @@ function ArticleDetail() {
 
 
 export function ArticleOverview() {
+
+    const fetchShells = useBlogStore((state) => state.fetchArticleShells)
+    const articleShells = useBlogStore((state) => state.articleList);
+
+    useEffect(() => {
+        fetchShells();
+    }, [])
+
     return (
         <div className="col-span-9">
             <div className="bg-white border border-neutral-200 rounded-lg shadow-sm">
@@ -27,12 +42,9 @@ export function ArticleOverview() {
                     </NavLink>
                 </div>
                 <div className="divide-y divide-neutral-200">
-                    <ArticleDetail />
-                    <ArticleDetail />
-                    <ArticleDetail />
-                    <ArticleDetail />
-                    <ArticleDetail />
-                    <ArticleDetail />
+                    {articleShells.map(a =>
+                        <ArticleDetail key={a.id} article={a} />
+                    )}
                 </div>
             </div>
         </div>
