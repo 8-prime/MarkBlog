@@ -17,6 +17,6 @@ public class ArticleShellsHandler : IRequestHandler<ArticleShellsQuery, List<Art
 
     public async Task<List<ArticleShell>> Handle(ArticleShellsQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Articles.Select(a => a.MaptToShell()).ToListAsync(cancellationToken);
+        return await _context.Articles.Select(a => a.MapToShell()).ToListAsync(cancellationToken);
     }
 }

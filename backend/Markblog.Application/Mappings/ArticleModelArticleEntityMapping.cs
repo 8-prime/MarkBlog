@@ -15,8 +15,8 @@ public static class ArticleModelArticleEntityMapping
             Description = model.Description,
             ArticleText = model.ArticleText,
             Image = model.Image,
-            CreatedDate = model.CreatedDate,
-            UpdatedDate = model.UpdatedDate,
+            CreatedDate = model.CreatedDate ?? DateTime.UtcNow,
+            UpdatedDate = model.UpdatedDate ?? DateTime.UtcNow,
             ReadDurationSeconds = model.ReadDurationSeconds
         };
     }

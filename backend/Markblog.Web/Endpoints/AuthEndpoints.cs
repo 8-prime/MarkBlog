@@ -60,7 +60,7 @@ public static class AuthEndpoints
         return TypedResults.Ok(new PasswordResetInformation { ResetToken = token, User = loginRequest.Username });
     }
 
-    private static async Task<Results<Ok<AccessTokenResponse>, ValidationProblem, EmptyHttpResult>>
+    private static async Task<Results<Ok, ValidationProblem, EmptyHttpResult>>
         ChangePassword([FromBody] PasswordChangeRequest request, [FromServices] UserManager<User> userManager)
     {
         var user = await userManager.FindByNameAsync(request.User);
@@ -74,7 +74,6 @@ public static class AuthEndpoints
         IdentityResult result;
         try
         {
-            // var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.ResetCode));
             result = await userManager.ResetPasswordAsync(user, request.ResetCode, request.NewPassword);
         }
         catch (FormatException)
