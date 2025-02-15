@@ -1,30 +1,27 @@
-
-//current article
-//logged in 
-
 import { create } from "zustand";
 import { ArticleModel, ArticleShell } from "../models/Articles";
-import { adminArticle, articleShells, checkLoginState, createArticle, deleteArticle, login, updateArticle } from "../api/api";
-import { isLoginInfo, LoginInfo, LoginRequest, LoginState } from "../models/Authentication";
-import { Navigate } from "react-router";
-
-
-
+import { adminArticle, articleShells, createArticle, deleteArticle, getUserInfo, updateArticle, updateUserInfo } from "../api/api";
+import { UserInfoModel } from "../models/UserInfo";
 
 interface BlogState {
     currentArticle: ArticleModel | undefined,
     articleList: ArticleShell[],
+    userSettings: UserInfoModel | undefined,
     updateLocal: (value: ArticleModel) => void,
     createArticle: (value: ArticleModel) => Promise<void>,
     updateArticle: (value: ArticleModel) => Promise<void>,
     deleteArticle: (id: string) => Promise<void>,
     fetchArticleShells: () => Promise<void>,
     fetchArticle: (id: string) => Promise<void>,
+    fetchUserInfo: () => Promise<void>,
+    updateLocalUserInfo: (userInfo: UserInfoModel) => void,
+    saveUserInfo: () => Promise<void>
 }
 
 export const useBlogStore = create<BlogState>((set, get) => ({
     currentArticle: undefined,
     articleList: [],
+    userSettings: undefined,
     updateLocal: (value: ArticleModel) => {
         set({ currentArticle: value })
     },
@@ -55,5 +52,21 @@ export const useBlogStore = create<BlogState>((set, get) => ({
         if (result) {
             set({ currentArticle: result })
         }
+    },
+    fetchUserInfo: async () => {
+        const result = await getUserInfo()
+        if (result) {
+            set({ userSettings: result })
+        }
+    },
+    updateLocalUserInfo: (userInfo: UserInfoModel) => {
+        set({ userSettings: userInfo })
+    },
+    saveUserInfo: async () => {
+        const userSettings = get().userSettings;
+        if (!userSettings) {
+            return
+        }
+        await updateUserInfo(userSettings)
     }
 }))

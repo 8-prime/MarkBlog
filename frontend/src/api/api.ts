@@ -1,5 +1,6 @@
 import { ArticleModel, ArticleShell } from "../models/Articles"
 import { isLoginInfo, LoginInfo, LoginRequest, PasswordChangeRequest, PasswordResetInformation } from "../models/Authentication"
+import { UserInfoModel } from "../models/UserInfo";
 import { useAuthStore } from "../state/AuthStore";
 
 const requestHeaders = {
@@ -139,4 +140,44 @@ const createArticle = async (article: ArticleModel): Promise<ArticleModel | unde
     return await response.json() as ArticleModel;
 }
 
-export { createArticle, updateArticle, deleteArticle, adminArticle, articleShells, uploadImage, refresh, changePassword, login, checkLoginState }
+const getUserInfo = async (): Promise<UserInfoModel | undefined> => {
+    const loginData = useAuthStore.getState().loginInfo;
+    const headers = { 'Authorization': `Bearer ${loginData?.accessToken}` }; // auth header with bearer token
+    const response = await fetch(`/api/articles-admin/userinfo`, {
+        method: 'GET',
+        headers: { ...headers, ...requestHeaders }
+    })
+    if (!response.ok) {
+        return undefined;
+    }
+    return await response.json() as UserInfoModel
+}
+
+const updateUserInfo = async (userInfo: UserInfoModel): Promise<void> => {
+    const loginData = useAuthStore.getState().loginInfo;
+    const headers = { 'Authorization': `Bearer ${loginData?.accessToken}` }; // auth header with bearer token
+    const response = await fetch(`/api/articles-admin/userinfo`, {
+        method: 'POST',
+        headers: { ...headers, ...requestHeaders },
+        body: JSON.stringify(userInfo)
+    })
+    if (!response.ok) {
+        return undefined;
+    }
+}
+
+
+export {
+    createArticle,
+    updateArticle,
+    deleteArticle,
+    adminArticle,
+    articleShells,
+    uploadImage,
+    refresh,
+    changePassword,
+    login,
+    checkLoginState,
+    getUserInfo,
+    updateUserInfo
+}

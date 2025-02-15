@@ -25,14 +25,17 @@
 <div class="w-full h-full flex flex-col justify-start items-center text-neutral-900 dark:text-neutral-100">
     <div class="flex flex-col gap-2 items-center mb-10">
         <div class="rounded-full overflow-hidden w-32 h-32 object-cover">
-            <img src="me.webp" alt="Photo of Stefan"/>
+            @if (!string.IsNullOrEmpty(UserInfoEntity.ImageUrl))
+            {
+                <img src="@UserInfoEntity.ImageUrl" alt="Photo of Stefan"/>
+            }
         </div>
         <div class="flex flex-col items-center">
             <h1 class="font-semibold text-2xl">
-                Stefan's Blog
+                @UserInfoEntity.Name's Blog
             </h1>
             <h2 class="text-xl">
-                Tech, Photograpyh, Blender and other stuff
+                @UserInfoEntity.Description
             </h2>
         </div>
     </div>
@@ -44,6 +47,5 @@
 @code {
     [Parameter] public List<ArticleEntity> Articles { get; set; } = [];
     [Parameter] public int PageSize { get; set; }
-    
-    //TODO also get image for user and interests and sheez
+    [Parameter] public UserInfoEntity UserInfoEntity { get; set; } = null!;
 }

@@ -154,7 +154,7 @@ export function ArticleEdit() {
                 <div>
                     {
                         selectedArticle?.image &&
-                        <img src={selectedArticle?.image} alt="Article title" />
+                        <img src={'/' + selectedArticle?.image} alt="Article title" />
                     }
                     <ImageUploader onSelected={handleImageUpdate} />
                 </div>

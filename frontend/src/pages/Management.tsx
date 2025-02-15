@@ -13,6 +13,10 @@ export function Management() {
                         ${isActive ? "bg-neutral-700 text-neutral-50 hover:bg-neutral-800" : "text-neutral-600 hover:bg-neutral-200"}`}>
                             Articles
                         </NavLink>
+                        <NavLink to="/user-settings" className={({ isActive }) => `block py-3 px-4 rounded-md transition-colors 
+                        ${isActive ? "bg-neutral-700 text-neutral-50 hover:bg-neutral-800" : "text-neutral-600 hover:bg-neutral-200"}`}>
+                            User settings
+                        </NavLink>
                         <NavLink to="/analytics" className={({ isActive }) => `block py-3 px-4 rounded-md transition-colors 
                         ${isActive ? "bg-neutral-700 text-neutral-50 hover:bg-neutral-800" : "text-neutral-600 hover:bg-neutral-200"}`}>
                             Analytics

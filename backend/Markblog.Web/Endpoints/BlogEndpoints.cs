@@ -47,8 +47,10 @@ public static class BlogEndpoints
     private static async Task<IResult> GetHomePage(
         [FromServices] IBlogDbContext dbContext)
     {
+        var userinfo = await dbContext.Users.FirstOrDefaultAsync();
         var articles = await GetArticlesForPage(0, dbContext);
         var landingHtml = new ComponentRenderer<Home>()
+            .Set(c => c.UserInfoEntity, userinfo)
             .Set(c => c.Articles, articles)
             .Set(c => c.PageSize, PageSize)
             .Render();
