@@ -4,6 +4,7 @@ import { NavLink, useNavigate, useParams } from "react-router";
 import ImageUploader from "../components/ImageUploader";
 import { useBlogStore } from "../state/Store";
 import { uploadImage } from "../api/api";
+import { BasicButton } from "../components/BasicButton";
 
 
 function Tag({ label, index, onRemove }: { label: string, index: number, onRemove: (index: string) => void }) {
@@ -101,6 +102,12 @@ export function ArticleEdit() {
         }
     };
 
+    const handleImageUpdate = (imageUrl: string) => {
+        updateLocal({
+            ...selectedArticle!,
+            image: imageUrl
+        })
+    }
 
     return (
         <div className="max-w-4xl mx-auto px-4 py-8">
@@ -117,7 +124,7 @@ export function ArticleEdit() {
                     }
                     <div className="space-x-4">
                         <button onClick={() => navigate(-1)} className="px-4 py-2 text-neutral-600 hover:bg-neutral-100 rounded-md">Cancel</button>
-                        <button onClick={handleSave} className="px-4 py-2 bg-neutral-900 text-white rounded-md hover:bg-neutral-700">Save</button>
+                        <BasicButton onClick={handleSave}>Save</BasicButton>
                     </div>
                 </div>
             </header>
@@ -145,7 +152,11 @@ export function ArticleEdit() {
                 </div>
 
                 <div>
-                    <ImageUploader />
+                    {
+                        selectedArticle?.image &&
+                        <img src={selectedArticle?.image} alt="Article title" />
+                    }
+                    <ImageUploader onSelected={handleImageUpdate} />
                 </div>
                 <div>
                     <label htmlFor="articleText" className="block text-neutral-700 mb-2">Content (Markdown)</label>

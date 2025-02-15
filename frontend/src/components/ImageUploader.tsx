@@ -1,19 +1,29 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
+import { BasicButton } from './BasicButton';
+import { uploadImage } from '../api/api';
 
-const ImageUploader: React.FC = () => {
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setSelectedImage(imageUrl);
+export type ImageUploaderProps = {
+    onSelected: (imageUrl: string) => void
+}
+
+const ImageUploader = ({ onSelected }: ImageUploaderProps) => {
+    const fileInput = useRef<HTMLInputElement>(null);
+
+    const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const fileObject = event.target.files?.[0];
+        if (fileObject) {
+            const response = await uploadImage(fileObject);
+            if (response) {
+                onSelected(response);
+            }
         }
     };
 
     return (
         <div>
             <input
+                ref={fileInput}
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
@@ -21,17 +31,8 @@ const ImageUploader: React.FC = () => {
                 id="image-upload"
             />
             <label htmlFor="image-upload" style={{ cursor: 'pointer' }}>
-                <button>Select Image</button>
+                <BasicButton onClick={() => fileInput.current!.click()} >Select Image</BasicButton>
             </label>
-            {selectedImage && (
-                <div style={{ marginTop: '10px' }}>
-                    <img
-                        src={selectedImage}
-                        alt="Selected"
-                        style={{ width: '200px', height: 'auto' }}
-                    />
-                </div>
-            )}
         </div>
     );
 };

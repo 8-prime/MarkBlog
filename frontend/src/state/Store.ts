@@ -22,7 +22,7 @@ interface BlogState {
     fetchArticle: (id: string) => Promise<void>,
 }
 
-export const useBlogStore = create<BlogState>((set) => ({
+export const useBlogStore = create<BlogState>((set, get) => ({
     currentArticle: undefined,
     articleList: [],
     updateLocal: (value: ArticleModel) => {
@@ -43,6 +43,7 @@ export const useBlogStore = create<BlogState>((set) => ({
     deleteArticle: async (id: string) => {
         // remove article and update shell list
         await deleteArticle(id);
+        get().fetchArticleShells()
     },
     fetchArticleShells: async () => {
         // load articles and set shell list

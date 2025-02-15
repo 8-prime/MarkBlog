@@ -1,22 +1,47 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router";
 import { useBlogStore } from "../state/Store";
 import { ArticleShell } from "../models/Articles";
+import { DeleteButton } from "../components/DeleteButton";
 
 type ArticleDetailProps = {
     article: ArticleShell
 }
 
 function ArticleDetail({ article }: Readonly<ArticleDetailProps>) {
+
+    const [isDeleting, setIsDeleting] = useState<boolean>(false);
+    const deleteArticle = useBlogStore((store) => store.deleteArticle)
+
+    const onDelete = () => {
+        deleteArticle(article.id!)
+    }
+
+
     return (
         <div className="flex items-center justify-between p-6 hover:bg-neutral-50 transition-colors">
-            <div>
-                <h3 className="text-lg font-medium">{article.title}</h3>
-                <p className="text-neutral-500 text-sm">Published on {article.updatedDate}</p>
+            <div className="h-10">
+                {
+                    !isDeleting &&
+                    <div>
+                        <h3 className="text-lg font-medium">{article.title}</h3>
+                        <p className="text-neutral-500 text-sm">Published on {article.updatedDate}</p>
+                    </div>
+                }
+                {
+                    isDeleting &&
+                    <div className="h-full flex justify-start items-center  gap-4">
+                        <span>Are you sure you want to delete</span>
+                        <span className="text-lg font-medium">{article.title}</span>
+                    </div>
+                }
             </div>
-            <div className="space-x-4">
-                <NavLink to={`edit/${article.id}`} className="text-neutral-600 hover:text-neutral-900">Edit</NavLink>
-                <button className="text-red-600 hover:text-red-800">Delete</button>
+            <div className="space-x-4 flex flex-row">
+                {
+                    !isDeleting &&
+                    <NavLink to={`edit/${article.id}`} className="text-neutral-600 hover:text-neutral-900">Edit</NavLink>
+                }
+                <DeleteButton isDeleting={isDeleting} onDelete={onDelete} setDeletingState={setIsDeleting} />
             </div>
         </div>
     );
