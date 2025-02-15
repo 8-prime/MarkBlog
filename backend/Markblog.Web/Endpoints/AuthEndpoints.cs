@@ -20,9 +20,16 @@ public static class AuthEndpoints
         group.MapPost("/login", Login);
         group.MapPost("/change-password", ChangePassword);
         group.MapPost("/refresh", Refresh);
+        group.MapGet("/check", Check).RequireAuthorization();
+        
         return app;
     }
 
+    private static Results<Ok, UnauthorizedHttpResult> Check()
+    {
+        return TypedResults.Ok();
+    }
+    
     private static async
         Task<Results<Ok<PasswordResetInformation>, EmptyHttpResult, ProblemHttpResult, UnauthorizedHttpResult>> Login(
             [FromBody] LoginRequest loginRequest,

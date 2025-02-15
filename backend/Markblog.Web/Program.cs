@@ -12,7 +12,8 @@ builder.Services
     .AddHealthChecksSetup()
     .AddCacheSetup()
     .AddAuthenticationSetup()
-    .AddAntiforgery();
+    .AddAntiforgery()
+    .AddSettingsSetup(builder.Configuration);
 var app = builder.Build();
 
 app

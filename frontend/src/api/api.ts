@@ -63,13 +63,13 @@ const uploadImage = async (image: File): Promise<string | undefined> => {
 
     const response = await fetch('/api/images', {
         method: 'POST',
-        headers: requestHeaders,
         body: data
     })
     if (!response.ok) {
         return undefined;
     }
-    return response.text()
+    const text = await response.text()
+    return text.trim().replace(/^"|"$/g, '')
 }
 
 const articleShells = async (): Promise<ArticleShell[]> => {

@@ -13,7 +13,7 @@ public static class ImageEndpoints
     public static WebApplication MapImageEndpoints(this WebApplication app)
     {
         var group = app.MapGroup(groupPrefix);
-        group.MapPost("/", CreateImage);
+        group.MapPost("/", CreateImage).DisableAntiforgery();;
         group.MapGet("/{id:guid}", GetImage);
         return app;
     }
@@ -26,7 +26,7 @@ public static class ImageEndpoints
         var imageBytes = ms.ToArray();
         var response = await mediator.Send(new CreateImageCommand(imageBytes));
 
-        return TypedResults.Ok(Path.Join(groupPrefix, response.ToString()));
+        return TypedResults.Ok(groupPrefix + "/" + response);
     }
 
     private static async Task<Results<IResult, NotFound>> GetImage(Guid id, [FromServices] IMediator mediator)

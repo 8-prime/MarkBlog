@@ -1,4 +1,5 @@
 ﻿@using Domain.Entities
+@using Markblog.Application.Services
 @layout EmptyLayout
 
 
@@ -40,7 +41,7 @@
                             <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
                         <span style="line-height: 32px"
-                              class="text-nowrap">@ReadDuration(Articles[i].ReadDurationSeconds)</span>
+                              class="text-nowrap">@ReadDurationService.GetReadDurationText(Articles[i].ReadDurationSeconds)</span>
                     </div>
                 </div>
             </div>
@@ -53,11 +54,6 @@
     [Parameter] public List<ArticleEntity> Articles { get; set; } = [];
     [Parameter] public int PageSize { get; set; }
     [Parameter] public int Page { get; set; }
-
-    private string ReadDuration(int seconds)
-    {
-        return seconds > 60 ? $"{seconds / 60} min read" : $"{seconds} sec read";
-    }
     
     private Dictionary<string, object> GetAttribute(int index)
     {

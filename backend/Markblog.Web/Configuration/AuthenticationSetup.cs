@@ -19,9 +19,10 @@ public static class AuthenticationSetup
             {
                 opts.DefaultAuthenticateScheme = IdentityConstants.BearerScheme;
                 opts.DefaultSignInScheme = IdentityConstants.BearerScheme;
+                opts.DefaultChallengeScheme = IdentityConstants.BearerScheme;
             })
             .AddBearerToken(IdentityConstants.BearerScheme)
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);;
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
         services.AddIdentityCore<User>(opts =>
             {
                 opts.Password.RequireDigit = false;

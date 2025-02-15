@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { NavLink, useNavigate, useParams } from "react-router";
 import ImageUploader from "../components/ImageUploader";
 import { useBlogStore } from "../state/Store";
+import { uploadImage } from "../api/api";
 
 
 function Tag({ label, index, onRemove }: { label: string, index: number, onRemove: (index: string) => void }) {
@@ -80,6 +81,27 @@ export function ArticleEdit() {
         }
     }, [selectedArticle])
 
+
+    const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+
+        if (e.clipboardData.files.length) {
+            const fileObject = e.clipboardData.files[0];
+            if (fileObject) {
+                const response = await uploadImage(fileObject);
+                if (response && selectedArticle) {
+                    const imageInfo = `![](${response})`
+                    updateLocal({
+                        ...selectedArticle,
+                        articleText: selectedArticle?.articleText + `\n${imageInfo}\n`
+                    })
+                }
+            }
+        } else {
+            alert('No image data was found in your clipboard. Copy an image first or take a screenshot.');
+        }
+    };
+
+
     return (
         <div className="max-w-4xl mx-auto px-4 py-8">
             <header className="border-b border-neutral-200 pb-6 mb-8">
@@ -125,16 +147,6 @@ export function ArticleEdit() {
                 <div>
                     <ImageUploader />
                 </div>
-
-                <div>
-                    Tags
-                    {/* <div className="flex flex-wrap gap-2">
-                        {tags.map((t, i) => {
-                            return <Tag key={t} label={t} index={i} onRemove={removeItem} />
-                        })}
-                    </div> */}
-                </div>
-
                 <div>
                     <label htmlFor="articleText" className="block text-neutral-700 mb-2">Content (Markdown)</label>
                     <textarea
@@ -142,6 +154,7 @@ export function ArticleEdit() {
                         className="w-full px-3 py-2 border border-neutral-300 rounded-md min-h-[400px] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-neutral-500"
                         placeholder="Write your article in Markdown..."
                         value={selectedArticle?.articleText ?? ''}
+                        onPaste={(e) => handlePaste(e)}
                         onChange={(e) => handleTextChanged(e.target.value)}
                     >
                     </textarea>
