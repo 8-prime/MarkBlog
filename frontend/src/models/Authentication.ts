@@ -3,7 +3,6 @@ export type LoginRequest = {
     password: string
 }
 
-
 export type PasswordChangeRequest = {
     user: string,
     resetCode: string,
@@ -20,6 +19,12 @@ export type LoginInfo = {
     accessToken: string,
     expiresIn: number,
     refreshToken: string
+}
+
+export enum LoginState {
+    LOGGED_IN = 'logged_in',
+    LOGGED_OUT = 'logged_out',
+    LOADING = 'loading'
 }
 
 const isLoginInfo = (data: any) => {

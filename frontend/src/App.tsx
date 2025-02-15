@@ -5,6 +5,8 @@ import { ArticleOverview } from "./pages/ArticleOverview"
 import { Analytics } from "./pages/Analytics"
 import ChangePassword from "./pages/ChangePassword"
 import Login from "./pages/Login"
+import Test from "./pages/Test"
+import ProtectedRoute from "./components/ProtectedRoute"
 
 function App() {
 
@@ -15,10 +17,11 @@ function App() {
         <Route path="edit/:id" element={<ArticleEdit />} />
         <Route path="login" element={<Login />} />
         <Route path="change-password" element={<ChangePassword />} />
-        <Route path="/" element={<Management />}>
+        <Route path="/" element={<ProtectedRoute> <Management /> </ProtectedRoute>}>
           <Route index element={<ArticleOverview />} />
           <Route path="analytics" element={<Analytics />} />
         </Route>
+        <Route path="test" element={<Test />} />
       </Routes>
     </BrowserRouter>
   )

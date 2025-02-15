@@ -5,6 +5,14 @@ const requestHeaders = {
     "Content-Type": "application/json; charset=utf-8",
 }
 
+const checkLoginState = async (): Promise<boolean> => {
+    const response = await fetch('/api/check', {
+        method: 'GET',
+        headers: requestHeaders,
+    });
+    return response.ok;
+}
+
 const login = async (login: LoginRequest): Promise<LoginInfo | PasswordResetInformation | undefined> => {
     const response = await fetch('/api/login', {
         method: 'POST',
@@ -114,4 +122,4 @@ const createArticle = async (article: ArticleModel): Promise<ArticleModel | unde
     return await response.json() as ArticleModel;
 }
 
-export { createArticle, updateArticle, deleteArticle, adminArticle, articleShells, uploadImage, refresh, changePassword, login }
+export { createArticle, updateArticle, deleteArticle, adminArticle, articleShells, uploadImage, refresh, changePassword, login, checkLoginState }
