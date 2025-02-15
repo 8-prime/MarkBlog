@@ -13,7 +13,7 @@ public static class ArticleAdminEndpoints
 {
     public static WebApplication MapArticleAdminEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("api/articles-admin");
+        var group = app.MapGroup("api/articles-admin").RequireAuthorization();
         group.MapPost("/", CreateArticle);
         group.MapPut("/{id:guid}", UpdateArticle);
         group.MapDelete("/{id:guid}", DeleteArticle);

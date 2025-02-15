@@ -12,7 +12,7 @@ public static class ImageEndpoints
 
     public static WebApplication MapImageEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup(groupPrefix);
+        var group = app.MapGroup(groupPrefix).RequireAuthorization();
         group.MapPost("/", CreateImage).DisableAntiforgery();;
         group.MapGet("/{id:guid}", GetImage);
         return app;

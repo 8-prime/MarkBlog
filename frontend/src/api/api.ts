@@ -1,5 +1,6 @@
 import { ArticleModel, ArticleShell } from "../models/Articles"
 import { isLoginInfo, LoginInfo, LoginRequest, PasswordChangeRequest, PasswordResetInformation } from "../models/Authentication"
+import { useAuthStore } from "../state/AuthStore";
 
 const requestHeaders = {
     "Content-Type": "application/json; charset=utf-8",
@@ -58,12 +59,15 @@ const refresh = async (refreshToken: string): Promise<LoginInfo | undefined> => 
 }
 
 const uploadImage = async (image: File): Promise<string | undefined> => {
+    const loginData = useAuthStore.getState().loginInfo;
+    const headers = { 'Authorization': `Bearer ${loginData?.accessToken}` }; // auth header with bearer token
     const data = new FormData()
     data.append('file', image)
 
     const response = await fetch('/api/images', {
         method: 'POST',
-        body: data
+        body: data,
+        headers
     })
     if (!response.ok) {
         return undefined;
@@ -73,8 +77,11 @@ const uploadImage = async (image: File): Promise<string | undefined> => {
 }
 
 const articleShells = async (): Promise<ArticleShell[]> => {
+    const loginData = useAuthStore.getState().loginInfo;
+    const headers = { 'Authorization': `Bearer ${loginData?.accessToken}` }; // auth header with bearer token
     const response = await fetch('/api/articles-admin/shells', {
-        method: 'GET'
+        method: 'GET',
+        headers
     })
     if (!response.ok) {
         return []
@@ -83,8 +90,11 @@ const articleShells = async (): Promise<ArticleShell[]> => {
 }
 
 const adminArticle = async (id: string): Promise<ArticleModel | undefined> => {
+    const loginData = useAuthStore.getState().loginInfo;
+    const headers = { 'Authorization': `Bearer ${loginData?.accessToken}` }; // auth header with bearer token
     const response = await fetch(`/api/articles-admin/${id}`, {
-        method: 'GET'
+        method: 'GET',
+        headers
     })
     if (!response.ok) {
         return undefined;
@@ -93,15 +103,20 @@ const adminArticle = async (id: string): Promise<ArticleModel | undefined> => {
 }
 
 const deleteArticle = (id: string) => {
+    const loginData = useAuthStore.getState().loginInfo;
+    const headers = { 'Authorization': `Bearer ${loginData?.accessToken}` }; // auth header with bearer token
     return fetch(`/api/articles-admin/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers
     })
 }
 
 const updateArticle = async (article: ArticleModel): Promise<ArticleModel | undefined> => {
+    const loginData = useAuthStore.getState().loginInfo;
+    const headers = { 'Authorization': `Bearer ${loginData?.accessToken}` }; // auth header with bearer token
     const response = await fetch(`/api/articles-admin/${article.id}`, {
         method: 'PUT',
-        headers: requestHeaders,
+        headers: { ...headers, ...requestHeaders },
         body: JSON.stringify(article)
     })
     if (!response.ok) {
@@ -111,9 +126,11 @@ const updateArticle = async (article: ArticleModel): Promise<ArticleModel | unde
 }
 
 const createArticle = async (article: ArticleModel): Promise<ArticleModel | undefined> => {
+    const loginData = useAuthStore.getState().loginInfo;
+    const headers = { 'Authorization': `Bearer ${loginData?.accessToken}` }; // auth header with bearer token
     const response = await fetch(`/api/articles-admin/`, {
         method: 'POST',
-        headers: requestHeaders,
+        headers: { ...requestHeaders, ...headers },
         body: JSON.stringify(article)
     })
     if (!response.ok) {

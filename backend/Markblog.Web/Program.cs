@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.SetupDatabase();
 
 builder.Services
+    .AddApplicationSettings()
     .AddApiDocumentation()
     .AddMediatRSetup()
     .AddHealthChecksSetup()
