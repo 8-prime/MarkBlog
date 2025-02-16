@@ -5,7 +5,6 @@ import { ArticleOverview } from "./pages/ArticleOverview"
 import { Analytics } from "./pages/Analytics"
 import ChangePassword from "./pages/ChangePassword"
 import Login from "./pages/Login"
-import Test from "./pages/Test"
 import ProtectedRoute from "./components/ProtectedRoute"
 import { UserSettings } from "./pages/UserSettings"
 
@@ -23,7 +22,6 @@ function App() {
           <Route path="user-settings" element={<UserSettings />} />
           <Route path="analytics" element={<Analytics />} />
         </Route>
-        <Route path="test" element={<Test />} />
       </Routes>
     </BrowserRouter>
   )

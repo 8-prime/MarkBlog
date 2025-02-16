@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using Domain.Entities;
+using Markblog.Domain.Entities;
 using Markblog.Web.Models;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Http.HttpResults;

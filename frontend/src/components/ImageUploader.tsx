@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { BasicButton } from './BasicButton';
 import { uploadImage } from '../api/api';
 

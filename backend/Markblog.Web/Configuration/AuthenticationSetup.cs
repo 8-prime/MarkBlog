@@ -1,10 +1,9 @@
-﻿using Domain.Entities;
+﻿using Markblog.Domain.Entities;
 using Markblog.Infrastructure.Contexts;
 using Markblog.Infrastructure.Services;
 using Markblog.Web.Endpoints;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Query.Expressions.Internal;
 
 namespace Markblog.Web.Configuration;
 

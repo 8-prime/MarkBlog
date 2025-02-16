@@ -7,15 +7,6 @@ import { uploadImage } from "../api/api";
 import { BasicButton } from "../components/BasicButton";
 
 
-function Tag({ label, index, onRemove }: { label: string, index: number, onRemove: (index: string) => void }) {
-    return (
-        <span className="px-3 py-1 bg-neutral-200 text-neutral-700 rounded-full text-sm flex items-center">
-            {label}
-            <button onClick={() => onRemove(label)} className="ml-2 text-neutral-300 hover:text-neutral-200 rounded-full bg-neutral-600 w-5 h-5">×</button>
-        </span>
-    );
-}
-
 export function ArticleEdit() {
     const { id } = useParams();
     const navigate = useNavigate();

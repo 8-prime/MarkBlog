@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\Markblog.Domain\Markblog.Domain.csproj" />
     <ProjectReference Include="..\Markblog.Application\Markblog.Application.csproj" />
   </ItemGroup>
 

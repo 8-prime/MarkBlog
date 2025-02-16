@@ -1,13 +1,11 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Net;
+﻿using System.Net;
 using BlazorTemplater;
-using Domain.Entities;
 using Markblog.Application.Interfaces;
 using Markblog.Web.Pages.Components;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Markblog.Application.Mappings;
+using Markblog.Domain.Entities;
 using Markblog.Web.Pages.Home;
 
 namespace Markblog.Web.Endpoints;

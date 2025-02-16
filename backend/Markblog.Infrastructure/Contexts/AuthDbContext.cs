@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Markblog.Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

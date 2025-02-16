@@ -1,5 +1,5 @@
-﻿using Domain.Entities;
-using Markblog.Application.Models;
+﻿using Markblog.Application.Models;
+using Markblog.Domain.Entities;
 
 namespace Markblog.Application.Mappings;
 

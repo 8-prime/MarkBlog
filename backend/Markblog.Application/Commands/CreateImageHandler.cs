@@ -1,7 +1,7 @@
-﻿using Domain.Entities;
-using ImageMagick;
+﻿using ImageMagick;
 using Markblog.Application.Interfaces;
 using Markblog.Application.Settings;
+using Markblog.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Options;
 

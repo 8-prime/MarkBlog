@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities;
+﻿namespace Markblog.Domain.Entities;
 
 public class ImageEntity
 {

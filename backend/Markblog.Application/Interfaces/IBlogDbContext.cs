@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Markblog.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Markblog.Application.Interfaces;

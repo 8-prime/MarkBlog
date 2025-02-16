@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Markblog.Infrastructure", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Markblog.Application", "Markblog.Application\Markblog.Application.csproj", "{4FB27010-8BCD-44DD-87D4-B40A4DD67483}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{3448EAA9-55BC-4373-8765-219CB8BD98CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Markblog.Domain", "Markblog.Domain\Markblog.Domain.csproj", "{3448EAA9-55BC-4373-8765-219CB8BD98CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

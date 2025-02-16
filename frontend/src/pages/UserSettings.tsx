@@ -43,9 +43,9 @@ export const UserSettings = () => {
                 </BasicButton>
             </div>
             <label htmlFor="name">Name:</label>
-            <input onChange={(e) => changeUserName(e.target.value)} type="text" id="name" className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-neutral-500" />
+            <input value={userSettings?.name} onChange={(e) => changeUserName(e.target.value)} type="text" id="name" className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-neutral-500" />
             <label htmlFor="name">Description:</label>
-            <input onChange={(e) => changeDescription(e.target.value)} type="text" id="description" className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-neutral-500" />
+            <input value={userSettings?.description} onChange={(e) => changeDescription(e.target.value)} type="text" id="description" className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-neutral-500" />
             <div>
                 {
                     userSettings?.imageUrl &&

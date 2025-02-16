@@ -23,7 +23,7 @@ namespace Markblog.Infrastructure.Migrations.Blog
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Entities.ArticleEntity", b =>
+            modelBuilder.Entity("Markblog.Domain.Entities.ArticleEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -60,7 +60,7 @@ namespace Markblog.Infrastructure.Migrations.Blog
                     b.ToTable("Articles", "blogs");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ImageEntity", b =>
+            modelBuilder.Entity("Markblog.Domain.Entities.ImageEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -75,7 +75,7 @@ namespace Markblog.Infrastructure.Migrations.Blog
                     b.ToTable("Images", "blogs");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserInfo", b =>
+            modelBuilder.Entity("Markblog.Domain.Entities.UserInfo", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

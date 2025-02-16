@@ -1,6 +1,5 @@
-﻿using BlazorTemplater;
-using Domain.Entities;
-using Markblog.Application.Interfaces;
+﻿using Markblog.Application.Interfaces;
+using Markblog.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Markblog.Infrastructure.Contexts
