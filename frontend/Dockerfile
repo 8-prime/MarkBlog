@@ -1,11 +1,11 @@
-FROM node:18-alpine
+FROM node:alpine
 
 WORKDIR /app
 
 COPY package.json .
 
 RUN npm install
-
+RUN npm i --save-dev @types/node
 RUN npm i -g serve
 
 COPY . .
