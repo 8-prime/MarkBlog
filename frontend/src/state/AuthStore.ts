@@ -3,23 +3,29 @@
 // import { LoginRequest, LoginState } from '../models/Authentication'
 
 import { create } from "zustand";
-import { isLoginInfo, LoginInfo, LoginRequest, LoginState } from "../models/Authentication";
+import { isLoginInfo, LoginInfo, LoginRequest, LoginState, PasswordChangeRequest } from "../models/Authentication";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { checkLoginState, login } from "../api/api";
+import { changePassword, checkLoginState, login } from "../api/api";
 
 type AuthStore = {
     loginInfo: LoginInfo | undefined,
     loginState: LoginState,
+    passwordChangeInfo: PasswordChangeRequest | undefined,
+    setPasswordChangeInfo: (passwordChange: PasswordChangeRequest) => void,
     login: (loginRequest: LoginRequest) => Promise<void>,
     checkLoginState: () => Promise<void>,
-
+    changePassword: (passwordChange: PasswordChangeRequest) => Promise<void>
 }
 
 export const useAuthStore = create<AuthStore>()(
     persist(
-        (set, _) => ({
+        (set, get) => ({
             loginInfo: undefined,
             loginState: LoginState.LOGGED_OUT,
+            passwordChangeInfo: undefined,
+            setPasswordChangeInfo: (passwordChange: PasswordChangeRequest) => {
+                set({ passwordChangeInfo: passwordChange })
+            },
             login: async (loginRequest: LoginRequest) => {
                 console.log("called login");
 
@@ -38,6 +44,11 @@ export const useAuthStore = create<AuthStore>()(
                     set({ loginState: LoginState.LOGGED_IN })
                 }
             },
+            changePassword: async (passwordChange: PasswordChangeRequest) => {
+                const response = await changePassword(passwordChange);
+                if (!response) return;
+                get().login({ password: passwordChange.newPassword, username: passwordChange.user })
+            }
         }),
         {
             name: 'auth-storage', // name of the item in the storage (must be unique)
