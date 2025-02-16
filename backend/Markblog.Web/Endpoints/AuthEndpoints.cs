@@ -1,12 +1,10 @@
-﻿using System.Text;
-using Markblog.Domain.Entities;
+﻿using Markblog.Domain.Entities;
 using Markblog.Web.Models;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using LoginRequest = Markblog.Web.Models.LoginRequest;
 

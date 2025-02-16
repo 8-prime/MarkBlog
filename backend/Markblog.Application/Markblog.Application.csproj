@@ -12,16 +12,12 @@
       <PackageReference Include="MediatR" Version="12.4.1" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.1" />
+      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.1" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Markblog.Domain\Markblog.Domain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Reference Include="Microsoft.Extensions.Hosting.Abstractions">
-        <HintPath>..\..\..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\9.0.1\Microsoft.Extensions.Hosting.Abstractions.dll</HintPath>
-      </Reference>
-    </ItemGroup>
 
 </Project>
