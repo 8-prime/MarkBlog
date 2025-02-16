@@ -1,9 +1,5 @@
-// import { create } from 'zustand'
-// import { persist, createJSONStorage } from 'zustand/middleware'
-// import { LoginRequest, LoginState } from '../models/Authentication'
-
 import { create } from "zustand";
-import { isLoginInfo, LoginInfo, LoginRequest, LoginState, PasswordChangeRequest } from "../models/Authentication";
+import { isLoginInfo, LoginInfo, LoginRequest, LoginState, PasswordChangeRequest, PasswordResetInformation } from "../models/Authentication";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { changePassword, checkLoginState, login } from "../api/api";
 
@@ -27,15 +23,15 @@ export const useAuthStore = create<AuthStore>()(
                 set({ passwordChangeInfo: passwordChange })
             },
             login: async (loginRequest: LoginRequest) => {
-                console.log("called login");
-
                 const response = await login(loginRequest);
                 if (!response) return;
                 if (isLoginInfo(response)) {
                     set({ loginInfo: response as LoginInfo, loginState: LoginState.LOGGED_IN })
-                    window.location.href = '/';
+                    window.location.href = import.meta.env.VITE_BASE_URL;
                 } else {
-                    window.location.href = '/change-password'
+                    const resetResponse = response as PasswordResetInformation
+                    set({ passwordChangeInfo: { newPassword: '', user: resetResponse.user, resetCode: resetResponse.resetToken } })
+                    window.location.href = `${import.meta.env.VITE_BASE_URL}change-password`
                 }
             },
             checkLoginState: async () => {
