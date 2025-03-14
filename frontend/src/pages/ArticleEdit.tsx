@@ -75,7 +75,6 @@ export function ArticleEdit() {
 
 
     const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-
         if (e.clipboardData.files.length) {
             const fileObject = e.clipboardData.files[0];
             if (fileObject) {
@@ -88,8 +87,6 @@ export function ArticleEdit() {
                     })
                 }
             }
-        } else {
-            alert('No image data was found in your clipboard. Copy an image first or take a screenshot.');
         }
     };
 
