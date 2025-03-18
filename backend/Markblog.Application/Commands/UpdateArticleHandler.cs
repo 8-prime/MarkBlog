@@ -1,23 +1,32 @@
-﻿using Markblog.Application.Interfaces;
+﻿using Markblog.Application.Constants;
+using Markblog.Application.Interfaces;
 using Markblog.Application.Mappings;
 using Markblog.Application.Models;
 using Markblog.Application.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Markblog.Application.Commands;
 
 public class UpdateArticleHandler : IRequestHandler<UpdateArticleCommand, ArticleModel?>
 {
     private readonly IBlogDbContext _blogDbContext;
+    private readonly IMemoryCache _memoryCache;
 
-    public UpdateArticleHandler(IBlogDbContext blogDbContext)
+    public UpdateArticleHandler(IBlogDbContext blogDbContext, IMemoryCache memoryCache)
     {
         _blogDbContext = blogDbContext;
+        _memoryCache = memoryCache;
     }
 
     public async Task<ArticleModel?> Handle(UpdateArticleCommand request, CancellationToken cancellationToken)
     {
+        if (request.Article.Id is not { } articleId)
+        {
+            return null;
+        }
+        _memoryCache.Remove(CacheKeys.GetArticleTextCacheKey(articleId));
         var readDuration = ReadDurationService.GetReadDurationSeconds(request.Article.ArticleText);
         if (await _blogDbContext.Articles.Where(a => a.Id == request.Article.Id)
                 .ExecuteUpdateAsync(setters => setters
