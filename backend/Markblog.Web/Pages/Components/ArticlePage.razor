@@ -5,12 +5,16 @@
 
 @if (ArticleText is null)
 {
-    <PageTitle>:/ Nothing here</PageTitle>
+    <script>
+    document.title = ':/ Nothing here';
+    </script>
     <h1 class="font-bold text-4xl">This article does not exist</h1>
 }
 else
 {
-    <PageTitle>@Article?.Title</PageTitle>
+    <script>
+        setTimeout(() => document.title = '@Article?.Title', 1000)
+    </script>
     <div
         class="fixed bg-gray-100 dark:bg-neutral-900 md:bg-transparent md:dard:bg-transparent md:absolute top-0 left-0 p-6 w-screen md:w-auto">
         <a href="/" aria-label="Go back to the homepage">

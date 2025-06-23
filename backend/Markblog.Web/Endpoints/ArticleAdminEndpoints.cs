@@ -1,9 +1,7 @@
-﻿using Markblog.Application.Commands;
-using Markblog.Application.Interfaces;
+﻿using Markblog.Application.Interfaces;
 using Markblog.Application.Mappings;
 using Markblog.Application.Models;
-using Markblog.Application.Queries;
-using MediatR;
+using Markblog.Application.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,9 +24,9 @@ public static class ArticleAdminEndpoints
     }
 
     private static async Task<Results<Ok<UserInfoModel>, InternalServerError>> GetUserInfo(
-        [FromServices] IMediator mediator)
+        [FromServices] UserRepository userRepository, CancellationToken ct)
     {
-        var model = await mediator.Send(new UserInfoQuery());
+        var model = await userRepository.GetUserInfoModel(ct);
         if (model == null)
         {
             return TypedResults.InternalServerError();
@@ -37,17 +35,18 @@ public static class ArticleAdminEndpoints
         return TypedResults.Ok(model);
     }
 
-    private static async Task<Results<Ok, InternalServerError>> UpdateUserInfo([FromServices] IMediator mediator,
-        [FromBody] UserInfoModel userInfoModel)
+    private static async Task<Results<Ok, InternalServerError>> UpdateUserInfo(
+        [FromServices] UserRepository userRepository,
+        [FromBody] UserInfoModel userInfoModel, CancellationToken ct)
     {
-        await mediator.Send(new UpdateUserInfoCommand(userInfoModel));
+        await userRepository.UpdateUserDataAsync(userInfoModel, ct);
         return TypedResults.Ok();
     }
 
     private static async Task<Results<Ok<ArticleModel>, NotFound>> GetArticle(Guid id,
-        [FromServices] IBlogDbContext dbContext)
+        [FromServices] ArticleRepository articleRepository, CancellationToken ct)
     {
-        var model = (await dbContext.Articles.FirstOrDefaultAsync(a => a.Id == id))?.MapToModel();
+        var model = await articleRepository.GetArticleModelAsync(id, ct);
         if (model is null) return TypedResults.NotFound();
         return TypedResults.Ok(model);
     }
@@ -57,29 +56,29 @@ public static class ArticleAdminEndpoints
         return TypedResults.Ok(await dbContext.Articles.Select(a => a.MapToShell()).ToListAsync());
     }
 
-    private static async Task<Ok<ArticleModel>> CreateArticle([FromBody] ArticleModel article,
-        [FromServices] IMediator mediator)
+    private static async Task<Ok<ArticleModel>> CreateArticle([FromBody] ArticleCreationModel article,
+        [FromServices] ArticleRepository articleRepository, CancellationToken ct)
     {
-        var res = await mediator.Send(new CreateArticleCommand(article));
-        return TypedResults.Ok(res);
+        var model = await articleRepository.CreateArticleAsync(article, ct);
+        return TypedResults.Ok(model);
     }
 
     private static async Task<Results<Ok<ArticleModel>, NotFound>> UpdateArticle(Guid id,
         [FromBody] ArticleModel article,
-        [FromServices] IMediator mediator)
+        [FromServices] ArticleRepository articleRepository, CancellationToken ct)
     {
-        var res = await mediator.Send(new UpdateArticleCommand(article));
-        if (res is null)
+        var update = await articleRepository.UpdateArticleAsync(article, ct);
+        if (update is null)
         {
             return TypedResults.NotFound();
         }
 
-        return TypedResults.Ok(res);
+        return TypedResults.Ok(update);
     }
 
-    private static async Task<Results<Ok, NotFound>> DeleteArticle(Guid id, [FromServices] IMediator mediator)
+    private static async Task<Results<Ok, NotFound>> DeleteArticle(Guid id, [FromServices] ArticleRepository articleRepository, CancellationToken ct)
     {
-        if (!await mediator.Send(new DeleteArticleCommand(id)))
+        if (!await articleRepository.DeleteArticleAsync(id, ct))
         {
             return TypedResults.NotFound();
         }

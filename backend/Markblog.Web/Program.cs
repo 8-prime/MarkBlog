@@ -9,11 +9,11 @@ builder.SetupDatabase();
 builder.Services
     .AddApplicationSettings()
     .AddApiDocumentation()
-    .AddMediatRSetup()
     .AddHealthChecksSetup()
     .AddCacheSetup()
     .AddAuthenticationSetup()
     .AddAntiforgery()
+    .AddApplicationServices()
     .AddSettingsSetup(builder.Configuration);
 var app = builder.Build();
 

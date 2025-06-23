@@ -2,7 +2,7 @@
 {
     public class ArticleModel
     {
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; }
         public required string Title { get; set; }
         public required string ArticleText { get; set; }
         public string? Description { get; set; }

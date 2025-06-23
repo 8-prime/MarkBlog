@@ -5,11 +5,9 @@ using Markblog.Application.Interfaces;
 using Markblog.Web.Pages.Components;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Markblog.Application.Mappings;
-using Markblog.Application.Queries;
+using Markblog.Application.Services;
 using Markblog.Domain.Entities;
 using Markblog.Web.Pages.Home;
-using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Markblog.Web.Endpoints;
@@ -28,15 +26,16 @@ public static class BlogEndpoints
     }
 
     private static async Task<IResult> GetArticle(Guid id,
-        [FromServices] IMediator mediator, IMemoryCache memoryCache)
+        [FromServices] IMemoryCache memoryCache,
+        [FromServices] ArticleRepository articleRepository, CancellationToken cancellation)
     {
         var cacheHit = memoryCache.TryGetValue(CacheKeys.GetArticleTextCacheKey(id), out var articleText);
         if (cacheHit && articleText is string articleTextString)
         {
-            return Results.Text(content: articleTextString, "text/plain", statusCode: (int)HttpStatusCode.OK);
+            return Results.Text(content: articleTextString, "text/html", statusCode: (int)HttpStatusCode.OK);
         }
 
-        var article = await mediator.Send(new ArticleModelQuery(id));
+        var article = await articleRepository.GetArticleModelAsync(id, cancellation);
         if (article is null)
         {
             return TypedResults.NotFound();

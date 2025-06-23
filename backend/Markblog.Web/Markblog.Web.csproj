@@ -8,37 +8,37 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Markdig" Version="0.37.0"/>
-        <PackageReference Include="MediatR" Version="12.4.1"/>
+        <PackageReference Include="ColorCode.HTML" Version="2.0.15" />
+        <PackageReference Include="Markdig" Version="0.41.2" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.3"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.3" />
         <PackageReference Include="Scalar.AspNetCore" Version="2.0.12" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Markblog.Infrastructure\Markblog.Infrastructure.csproj"/>
+        <ProjectReference Include="..\Markblog.Infrastructure\Markblog.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <_ContentIncludedByDefault Remove="wwwroot\android-chrome-192x192.png"/>
-        <_ContentIncludedByDefault Remove="wwwroot\android-chrome-512x512.png"/>
-        <_ContentIncludedByDefault Remove="wwwroot\app.css"/>
-        <_ContentIncludedByDefault Remove="wwwroot\app.js"/>
-        <_ContentIncludedByDefault Remove="wwwroot\apple-touch-icon.png"/>
-        <_ContentIncludedByDefault Remove="wwwroot\bootstrap\bootstrap.min.css"/>
-        <_ContentIncludedByDefault Remove="wwwroot\bootstrap\bootstrap.min.css.map"/>
-        <_ContentIncludedByDefault Remove="wwwroot\favicon-16x16.png"/>
-        <_ContentIncludedByDefault Remove="wwwroot\favicon-32x32.png"/>
-        <_ContentIncludedByDefault Remove="wwwroot\favicon.ico"/>
-        <_ContentIncludedByDefault Remove="wwwroot\icons\default.png"/>
-        <_ContentIncludedByDefault Remove="wwwroot\icons\tags.svg"/>
-        <_ContentIncludedByDefault Remove="wwwroot\icons\timer.svg"/>
-        <_ContentIncludedByDefault Remove="wwwroot\me.webp"/>
-        <_ContentIncludedByDefault Remove="wwwroot\site.webmanifest"/>
+        <_ContentIncludedByDefault Remove="wwwroot\android-chrome-192x192.png" />
+        <_ContentIncludedByDefault Remove="wwwroot\android-chrome-512x512.png" />
+        <_ContentIncludedByDefault Remove="wwwroot\app.css" />
+        <_ContentIncludedByDefault Remove="wwwroot\app.js" />
+        <_ContentIncludedByDefault Remove="wwwroot\apple-touch-icon.png" />
+        <_ContentIncludedByDefault Remove="wwwroot\bootstrap\bootstrap.min.css" />
+        <_ContentIncludedByDefault Remove="wwwroot\bootstrap\bootstrap.min.css.map" />
+        <_ContentIncludedByDefault Remove="wwwroot\favicon-16x16.png" />
+        <_ContentIncludedByDefault Remove="wwwroot\favicon-32x32.png" />
+        <_ContentIncludedByDefault Remove="wwwroot\favicon.ico" />
+        <_ContentIncludedByDefault Remove="wwwroot\icons\default.png" />
+        <_ContentIncludedByDefault Remove="wwwroot\icons\tags.svg" />
+        <_ContentIncludedByDefault Remove="wwwroot\icons\timer.svg" />
+        <_ContentIncludedByDefault Remove="wwwroot\me.webp" />
+        <_ContentIncludedByDefault Remove="wwwroot\site.webmanifest" />
     </ItemGroup>
 
     <ItemGroup>
