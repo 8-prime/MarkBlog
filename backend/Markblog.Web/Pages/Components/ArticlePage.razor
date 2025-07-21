@@ -70,10 +70,10 @@ else
 
     private string? ArticleText { get; set; }
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        if (Article is null) return Task.CompletedTask;
-        ArticleText = Markdown.ToHtml(Article.ArticleText);
-        return Task.CompletedTask;
+        if (Article is null) return;
+        ArticleText = await MarkdownRenderService.RenderMarkdown(Article.ArticleText);
+        // ArticleText = Markdown.ToHtml(Article.ArticleText);
     }
 }
