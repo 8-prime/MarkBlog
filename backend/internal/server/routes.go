@@ -1,6 +1,7 @@
 package server
 
 import (
+	"backend/internal/handlers"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -23,17 +24,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 	}))
 
 	r.Get("/", s.HelloWorldHandler)
-	r.Get("/bad", s.badHandler)
-	r.Get("/health", s.healthHandler)
-
-	r.Get("/auth/{provider}", s.getAuth)
-	r.Get("/auth/{provider}/callback", s.getAuthCallbackHandler)
+	r.Route("/api", func(r chi.Router) {
+		r.Get("/user", handlers.GetUserHandler())
+		r.Get("/auth/{provider}", handlers.LoginHandler())
+	})
+	r.Get("/auth/{provider}/callback", handlers.AuthCallbackHandler())
 
 	return r
-}
-
-func (s *Server) badHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("you are not allowed here"))
 }
 
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
@@ -45,10 +42,5 @@ func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatalf("error handling JSON marshal. Err: %v", err)
 	}
 
-	_, _ = w.Write(jsonResp)
-}
-
-func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
-	jsonResp, _ := json.Marshal(s.db.Health())
 	_, _ = w.Write(jsonResp)
 }

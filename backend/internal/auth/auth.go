@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
 	"github.com/markbates/goth"
+	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/google"
 )
 
@@ -33,8 +34,7 @@ func NewAuth() {
 	store.Options.HttpOnly = true
 	store.Options.Secure = IsProd
 
-	// gothic.Store = store
-	// goth.Session
+	gothic.Store = store
 
 	goth.UseProviders(
 		google.New(googleClientId, googleClientSecret, callbackUrl),

@@ -1,14 +1,12 @@
 package handlers
 
 import (
-	"backend/internal/database"
-	"encoding/json"
 	"net/http"
 
 	"github.com/markbates/goth/gothic"
 )
 
-func GetUserHandler(db database.Service) http.HandlerFunc {
+func GetUserHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Retrieve user ID from session
 		userID, err := gothic.GetFromSession("user_id", r)
@@ -16,20 +14,7 @@ func GetUserHandler(db database.Service) http.HandlerFunc {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
-
-		// Fetch user details from the database
-		ctx := r.Context()
-		user, err := db.GetUserByID(ctx, userID)
-		if err != nil {
-			http.Error(w, "Error fetching user", http.StatusInternalServerError)
-			return
-		}
-		if user == nil {
-			http.Error(w, "User not found", http.StatusNotFound)
-			return
-		}
-
-		// Respond with user data
-		json.NewEncoder(w).Encode(user)
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(userID))
 	}
 }

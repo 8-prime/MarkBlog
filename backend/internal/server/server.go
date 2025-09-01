@@ -1,6 +1,7 @@
 package server
 
 import (
+	"backend/internal/handlers"
 	"fmt"
 	"net/http"
 	"os"
@@ -8,22 +9,18 @@ import (
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
-
-	"backend/internal/database"
 )
 
 type Server struct {
-	port int
-
-	db database.Service
+	port            int
+	handlerSettings *handlers.HandlerSettings
 }
 
 func NewServer() *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	NewServer := &Server{
-		port: port,
-
-		db: database.New(),
+		port:            port,
+		handlerSettings: handlers.NewHandlerSettings(),
 	}
 
 	// Declare Server config
