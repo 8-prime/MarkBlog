@@ -26,9 +26,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/", s.HelloWorldHandler)
 	r.Route("/api", func(r chi.Router) {
 		r.Get("/user", handlers.GetUserHandler())
-		r.Get("/auth/{provider}", handlers.LoginHandler())
+		r.Get("/auth/{provider}", handlers.LoginHandler(s.handlerSettings))
 	})
-	r.Get("/auth/{provider}/callback", handlers.AuthCallbackHandler())
+	r.Get("/auth/{provider}/callback", handlers.AuthCallbackHandler(s.handlerSettings))
 
 	return r
 }
