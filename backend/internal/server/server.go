@@ -1,6 +1,7 @@
 package server
 
 import (
+	"backend/internal/database"
 	"backend/internal/handlers"
 	"fmt"
 	"net/http"
@@ -14,6 +15,7 @@ import (
 type Server struct {
 	port            int
 	handlerSettings *handlers.HandlerSettings
+	dbSettings      *database.DatabaseSettings
 }
 
 func NewServer() *http.Server {
@@ -21,6 +23,7 @@ func NewServer() *http.Server {
 	NewServer := &Server{
 		port:            port,
 		handlerSettings: handlers.NewHandlerSettings(),
+		dbSettings:      database.NewDatabaseSettings(),
 	}
 
 	// Declare Server config

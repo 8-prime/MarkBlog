@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -29,7 +30,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 		r.Get("/user", handlers.GetUserHandler())
 		r.Get("/auth/{provider}", handlers.LoginHandler(s.handlerSettings))
 		r.Route("/articles", func(r chi.Router) {
-			r.Use(authMiddleware.AuthMiddleware)
+			if os.Getenv("AUTH_ENABLED") == "true" {
+				r.Use(authMiddleware.AuthMiddleware)
+			}
 			r.Get("/", handlers.GetArticlesHandler())
 			r.Get("/{id}", handlers.GetArticleHandler())
 			r.Post("/", handlers.CreateArticleHandler())
