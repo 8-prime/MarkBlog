@@ -2,6 +2,7 @@ package server
 
 import (
 	"backend/internal/handlers"
+	authMiddleware "backend/internal/middleware"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -27,6 +28,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Route("/api", func(r chi.Router) {
 		r.Get("/user", handlers.GetUserHandler())
 		r.Get("/auth/{provider}", handlers.LoginHandler(s.handlerSettings))
+		r.Route("/articles", func(r chi.Router) {
+			r.Use(authMiddleware.AuthMiddleware)
+			r.Get("/", handlers.GetArticlesHandler())
+			r.Get("/{id}", handlers.GetArticleHandler())
+			r.Post("/", handlers.CreateArticleHandler())
+			r.Put("/{id}", handlers.UpdateArticleHandler())
+		})
 	})
 	r.Get("/auth/{provider}/callback", handlers.AuthCallbackHandler(s.handlerSettings))
 
