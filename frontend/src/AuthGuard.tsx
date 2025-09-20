@@ -1,12 +1,14 @@
-import { Navigate } from "react-router";
-import isLoggedIn from "./hooks/auth";
+import Login from "./pages/Login";
 
-export default function AuthGuard({ children }: { children: React.ReactNode }) {
-    const loggedIn = isLoggedIn();
+type AuthGuardProps = {
+    loggedIn: boolean,
+    children: React.ReactNode
+}
+
+export default function AuthGuard({ loggedIn, children }: AuthGuardProps) {
 
     if (!loggedIn) {
-        Navigate({ to: "/login" })
-        return <></>
+        return <Login />
     }
     return <>{children}</>
 }

@@ -2,7 +2,7 @@ import Editor from "./Editor";
 
 export default function Main() {
     return (
-        <div>
+        <div className="w-screen h-screen flex flex-col items-center justify-center">
             <Editor />
         </div>
     );

@@ -11,6 +11,7 @@ import (
 type HandlerSettings struct {
 	AdminEmail         string
 	ClientUrl          string
+	HostingUrl         string
 	SessionSecret      string
 	GoogleClientId     string
 	GoogleClientSecret string
@@ -30,13 +31,17 @@ func NewHandlerSettings() *HandlerSettings {
 	if err != nil {
 		panic(err)
 	}
+
+	hostingUrl := os.Getenv("HOSTING_URL")
+
 	return &HandlerSettings{
 		AdminEmail:         os.Getenv("ADMIN_EMAIL"),
 		ClientUrl:          os.Getenv("CLIENT_URL"),
+		HostingUrl:         hostingUrl,
 		SessionSecret:      os.Getenv("SESSION_KEY"),
 		GoogleClientId:     os.Getenv("GOOGLE_CLIENT_ID"),
 		GoogleClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
-		CallbackUrl:        os.Getenv("CALLBACK_URL"),
+		CallbackUrl:        hostingUrl + "/auth/google/callback",
 		AuthEnabled:        authEnabledBool,
 		ImagesDir:          os.Getenv("IMAGES_DIR"),
 	}

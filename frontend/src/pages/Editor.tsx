@@ -23,7 +23,7 @@ export default function Editor() {
                         method: 'POST',
                         body: formData,
                     });
-                    const { path } = await response.json();
+                    const path = response.headers.get('Location');
 
                     // Insert markdown image syntax at cursor position
                     const imageMarkdown = `\n![Image](${path})\n`;
@@ -38,15 +38,13 @@ export default function Editor() {
 
 
     return (
-        <div>
-            <div className="container">
-                <MDEditor
-                    value={articleText}
-                    onChange={setArticleText}
-                    onPaste={(e) => handlePaste(e)}
-                />
-                <MDEditor.Markdown source={articleText} style={{ whiteSpace: 'pre-wrap' }} />
-            </div>
+        <div className="w-full h-full">
+            <MDEditor
+                height="100%"
+                value={articleText}
+                onChange={setArticleText}
+                onPaste={(e) => handlePaste(e)}
+            />
         </div>
     );
 }

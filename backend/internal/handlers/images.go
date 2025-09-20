@@ -131,8 +131,10 @@ func ImageUploadHandler(settings *HandlerSettings) http.HandlerFunc {
 		if uploadErr != nil {
 			w.Write([]byte("something wen't wrong!!"))
 		} else {
-			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(id.String()))
+			imgUrl := settings.HostingUrl + "/api/images/" + id.String()
+			w.Header().Set("Location", imgUrl)
+			w.WriteHeader(http.StatusCreated)
+			w.Write([]byte(imgUrl))
 		}
 	}
 }

@@ -2,6 +2,7 @@ package auth
 
 import (
 	"backend/internal/handlers"
+	"net/http"
 
 	"github.com/gorilla/sessions"
 	"github.com/markbates/goth"
@@ -21,6 +22,11 @@ func NewAuth(settings *handlers.HandlerSettings) {
 	store.Options.Path = "/"
 	store.Options.HttpOnly = true
 	store.Options.Secure = IsProd
+	if IsProd {
+		store.Options.SameSite = http.SameSiteStrictMode
+	} else {
+		store.Options.SameSite = http.SameSiteLaxMode
+	}
 
 	gothic.Store = store
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function isLoggedIn() {
+export default function isLoggedIn(): boolean {
     const [loggedIn, setLoggedIn] = useState(false)
     useEffect(() => {
         fetch("/api/user")
