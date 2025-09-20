@@ -1,12 +1,10 @@
 package handlers
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/markbates/goth/gothic"
 )
 
@@ -14,12 +12,10 @@ const userSessionKey = "user_id"
 
 func LoginHandler(settings *HandlerSettings) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		provider := chi.URLParam(r, "provider")
-		r = r.WithContext(context.WithValue(context.Background(), "provider", provider))
-		// try to get the user without re-authenticating
 		if user, err := gothic.CompleteUserAuth(w, r); err == nil {
-			if user.Email != settings.adminEmail {
+			if user.Email != settings.AdminEmail {
 				http.Redirect(w, r, "/bad", http.StatusSeeOther)
+				return
 			}
 
 			err = gothic.StoreInSession(userSessionKey, user.UserID, r, w)
@@ -29,7 +25,7 @@ func LoginHandler(settings *HandlerSettings) http.HandlerFunc {
 				return
 			}
 
-			fmt.Println(w, err)
+			http.Redirect(w, r, settings.ClientUrl, http.StatusSeeOther)
 			return
 		} else {
 			gothic.BeginAuthHandler(w, r)
@@ -39,17 +35,13 @@ func LoginHandler(settings *HandlerSettings) http.HandlerFunc {
 
 func AuthCallbackHandler(settings *HandlerSettings) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		provider := chi.URLParam(r, "provider")
-		fmt.Println(provider)
-		r = r.WithContext(context.WithValue(context.Background(), "provider", provider))
-
 		user, err := gothic.CompleteUserAuth(w, r)
 		if err != nil {
 			fmt.Fprintln(w, err)
 			return
 		}
 		fmt.Println(user)
-		if user.Email != settings.adminEmail {
+		if user.Email != settings.AdminEmail {
 			http.Redirect(w, r, "/bad", http.StatusSeeOther)
 		}
 
@@ -59,6 +51,6 @@ func AuthCallbackHandler(settings *HandlerSettings) http.HandlerFunc {
 			log.Println(err)
 			return
 		}
-		http.Redirect(w, r, settings.clientUrl, http.StatusSeeOther)
+		http.Redirect(w, r, settings.ClientUrl, http.StatusSeeOther)
 	}
 }

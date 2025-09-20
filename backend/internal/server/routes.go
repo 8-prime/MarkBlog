@@ -6,14 +6,13 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 )
 
-func (s *Server) RegisterRoutes() http.Handler {
+func (s *Server) RegisterRoutes(settings *handlers.HandlerSettings) http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
@@ -26,17 +25,25 @@ func (s *Server) RegisterRoutes() http.Handler {
 	}))
 
 	r.Get("/", s.HelloWorldHandler)
+	r.Get("/scalar", handlers.ScalarHandler())
 	r.Route("/api", func(r chi.Router) {
 		r.Get("/user", handlers.GetUserHandler())
 		r.Get("/auth/{provider}", handlers.LoginHandler(s.handlerSettings))
 		r.Route("/articles", func(r chi.Router) {
-			if os.Getenv("AUTH_ENABLED") == "true" {
+			if settings.AuthEnabled {
 				r.Use(authMiddleware.AuthMiddleware)
 			}
 			r.Get("/", handlers.GetArticlesHandler())
 			r.Get("/{id}", handlers.GetArticleHandler())
 			r.Post("/", handlers.CreateArticleHandler())
 			r.Put("/{id}", handlers.UpdateArticleHandler())
+		})
+		r.Route("/images", func(r chi.Router) {
+			if settings.AuthEnabled {
+				r.Use(authMiddleware.AuthMiddleware)
+			}
+			r.Post("/", handlers.ImageUploadHandler(s.handlerSettings))
+			r.Get("/{imageId}", handlers.ImageDownloadHandler(s.handlerSettings))
 		})
 	})
 	r.Get("/auth/{provider}/callback", handlers.AuthCallbackHandler(s.handlerSettings))

@@ -1,7 +1,9 @@
+import Editor from "./Editor";
+
 export default function Main() {
     return (
         <div>
-            <h1>Main</h1>
+            <Editor />
         </div>
     );
 }

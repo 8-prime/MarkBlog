@@ -18,18 +18,18 @@ type Server struct {
 	dbSettings      *database.DatabaseSettings
 }
 
-func NewServer() *http.Server {
+func NewServer(settings *handlers.HandlerSettings) *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	NewServer := &Server{
 		port:            port,
-		handlerSettings: handlers.NewHandlerSettings(),
+		handlerSettings: settings,
 		dbSettings:      database.NewDatabaseSettings(),
 	}
 
 	// Declare Server config
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", NewServer.port),
-		Handler:      NewServer.RegisterRoutes(),
+		Handler:      NewServer.RegisterRoutes(NewServer.handlerSettings),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,

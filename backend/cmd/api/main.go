@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"backend/internal/auth"
+	"backend/internal/handlers"
 	"backend/internal/server"
 )
 
@@ -39,9 +40,9 @@ func gracefulShutdown(apiServer *http.Server, done chan bool) {
 }
 
 func main() {
-
-	auth.NewAuth()
-	server := server.NewServer()
+	settings := handlers.NewHandlerSettings()
+	auth.NewAuth(settings)
+	server := server.NewServer(settings)
 
 	// Create a done channel to signal when the shutdown is complete
 	done := make(chan bool, 1)
@@ -53,7 +54,6 @@ func main() {
 	if err != nil && err != http.ErrServerClosed {
 		panic(fmt.Sprintf("http server error: %s", err))
 	}
-
 	// Wait for the graceful shutdown to complete
 	<-done
 	log.Println("Graceful shutdown complete.")
