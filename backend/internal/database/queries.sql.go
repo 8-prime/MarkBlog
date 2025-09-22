@@ -43,7 +43,7 @@ const createArticle = `-- name: CreateArticle :one
 INSERT INTO
     articles (title, filename, description, body)
 VALUES
-    (?, ?, ?, ?) RETURNING id, title, filename, description, body, created_at, updated_at, scheduled_at, published_at, deleted_at
+    (?, ?, ?, ?) RETURNING ID
 `
 
 type CreateArticleParams struct {
@@ -54,27 +54,16 @@ type CreateArticleParams struct {
 }
 
 // Article CRUD Operations
-func (q *Queries) CreateArticle(ctx context.Context, arg CreateArticleParams) (Article, error) {
+func (q *Queries) CreateArticle(ctx context.Context, arg CreateArticleParams) (int64, error) {
 	row := q.db.QueryRowContext(ctx, createArticle,
 		arg.Title,
 		arg.Filename,
 		arg.Description,
 		arg.Body,
 	)
-	var i Article
-	err := row.Scan(
-		&i.ID,
-		&i.Title,
-		&i.Filename,
-		&i.Description,
-		&i.Body,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.ScheduledAt,
-		&i.PublishedAt,
-		&i.DeletedAt,
-	)
-	return i, err
+	var id int64
+	err := row.Scan(&id)
+	return id, err
 }
 
 const createArticleTag = `-- name: CreateArticleTag :exec
@@ -167,7 +156,14 @@ SELECT
     published_at
 FROM
     articles
+LIMIT
+    ? OFFSET ?
 `
+
+type GetArticleInfosParams struct {
+	Limit  int64
+	Offset int64
+}
 
 type GetArticleInfosRow struct {
 	ID          int64
@@ -180,8 +176,8 @@ type GetArticleInfosRow struct {
 	PublishedAt sql.NullTime
 }
 
-func (q *Queries) GetArticleInfos(ctx context.Context) ([]GetArticleInfosRow, error) {
-	rows, err := q.db.QueryContext(ctx, getArticleInfos)
+func (q *Queries) GetArticleInfos(ctx context.Context, arg GetArticleInfosParams) ([]GetArticleInfosRow, error) {
+	rows, err := q.db.QueryContext(ctx, getArticleInfos, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -210,6 +206,52 @@ func (q *Queries) GetArticleInfos(ctx context.Context) ([]GetArticleInfosRow, er
 		return nil, err
 	}
 	return items, nil
+}
+
+const getArticleTags = `-- name: GetArticleTags :many
+SELECT
+    tag_name
+FROM
+    article_tags
+WHERE
+    article_id = ?
+`
+
+func (q *Queries) GetArticleTags(ctx context.Context, articleID int64) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, getArticleTags, articleID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var tag_name string
+		if err := rows.Scan(&tag_name); err != nil {
+			return nil, err
+		}
+		items = append(items, tag_name)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const setArticleDeleted = `-- name: SetArticleDeleted :exec
+UPDATE
+    articles
+SET
+    deleted_at = CURRENT_TIMESTAMP
+WHERE
+    id = ?
+`
+
+func (q *Queries) SetArticleDeleted(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, setArticleDeleted, id)
+	return err
 }
 
 const updateArticle = `-- name: UpdateArticle :exec

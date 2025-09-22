@@ -33,10 +33,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 			if s.config.AuthEnabled {
 				r.Use(authMiddleware.AuthMiddleware)
 			}
-			r.Get("/", handlers.GetArticlesHandler())
-			r.Get("/{id}", handlers.GetArticleHandler())
+			r.Get("/", handlers.GetArticlesHandler(s.articleService))
+			r.Get("/{id}", handlers.GetArticleHandler(s.articleService))
 			r.Post("/", handlers.CreateArticleHandler(s.articleService))
-			r.Put("/{id}", handlers.UpdateArticleHandler())
+			r.Put("/{id}", handlers.UpdateArticleHandler(s.articleService))
+			r.Delete("/{id}", handlers.DeleteArticleHandler(s.articleService))
 		})
 		r.Route("/images", func(r chi.Router) {
 			if s.config.AuthEnabled {

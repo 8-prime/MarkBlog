@@ -38,7 +38,7 @@ func NewServer(config *models.Configuration) (*http.Server, error) {
 		queries:        queries,
 		port:           config.Port,
 		config:         config,
-		articleService: services.NewArticleService(queries),
+		articleService: services.NewArticleService(queries, db),
 	}
 
 	server := &http.Server{

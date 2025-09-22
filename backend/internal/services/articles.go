@@ -4,9 +4,11 @@ import (
 	"backend/internal/database"
 	"backend/internal/models"
 	"context"
+	"database/sql"
 	"fmt"
 	"regexp"
 	"strings"
+	"time"
 	"unicode"
 
 	_ "modernc.org/sqlite"
@@ -14,11 +16,13 @@ import (
 
 type ArticleService struct {
 	Queries *database.Queries
+	Db      *sql.DB
 }
 
-func NewArticleService(queries *database.Queries) *ArticleService {
+func NewArticleService(queries *database.Queries, db *sql.DB) *ArticleService {
 	return &ArticleService{
 		Queries: queries,
+		Db:      db,
 	}
 }
 
@@ -97,13 +101,38 @@ func titleToFilename(title string) (string, error) {
 	return filename, nil
 }
 
-func (a *ArticleService) CreateArticle(article models.CreateArticle, ctx context.Context) (*database.Article, error) {
+func (a *ArticleService) setTagsForArticle(articleId int64, tags []string, qtx *database.Queries, ctx context.Context) error {
+	for _, tag := range tags {
+		err := qtx.CreateTag(ctx, tag)
+		if err != nil {
+			return err
+		}
+
+		err = qtx.CreateArticleTag(ctx, database.CreateArticleTagParams{
+			ArticleID: articleId,
+			TagName:   tag,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (a *ArticleService) CreateArticle(article models.CreateArticle, ctx context.Context) (int64, error) {
+	tx, err := a.Db.BeginTx(ctx, nil)
+	if err != nil {
+		return 0, err
+	}
+	defer tx.Rollback()
+	qtx := a.Queries.WithTx(tx)
+
 	filename, err := titleToFilename(article.Title)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 
-	articleInfo, err := a.Queries.CreateArticle(ctx, database.CreateArticleParams{
+	articleId, err := qtx.CreateArticle(ctx, database.CreateArticleParams{
 		Title:       article.Title,
 		Filename:    filename,
 		Description: article.Description,
@@ -111,22 +140,113 @@ func (a *ArticleService) CreateArticle(article models.CreateArticle, ctx context
 	})
 
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 
-	for _, tag := range article.Tags {
-		err = a.Queries.CreateTag(ctx, tag)
-		if err != nil {
-			return nil, err
-		}
-
-		err = a.Queries.CreateArticleTag(ctx, database.CreateArticleTagParams{
-			ArticleID: articleInfo.ID,
-			TagName:   tag,
-		})
-		if err != nil {
-			return nil, err
-		}
+	err = a.setTagsForArticle(articleId, article.Tags, qtx, ctx)
+	if err != nil {
+		return 0, err
 	}
-	return &articleInfo, nil
+	return articleId, tx.Commit()
+}
+
+func (a *ArticleService) UpdateArticle(article *models.ArticleDto, ctx context.Context) error {
+	tx, err := a.Db.BeginTx(ctx, nil)
+
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	qtx := a.Queries.WithTx(tx)
+
+	newTitle, err := titleToFilename(article.Title)
+	if err != nil {
+		return err
+	}
+
+	publishTime, err := time.Parse(time.RFC3339, *article.PublishedAt)
+	if err != nil {
+		return err
+	}
+
+	scheduleTime, err := time.Parse(time.RFC3339, *article.ScheduledAt)
+	if err != nil {
+		return err
+	}
+
+	err = qtx.UpdateArticle(ctx, database.UpdateArticleParams{
+		Title:       article.Title,
+		Filename:    newTitle,
+		Description: article.Description,
+		Body:        article.Body,
+		ID:          article.ID,
+		ScheduledAt: sql.NullTime{Time: scheduleTime, Valid: true},
+		PublishedAt: sql.NullTime{Time: publishTime, Valid: true},
+	})
+	if err != nil {
+		return err
+	}
+
+	err = qtx.ClearArticleTags(ctx, article.ID)
+	if err != nil {
+		return err
+	}
+	err = a.setTagsForArticle(article.ID, article.Tags, qtx, ctx)
+
+	if err != nil {
+		return err
+	}
+
+	return tx.Commit()
+}
+
+func (a *ArticleService) GetArticleInfos(page int, ctx context.Context) ([]database.GetArticleInfosRow, error) {
+	infos, err := a.Queries.GetArticleInfos(ctx, database.GetArticleInfosParams{
+		Limit:  10,
+		Offset: int64((page - 1) * 10),
+	})
+
+	return infos, err
+}
+
+func (a *ArticleService) GetArticleDto(id int64, ctx context.Context) (models.ArticleDto, error) {
+	article, err := a.Queries.GetArticle(ctx, id)
+	if err != nil {
+		return models.ArticleDto{}, err
+	}
+
+	tags, err := a.Queries.GetArticleTags(ctx, id)
+	if err != nil {
+		return models.ArticleDto{}, err
+	}
+
+	articleDto := models.ArticleDto{
+		ID:          article.ID,
+		Title:       article.Title,
+		Description: article.Description,
+		Body:        article.Body,
+		CreatedAt:   article.CreatedAt.String(),
+		UpdatedAt:   article.UpdatedAt.String(),
+		Tags:        tags,
+	}
+
+	if article.ScheduledAt.Valid {
+		scheduledAt := article.ScheduledAt.Time.String()
+		articleDto.ScheduledAt = &scheduledAt
+	} else {
+		articleDto.ScheduledAt = nil
+	}
+
+	if article.PublishedAt.Valid {
+		publishedAt := article.PublishedAt.Time.String()
+		articleDto.PublishedAt = &publishedAt
+	} else {
+		articleDto.PublishedAt = nil
+	}
+
+	return articleDto, nil
+}
+
+func (a *ArticleService) DeleteArticle(id int64, ctx context.Context) error {
+	return a.Queries.SetArticleDeleted(ctx, id)
 }

@@ -3,7 +3,7 @@
 INSERT INTO
     articles (title, filename, description, body)
 VALUES
-    (?, ?, ?, ?) RETURNING *;
+    (?, ?, ?, ?) RETURNING ID;
 
 -- name: UpdateArticle :exec
 UPDATE
@@ -50,6 +50,14 @@ WHERE
 LIMIT
     1;
 
+-- name: GetArticleTags :many
+SELECT
+    tag_name
+FROM
+    article_tags
+WHERE
+    article_id = ?;
+
 -- name: GetArticleInfos :many
 SELECT
     id,
@@ -61,7 +69,9 @@ SELECT
     scheduled_at,
     published_at
 FROM
-    articles;
+    articles
+LIMIT
+    ? OFFSET ?;
 
 -- name: ClearArticleTags :exec
 DELETE FROM
@@ -78,3 +88,11 @@ FROM
     articles
 WHERE
     filename = ?;
+
+-- name: SetArticleDeleted :exec
+UPDATE
+    articles
+SET
+    deleted_at = CURRENT_TIMESTAMP
+WHERE
+    id = ?;
