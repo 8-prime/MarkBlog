@@ -164,14 +164,26 @@ func (a *ArticleService) UpdateArticle(article *models.ArticleDto, ctx context.C
 		return err
 	}
 
-	publishTime, err := time.Parse(time.RFC3339, *article.PublishedAt)
-	if err != nil {
-		return err
+	var publishTime sql.NullTime
+	if article.PublishedAt == nil {
+		publishTime = sql.NullTime{Valid: false}
+	} else {
+		pubTime, err := time.Parse(time.RFC3339, *article.PublishedAt)
+		if err != nil {
+			return err
+		}
+		publishTime = sql.NullTime{Time: pubTime, Valid: true}
 	}
 
-	scheduleTime, err := time.Parse(time.RFC3339, *article.ScheduledAt)
-	if err != nil {
-		return err
+	var scheduleTime sql.NullTime
+	if article.ScheduledAt == nil {
+		scheduleTime = sql.NullTime{Valid: false}
+	} else {
+		schedTime, err := time.Parse(time.RFC3339, *article.ScheduledAt)
+		if err != nil {
+			return err
+		}
+		scheduleTime = sql.NullTime{Time: schedTime, Valid: true}
 	}
 
 	err = qtx.UpdateArticle(ctx, database.UpdateArticleParams{
@@ -180,8 +192,8 @@ func (a *ArticleService) UpdateArticle(article *models.ArticleDto, ctx context.C
 		Description: article.Description,
 		Body:        article.Body,
 		ID:          article.ID,
-		ScheduledAt: sql.NullTime{Time: scheduleTime, Valid: true},
-		PublishedAt: sql.NullTime{Time: publishTime, Valid: true},
+		ScheduledAt: scheduleTime,
+		PublishedAt: publishTime,
 	})
 	if err != nil {
 		return err
@@ -225,20 +237,20 @@ func (a *ArticleService) GetArticleDto(id int64, ctx context.Context) (models.Ar
 		Title:       article.Title,
 		Description: article.Description,
 		Body:        article.Body,
-		CreatedAt:   article.CreatedAt.String(),
-		UpdatedAt:   article.UpdatedAt.String(),
+		CreatedAt:   article.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:   article.UpdatedAt.Format(time.RFC3339),
 		Tags:        tags,
 	}
 
 	if article.ScheduledAt.Valid {
-		scheduledAt := article.ScheduledAt.Time.String()
+		scheduledAt := article.ScheduledAt.Time.Format(time.RFC3339)
 		articleDto.ScheduledAt = &scheduledAt
 	} else {
 		articleDto.ScheduledAt = nil
 	}
 
 	if article.PublishedAt.Valid {
-		publishedAt := article.PublishedAt.Time.String()
+		publishedAt := article.PublishedAt.Time.Format(time.RFC3339)
 		articleDto.PublishedAt = &publishedAt
 	} else {
 		articleDto.PublishedAt = nil
