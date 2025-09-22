@@ -3,7 +3,7 @@ package database
 import "os"
 
 type DatabaseSettings struct {
-	connection string
+	Connection string
 }
 
 func NewDatabaseSettings() *DatabaseSettings {
@@ -11,10 +11,10 @@ func NewDatabaseSettings() *DatabaseSettings {
 	conn, found := os.LookupEnv("CONNECTION_STRING")
 	if !found {
 		return &DatabaseSettings{
-			connection: ":memory:",
+			Connection: ":memory:",
 		}
 	}
 	return &DatabaseSettings{
-		connection: conn,
+		Connection: conn,
 	}
 }

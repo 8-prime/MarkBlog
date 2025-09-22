@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"backend/internal/handlers"
+	"backend/internal/models"
 	"net/http"
 
 	"github.com/gorilla/sessions"
@@ -15,8 +15,8 @@ const (
 	IsProd = false
 )
 
-func NewAuth(settings *handlers.HandlerSettings) {
-	store := sessions.NewCookieStore([]byte(settings.SessionSecret))
+func NewAuth(config *models.Configuration) {
+	store := sessions.NewCookieStore([]byte(config.SessionSecret))
 	store.MaxAge(MaxAge)
 
 	store.Options.Path = "/"
@@ -31,6 +31,6 @@ func NewAuth(settings *handlers.HandlerSettings) {
 	gothic.Store = store
 
 	goth.UseProviders(
-		google.New(settings.GoogleClientId, settings.GoogleClientSecret, settings.CallbackUrl),
+		google.New(config.GoogleClientId, config.GoogleClientSecret, config.CallbackUrl),
 	)
 }

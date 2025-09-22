@@ -12,6 +12,7 @@ import (
 type Article struct {
 	ID          int64
 	Title       string
+	Filename    string
 	Description string
 	Body        string
 	CreatedAt   time.Time

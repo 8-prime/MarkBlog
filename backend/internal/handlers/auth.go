@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"backend/internal/models"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,10 +11,10 @@ import (
 
 const userSessionKey = "user_id"
 
-func LoginHandler(settings *HandlerSettings) http.HandlerFunc {
+func LoginHandler(config *models.Configuration) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if user, err := gothic.CompleteUserAuth(w, r); err == nil {
-			if user.Email != settings.AdminEmail {
+			if user.Email != config.AdminEmail {
 				http.Redirect(w, r, "/bad", http.StatusSeeOther)
 				return
 			}
@@ -25,7 +26,7 @@ func LoginHandler(settings *HandlerSettings) http.HandlerFunc {
 				return
 			}
 
-			http.Redirect(w, r, settings.ClientUrl, http.StatusSeeOther)
+			http.Redirect(w, r, config.ClientUrl, http.StatusSeeOther)
 			return
 		} else {
 			gothic.BeginAuthHandler(w, r)
@@ -33,7 +34,7 @@ func LoginHandler(settings *HandlerSettings) http.HandlerFunc {
 	}
 }
 
-func AuthCallbackHandler(settings *HandlerSettings) http.HandlerFunc {
+func AuthCallbackHandler(config *models.Configuration) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user, err := gothic.CompleteUserAuth(w, r)
 		if err != nil {
@@ -41,7 +42,7 @@ func AuthCallbackHandler(settings *HandlerSettings) http.HandlerFunc {
 			return
 		}
 		fmt.Println(user)
-		if user.Email != settings.AdminEmail {
+		if user.Email != config.AdminEmail {
 			http.Redirect(w, r, "/bad", http.StatusSeeOther)
 		}
 
@@ -51,6 +52,6 @@ func AuthCallbackHandler(settings *HandlerSettings) http.HandlerFunc {
 			log.Println(err)
 			return
 		}
-		http.Redirect(w, r, settings.ClientUrl, http.StatusSeeOther)
+		http.Redirect(w, r, config.ClientUrl, http.StatusSeeOther)
 	}
 }

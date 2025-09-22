@@ -1,3 +1,5 @@
+-- +goose Up
+-- +goose StatementBegin
 CREATE TABLE articles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -24,3 +26,16 @@ CREATE TABLE article_tags (
     article_id INTEGER NOT NULL REFERENCES articles(id),
     tag_name TEXT NOT NULL REFERENCES tags(name)
 );
+
+-- +goose StatementEnd
+-- +goose Down
+-- +goose StatementBegin
+DROP TABLE article_tags;
+
+DROP TABLE tags;
+
+DROP TABLE article_reads;
+
+DROP TABLE articles;
+
+-- +goose StatementEnd

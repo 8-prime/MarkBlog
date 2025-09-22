@@ -11,35 +11,225 @@ import (
 	"time"
 )
 
+const clearArticleTags = `-- name: ClearArticleTags :exec
+DELETE FROM
+    article_tags
+WHERE
+    article_id = ?
+`
+
+func (q *Queries) ClearArticleTags(ctx context.Context, articleID int64) error {
+	_, err := q.db.ExecContext(ctx, clearArticleTags, articleID)
+	return err
+}
+
 const createArticle = `-- name: CreateArticle :one
 INSERT INTO
-    articles (title, description, body, scheduled_at)
+    articles (title, filename, description, body)
 VALUES
-    (?, ?, ?, ?) RETURNING id,
-    created_at
+    (?, ?, ?, ?) RETURNING id, title, filename, description, body, created_at, updated_at, scheduled_at, published_at, deleted_at
 `
 
 type CreateArticleParams struct {
 	Title       string
+	Filename    string
 	Description string
 	Body        string
-	ScheduledAt sql.NullTime
-}
-
-type CreateArticleRow struct {
-	ID        int64
-	CreatedAt time.Time
 }
 
 // Article CRUD Operations
-func (q *Queries) CreateArticle(ctx context.Context, arg CreateArticleParams) (CreateArticleRow, error) {
+func (q *Queries) CreateArticle(ctx context.Context, arg CreateArticleParams) (Article, error) {
 	row := q.db.QueryRowContext(ctx, createArticle,
 		arg.Title,
+		arg.Filename,
+		arg.Description,
+		arg.Body,
+	)
+	var i Article
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Filename,
+		&i.Description,
+		&i.Body,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.ScheduledAt,
+		&i.PublishedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
+const createArticleTag = `-- name: CreateArticleTag :exec
+INSERT INTO
+    article_tags (article_id, tag_name)
+VALUES
+    (?, ?)
+`
+
+type CreateArticleTagParams struct {
+	ArticleID int64
+	TagName   string
+}
+
+func (q *Queries) CreateArticleTag(ctx context.Context, arg CreateArticleTagParams) error {
+	_, err := q.db.ExecContext(ctx, createArticleTag, arg.ArticleID, arg.TagName)
+	return err
+}
+
+const createTag = `-- name: CreateTag :exec
+INSERT
+    OR IGNORE INTO tags (name)
+VALUES
+    (?)
+`
+
+// Create tag
+func (q *Queries) CreateTag(ctx context.Context, name string) error {
+	_, err := q.db.ExecContext(ctx, createTag, name)
+	return err
+}
+
+const getArticle = `-- name: GetArticle :one
+SELECT
+    id,
+    title,
+    description,
+    body,
+    created_at,
+    updated_at,
+    scheduled_at,
+    published_at,
+    deleted_at
+FROM
+    articles
+WHERE
+    id = ?
+LIMIT
+    1
+`
+
+type GetArticleRow struct {
+	ID          int64
+	Title       string
+	Description string
+	Body        string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	ScheduledAt sql.NullTime
+	PublishedAt sql.NullTime
+	DeletedAt   sql.NullTime
+}
+
+func (q *Queries) GetArticle(ctx context.Context, id int64) (GetArticleRow, error) {
+	row := q.db.QueryRowContext(ctx, getArticle, id)
+	var i GetArticleRow
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Description,
+		&i.Body,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.ScheduledAt,
+		&i.PublishedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
+const getArticleInfos = `-- name: GetArticleInfos :many
+SELECT
+    id,
+    title,
+    filename,
+    description,
+    created_at,
+    updated_at,
+    scheduled_at,
+    published_at
+FROM
+    articles
+`
+
+type GetArticleInfosRow struct {
+	ID          int64
+	Title       string
+	Filename    string
+	Description string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	ScheduledAt sql.NullTime
+	PublishedAt sql.NullTime
+}
+
+func (q *Queries) GetArticleInfos(ctx context.Context) ([]GetArticleInfosRow, error) {
+	rows, err := q.db.QueryContext(ctx, getArticleInfos)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetArticleInfosRow
+	for rows.Next() {
+		var i GetArticleInfosRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Filename,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.ScheduledAt,
+			&i.PublishedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateArticle = `-- name: UpdateArticle :exec
+UPDATE
+    articles
+SET
+    title = ?,
+    filename = ?,
+    description = ?,
+    body = ?,
+    updated_at = CURRENT_TIMESTAMP,
+    scheduled_at = ?,
+    published_at = ?
+WHERE
+    id = ?
+`
+
+type UpdateArticleParams struct {
+	Title       string
+	Filename    string
+	Description string
+	Body        string
+	ScheduledAt sql.NullTime
+	PublishedAt sql.NullTime
+	ID          int64
+}
+
+func (q *Queries) UpdateArticle(ctx context.Context, arg UpdateArticleParams) error {
+	_, err := q.db.ExecContext(ctx, updateArticle,
+		arg.Title,
+		arg.Filename,
 		arg.Description,
 		arg.Body,
 		arg.ScheduledAt,
+		arg.PublishedAt,
+		arg.ID,
 	)
-	var i CreateArticleRow
-	err := row.Scan(&i.ID, &i.CreatedAt)
-	return i, err
+	return err
 }

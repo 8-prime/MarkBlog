@@ -1,14 +1,13 @@
-package handlers
+package models
 
 import (
-	"log"
 	"os"
 	"strconv"
 
 	"github.com/joho/godotenv"
 )
 
-type HandlerSettings struct {
+type Configuration struct {
 	AdminEmail         string
 	ClientUrl          string
 	HostingUrl         string
@@ -18,23 +17,29 @@ type HandlerSettings struct {
 	CallbackUrl        string
 	AuthEnabled        bool
 	ImagesDir          string
+	ConnectionString   string
 }
 
-func NewHandlerSettings() *HandlerSettings {
+func LoadConfiguration() (*Configuration, error) {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		return nil, err
 	}
 
 	authEnabled := os.Getenv("AUTH_ENABLED")
 	authEnabledBool, err := strconv.ParseBool(authEnabled)
 	if err != nil {
-		panic(err)
+		return nil, err
+	}
+
+	conn, found := os.LookupEnv("CONNECTION_STRING")
+	if !found {
+		conn = ":memory:"
 	}
 
 	hostingUrl := os.Getenv("HOSTING_URL")
 
-	return &HandlerSettings{
+	return &Configuration{
 		AdminEmail:         os.Getenv("ADMIN_EMAIL"),
 		ClientUrl:          os.Getenv("CLIENT_URL"),
 		HostingUrl:         hostingUrl,
@@ -44,5 +49,6 @@ func NewHandlerSettings() *HandlerSettings {
 		CallbackUrl:        hostingUrl + "/auth/google/callback",
 		AuthEnabled:        authEnabledBool,
 		ImagesDir:          os.Getenv("IMAGES_DIR"),
-	}
+		ConnectionString:   conn,
+	}, nil
 }

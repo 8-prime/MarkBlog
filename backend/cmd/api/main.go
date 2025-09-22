@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"backend/internal/auth"
-	"backend/internal/handlers"
+	"backend/internal/models"
 	"backend/internal/server"
 )
 
@@ -40,9 +40,20 @@ func gracefulShutdown(apiServer *http.Server, done chan bool) {
 }
 
 func main() {
-	settings := handlers.NewHandlerSettings()
-	auth.NewAuth(settings)
-	server := server.NewServer(settings)
+	log.Println("Starting server...")
+
+	config, err := models.LoadConfiguration()
+	if err != nil {
+		panic(fmt.Sprintf("error loading configuration: %s", err))
+	}
+	log.Println("Configuration loaded.")
+
+	auth.NewAuth(config)
+	log.Println("Authentication configured.")
+	server, err := server.NewServer(config)
+	if err != nil {
+		panic(fmt.Sprintf("error starting server: %s", err))
+	}
 
 	// Create a done channel to signal when the shutdown is complete
 	done := make(chan bool, 1)
@@ -50,7 +61,7 @@ func main() {
 	// Run graceful shutdown in a separate goroutine
 	go gracefulShutdown(server, done)
 
-	err := server.ListenAndServe()
+	err = server.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
 		panic(fmt.Sprintf("http server error: %s", err))
 	}

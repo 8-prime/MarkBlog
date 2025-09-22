@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"backend/internal/models"
 	"fmt"
 	"image"
 	_ "image/jpeg" // Register JPEG decoder
@@ -18,8 +19,8 @@ import (
 	"github.com/google/uuid"
 )
 
-func fileNameForId(settings *HandlerSettings, imageId uuid.UUID) string {
-	return path.Join(filepath.ToSlash(settings.ImagesDir), imageId.String()+".webp")
+func fileNameForId(config *models.Configuration, imageId uuid.UUID) string {
+	return path.Join(filepath.ToSlash(config.ImagesDir), imageId.String()+".webp")
 }
 
 func isValidImageType(contentType string) bool {
@@ -38,9 +39,9 @@ func isValidImageType(contentType string) bool {
 	return false
 }
 
-func convertImage(image image.Image, settings *HandlerSettings) (imageUuid uuid.UUID, err error) {
+func convertImage(image image.Image, config *models.Configuration) (imageUuid uuid.UUID, err error) {
 	fileUuid := uuid.New()
-	fileName := fileNameForId(settings, fileUuid)
+	fileName := fileNameForId(config, fileUuid)
 
 	dir := filepath.Dir(fileName)
 	err = os.MkdirAll(dir, os.ModeDir)
@@ -62,9 +63,9 @@ func convertImage(image image.Image, settings *HandlerSettings) (imageUuid uuid.
 	return fileUuid, nil
 }
 
-func storeWebp(file multipart.File, settings *HandlerSettings) (imageUuid uuid.UUID, err error) {
+func storeWebp(file multipart.File, config *models.Configuration) (imageUuid uuid.UUID, err error) {
 	fileUuid := uuid.New()
-	fileName := fileNameForId(settings, fileUuid)
+	fileName := fileNameForId(config, fileUuid)
 
 	dir := filepath.Dir(fileName)
 	err = os.MkdirAll(dir, os.ModeDir)
@@ -82,7 +83,7 @@ func storeWebp(file multipart.File, settings *HandlerSettings) (imageUuid uuid.U
 	return fileUuid, nil
 }
 
-func ImageUploadHandler(settings *HandlerSettings) http.HandlerFunc {
+func ImageUploadHandler(config *models.Configuration) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 		r.ParseForm()
@@ -102,7 +103,7 @@ func ImageUploadHandler(settings *HandlerSettings) http.HandlerFunc {
 		}
 
 		if contentType == "image/webp" {
-			id, uploadErr := storeWebp(imageFile, settings)
+			id, uploadErr := storeWebp(imageFile, config)
 			if uploadErr != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				w.Write([]byte("Error storing file"))
@@ -127,11 +128,11 @@ func ImageUploadHandler(settings *HandlerSettings) http.HandlerFunc {
 		}
 		fmt.Printf("Image uploaded with type: %s\n", imgType)
 
-		id, uploadErr := convertImage(img, settings)
+		id, uploadErr := convertImage(img, config)
 		if uploadErr != nil {
 			w.Write([]byte("something wen't wrong!!"))
 		} else {
-			imgUrl := settings.HostingUrl + "/api/images/" + id.String()
+			imgUrl := config.HostingUrl + "/api/images/" + id.String()
 			w.Header().Set("Location", imgUrl)
 			w.WriteHeader(http.StatusCreated)
 			w.Write([]byte(imgUrl))
@@ -139,7 +140,7 @@ func ImageUploadHandler(settings *HandlerSettings) http.HandlerFunc {
 	}
 }
 
-func ImageDownloadHandler(settings *HandlerSettings) http.HandlerFunc {
+func ImageDownloadHandler(config *models.Configuration) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		imageId := chi.URLParam(r, "imageId")
 		imageUuid, err := uuid.Parse(imageId)
@@ -149,7 +150,7 @@ func ImageDownloadHandler(settings *HandlerSettings) http.HandlerFunc {
 			return
 		}
 
-		imageFilePath := fileNameForId(settings, imageUuid)
+		imageFilePath := fileNameForId(config, imageUuid)
 		file, err := os.Open(imageFilePath)
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
