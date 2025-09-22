@@ -40,7 +40,7 @@ func gracefulShutdown(apiServer *http.Server, done chan bool) {
 }
 
 func main() {
-	log.Println("Starting server...")
+	log.Println("Starting Markblog backend...")
 
 	config, err := models.LoadConfiguration()
 	if err != nil {
@@ -54,13 +54,14 @@ func main() {
 	if err != nil {
 		panic(fmt.Sprintf("error starting server: %s", err))
 	}
-
+	log.Println("Server configured.")
 	// Create a done channel to signal when the shutdown is complete
 	done := make(chan bool, 1)
 
 	// Run graceful shutdown in a separate goroutine
 	go gracefulShutdown(server, done)
 
+	log.Println("Starting HTTP server on port", config.Port)
 	err = server.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
 		panic(fmt.Sprintf("http server error: %s", err))

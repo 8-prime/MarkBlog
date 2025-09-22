@@ -7,8 +7,6 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
-	"os"
-	"strconv"
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
@@ -23,7 +21,6 @@ type Server struct {
 }
 
 func NewServer(config *models.Configuration) (*http.Server, error) {
-	port, _ := strconv.Atoi(os.Getenv("PORT"))
 
 	db, err := sql.Open("sqlite", config.ConnectionString)
 	if err != nil {
@@ -39,7 +36,7 @@ func NewServer(config *models.Configuration) (*http.Server, error) {
 	serverConfig := &Server{
 		db:             db,
 		queries:        queries,
-		port:           port,
+		port:           config.Port,
 		config:         config,
 		articleService: services.NewArticleService(queries),
 	}

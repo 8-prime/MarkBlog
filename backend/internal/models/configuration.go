@@ -18,6 +18,7 @@ type Configuration struct {
 	AuthEnabled        bool
 	ImagesDir          string
 	ConnectionString   string
+	Port               int
 }
 
 func LoadConfiguration() (*Configuration, error) {
@@ -37,6 +38,11 @@ func LoadConfiguration() (*Configuration, error) {
 		conn = ":memory:"
 	}
 
+	port, err := strconv.Atoi(os.Getenv("PORT"))
+	if err != nil {
+		return nil, err
+	}
+
 	hostingUrl := os.Getenv("HOSTING_URL")
 
 	return &Configuration{
@@ -50,5 +56,6 @@ func LoadConfiguration() (*Configuration, error) {
 		AuthEnabled:        authEnabledBool,
 		ImagesDir:          os.Getenv("IMAGES_DIR"),
 		ConnectionString:   conn,
+		Port:               port,
 	}, nil
 }

@@ -11,6 +11,22 @@ import (
 	"time"
 )
 
+const addArticleRead = `-- name: AddArticleRead :exec
+INSERT INTO
+    article_reads (article_id)
+SELECT
+    id
+FROM
+    articles
+WHERE
+    filename = ?
+`
+
+func (q *Queries) AddArticleRead(ctx context.Context, filename string) error {
+	_, err := q.db.ExecContext(ctx, addArticleRead, filename)
+	return err
+}
+
 const clearArticleTags = `-- name: ClearArticleTags :exec
 DELETE FROM
     article_tags
