@@ -227,6 +227,7 @@ func (a *ArticleService) GetArticleDto(id int64, ctx context.Context) (models.Ar
 	articleDto := models.ArticleDto{
 		ID:          article.ID,
 		Title:       article.Title,
+		Filename:    article.Filename,
 		Description: article.Description,
 		Body:        article.Body,
 		CreatedAt:   article.CreatedAt.Format(time.RFC3339),

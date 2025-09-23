@@ -36,28 +36,17 @@ func NewPublisherService(queries *database.Queries, config *models.Configuration
 		config:         config,
 		articleService: articleService,
 		renderer:       renderer,
-		requests:       make(chan *PublishRequest),
+		requests:       make(chan *PublishRequest, 100),
 		timers:         make(map[int64]*time.Timer),
 	}
 	go service.watchPublishRequests()
 	return service
 }
 
-func (s *PublisherService) publish(article *models.ArticleDto) error {
-	rendered, err := s.renderer.Render(*article)
-	if err != nil {
-		return err
-	}
-
-	articleFileName := path.Join(s.config.ArticlesDir, article.Title+".html")
+func (s *PublisherService) writeArticle(article *models.ArticleDto) error {
+	articleFileName := path.Join(s.config.ArticlesDir, article.Filename+".html")
 
 	file, err := os.Create(articleFileName)
-	if err != nil {
-		return err
-	}
-
-	_, err = file.Write(*rendered)
-
 	if err != nil {
 		return err
 	}
@@ -66,6 +55,12 @@ func (s *PublisherService) publish(article *models.ArticleDto) error {
 	if err != nil {
 		return err
 	}
+
+	err = s.renderer.Render(*article, file)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -84,34 +79,38 @@ func (s *PublisherService) watchPublishRequests() {
 	}
 
 	for {
-		req := <-s.requests
-		article, err := s.articleService.GetArticleDto(req.id, ctx)
+		select {
+		case req := <-s.requests:
+			article, err := s.articleService.GetArticleDto(req.id, ctx)
 
-		timer := s.timers[req.id]
-		if timer != nil {
-			timer.Stop()
-			delete(s.timers, req.id)
-		}
-
-		if err != nil {
-			log.Printf("Error getting article %d: %v", req.id, err)
-			continue
-		}
-		if article.ScheduledAt == nil {
-			continue
-		}
-
-		if article.ScheduledAt.Before(time.Now()) {
-			s.publish(&article)
-		} else {
-			duration := time.Until(*article.ScheduledAt)
-			s.timers[req.id] = time.AfterFunc(duration, func() {
-				err := s.publish(&article)
-				if err != nil {
-					log.Printf("Error publishing article %d: %v", req.id, err)
-				}
+			timer := s.timers[req.id]
+			if timer != nil {
+				timer.Stop()
 				delete(s.timers, req.id)
-			})
+			}
+
+			if err != nil {
+				log.Printf("Error getting article %d: %v", req.id, err)
+				continue
+			}
+			if article.ScheduledAt == nil {
+				log.Printf("Article %d has no scheduled time, skipping", req.id)
+				continue
+			}
+
+			if article.ScheduledAt.Before(time.Now()) {
+				log.Printf("Publishing article %d immediately", req.id)
+				s.writeArticle(&article)
+			} else {
+				duration := time.Until(*article.ScheduledAt)
+				s.timers[req.id] = time.AfterFunc(duration, func() {
+					err := s.writeArticle(&article)
+					if err != nil {
+						log.Printf("Error publishing article %d: %v", req.id, err)
+					}
+					delete(s.timers, req.id)
+				})
+			}
 		}
 	}
 }

@@ -1,8 +1,6 @@
 package views
 
 import (
-	"fmt"
-	"time"
 	"backend/internal/models"
 )
 
@@ -21,9 +19,11 @@ templ Article(article models.ArticleDto, renderedBody string) {
 			<div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
 				<div class="flex items-center gap-1">
 					<span class="font-medium">Published:</span>
-					<time datetime={ article.PublishedAt.Format("2006-01-02T15:04:05Z07:00") }>
-						{ article.PublishedAt.Format("January 2, 2006") }
-					</time>
+					if  article.PublishedAt != nil {
+						<time datetime={ article.PublishedAt.Format("2006-01-02T15:04:05Z07:00") }>
+							{ article.PublishedAt.Format("January 2, 2006") }
+						</time>
+					}
 				</div>
 				
 				if article.CreatedAt != article.UpdatedAt {

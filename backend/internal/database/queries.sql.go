@@ -100,6 +100,7 @@ const getArticle = `-- name: GetArticle :one
 SELECT
     id,
     title,
+    filename,
     description,
     body,
     created_at,
@@ -115,24 +116,13 @@ LIMIT
     1
 `
 
-type GetArticleRow struct {
-	ID          int64
-	Title       string
-	Description string
-	Body        string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	ScheduledAt sql.NullTime
-	PublishedAt sql.NullTime
-	DeletedAt   sql.NullTime
-}
-
-func (q *Queries) GetArticle(ctx context.Context, id int64) (GetArticleRow, error) {
+func (q *Queries) GetArticle(ctx context.Context, id int64) (Article, error) {
 	row := q.db.QueryRowContext(ctx, getArticle, id)
-	var i GetArticleRow
+	var i Article
 	err := row.Scan(
 		&i.ID,
 		&i.Title,
+		&i.Filename,
 		&i.Description,
 		&i.Body,
 		&i.CreatedAt,

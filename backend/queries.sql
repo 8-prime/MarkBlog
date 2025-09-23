@@ -36,6 +36,7 @@ VALUES
 SELECT
     id,
     title,
+    filename,
     description,
     body,
     created_at,

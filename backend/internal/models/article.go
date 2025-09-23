@@ -12,6 +12,7 @@ type CreateArticle struct {
 type ArticleDto struct {
 	ID          int64      `json:"id"`
 	Title       string     `json:"title"`
+	Filename    string     `json:"-"`
 	Description string     `json:"description"`
 	Body        string     `json:"body"`
 	CreatedAt   string     `json:"created_at"`

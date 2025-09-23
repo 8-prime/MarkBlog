@@ -2,6 +2,8 @@ package services
 
 import (
 	"backend/internal/models"
+	"backend/internal/views"
+	"context"
 	"fmt"
 	"io"
 
@@ -85,9 +87,12 @@ func (s *RendererService) newCustomizedRender() *mdhtml.Renderer {
 	}
 	return mdhtml.NewRenderer(opts)
 }
-func (s *RendererService) Render(article models.ArticleDto) (*[]byte, error) {
+func (s *RendererService) Render(article models.ArticleDto, w io.Writer) error {
 	md := []byte(article.Body)
 
-	html := markdown.ToHTML(md, nil, s.renderer)
-	return &html, nil
+	html := string(markdown.ToHTML(md, nil, s.renderer))
+
+	page := views.ArticlePage(article, html)
+
+	return page.Render(context.Background(), w)
 }
