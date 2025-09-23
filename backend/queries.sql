@@ -96,3 +96,23 @@ SET
     deleted_at = CURRENT_TIMESTAMP
 WHERE
     id = ?;
+
+-- name: GetScheduledArticleTimes :many
+SELECT
+    id,
+    scheduled_at
+FROM
+    articles
+WHERE
+    scheduled_at IS NOT NULL
+    AND scheduled_at > CURRENT_TIMESTAMP
+    OR (published_at IS NULL)
+    AND deleted_at IS NULL;
+
+-- name: PublishArticle :exec
+UPDATE
+    articles
+SET
+    published_at = CURRENT_TIMESTAMP
+WHERE
+    id = ?;

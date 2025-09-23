@@ -240,6 +240,61 @@ func (q *Queries) GetArticleTags(ctx context.Context, articleID int64) ([]string
 	return items, nil
 }
 
+const getScheduledArticleTimes = `-- name: GetScheduledArticleTimes :many
+SELECT
+    id,
+    scheduled_at
+FROM
+    articles
+WHERE
+    scheduled_at IS NOT NULL
+    AND scheduled_at > CURRENT_TIMESTAMP
+    OR (published_at IS NULL)
+    AND deleted_at IS NULL
+`
+
+type GetScheduledArticleTimesRow struct {
+	ID          int64
+	ScheduledAt sql.NullTime
+}
+
+func (q *Queries) GetScheduledArticleTimes(ctx context.Context) ([]GetScheduledArticleTimesRow, error) {
+	rows, err := q.db.QueryContext(ctx, getScheduledArticleTimes)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetScheduledArticleTimesRow
+	for rows.Next() {
+		var i GetScheduledArticleTimesRow
+		if err := rows.Scan(&i.ID, &i.ScheduledAt); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const publishArticle = `-- name: PublishArticle :exec
+UPDATE
+    articles
+SET
+    published_at = CURRENT_TIMESTAMP
+WHERE
+    id = ?
+`
+
+func (q *Queries) PublishArticle(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, publishArticle, id)
+	return err
+}
+
 const setArticleDeleted = `-- name: SetArticleDeleted :exec
 UPDATE
     articles

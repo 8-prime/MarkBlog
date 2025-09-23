@@ -168,22 +168,14 @@ func (a *ArticleService) UpdateArticle(article *models.ArticleDto, ctx context.C
 	if article.PublishedAt == nil {
 		publishTime = sql.NullTime{Valid: false}
 	} else {
-		pubTime, err := time.Parse(time.RFC3339, *article.PublishedAt)
-		if err != nil {
-			return err
-		}
-		publishTime = sql.NullTime{Time: pubTime, Valid: true}
+		publishTime = sql.NullTime{Time: *article.PublishedAt, Valid: true}
 	}
 
 	var scheduleTime sql.NullTime
 	if article.ScheduledAt == nil {
 		scheduleTime = sql.NullTime{Valid: false}
 	} else {
-		schedTime, err := time.Parse(time.RFC3339, *article.ScheduledAt)
-		if err != nil {
-			return err
-		}
-		scheduleTime = sql.NullTime{Time: schedTime, Valid: true}
+		scheduleTime = sql.NullTime{Time: *article.ScheduledAt, Valid: true}
 	}
 
 	err = qtx.UpdateArticle(ctx, database.UpdateArticleParams{
@@ -243,15 +235,13 @@ func (a *ArticleService) GetArticleDto(id int64, ctx context.Context) (models.Ar
 	}
 
 	if article.ScheduledAt.Valid {
-		scheduledAt := article.ScheduledAt.Time.Format(time.RFC3339)
-		articleDto.ScheduledAt = &scheduledAt
+		articleDto.ScheduledAt = &article.ScheduledAt.Time
 	} else {
 		articleDto.ScheduledAt = nil
 	}
 
 	if article.PublishedAt.Valid {
-		publishedAt := article.PublishedAt.Time.Format(time.RFC3339)
-		articleDto.PublishedAt = &publishedAt
+		articleDto.PublishedAt = &article.PublishedAt.Time
 	} else {
 		articleDto.PublishedAt = nil
 	}

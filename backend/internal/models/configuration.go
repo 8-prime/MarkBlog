@@ -17,8 +17,10 @@ type Configuration struct {
 	CallbackUrl        string
 	AuthEnabled        bool
 	ImagesDir          string
+	ArticlesDir        string
 	ConnectionString   string
 	Port               int
+	Style              string
 }
 
 func LoadConfiguration() (*Configuration, error) {
@@ -43,6 +45,11 @@ func LoadConfiguration() (*Configuration, error) {
 		return nil, err
 	}
 
+	style, found := os.LookupEnv("CODE_HIGHLIGHT_STYLE")
+	if !found {
+		style = "monokailight"
+	}
+
 	hostingUrl := os.Getenv("HOSTING_URL")
 
 	return &Configuration{
@@ -55,7 +62,9 @@ func LoadConfiguration() (*Configuration, error) {
 		CallbackUrl:        hostingUrl + "/auth/google/callback",
 		AuthEnabled:        authEnabledBool,
 		ImagesDir:          os.Getenv("IMAGES_DIR"),
+		ArticlesDir:        os.Getenv("ARTICLES_DIR"),
 		ConnectionString:   conn,
 		Port:               port,
+		Style:              style,
 	}, nil
 }
