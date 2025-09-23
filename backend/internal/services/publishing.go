@@ -50,6 +50,7 @@ func (s *PublisherService) writeArticle(article *models.ArticleDto) error {
 	if err != nil {
 		return err
 	}
+	defer file.Close()
 
 	err = s.queries.PublishArticle(context.Background(), article.ID)
 	if err != nil {
