@@ -36,8 +36,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 			r.Get("/", handlers.GetArticlesHandler(s.articleService))
 			r.Get("/{id}", handlers.GetArticleHandler(s.articleService))
 			r.Post("/", handlers.CreateArticleHandler(s.articleService))
-			r.Put("/{id}", handlers.UpdateArticleHandler(s.articleService))
-			r.Delete("/{id}", handlers.DeleteArticleHandler(s.articleService))
+			r.Put("/{id}", handlers.UpdateArticleHandler(s.articleService, s.publisherService))
+			r.Delete("/{id}", handlers.DeleteArticleHandler(s.articleService, s.publisherService))
 		})
 		r.Route("/images", func(r chi.Router) {
 			if s.config.AuthEnabled {

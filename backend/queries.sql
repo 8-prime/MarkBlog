@@ -116,3 +116,11 @@ SET
     published_at = CURRENT_TIMESTAMP
 WHERE
     id = ?;
+
+-- name: GetArticleTitle :one
+SELECT
+    title
+FROM
+    articles
+WHERE
+    id = ?;

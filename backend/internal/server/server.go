@@ -13,11 +13,13 @@ import (
 )
 
 type Server struct {
-	port           int
-	config         *models.Configuration
-	articleService *services.ArticleService
-	db             *sql.DB
-	queries        *database.Queries
+	port             int
+	config           *models.Configuration
+	articleService   *services.ArticleService
+	renderService    *services.RendererService
+	publisherService *services.PublisherService
+	db               *sql.DB
+	queries          *database.Queries
 }
 
 func NewServer(config *models.Configuration) (*http.Server, error) {
@@ -33,12 +35,21 @@ func NewServer(config *models.Configuration) (*http.Server, error) {
 
 	queries := database.New(db)
 
+	renderService, err := services.NewRendererService(config)
+	if err != nil {
+		return nil, err
+	}
+
+	articleService := services.NewArticleService(queries, db)
+
 	serverConfig := &Server{
-		db:             db,
-		queries:        queries,
-		port:           config.Port,
-		config:         config,
-		articleService: services.NewArticleService(queries, db),
+		db:               db,
+		queries:          queries,
+		port:             config.Port,
+		config:           config,
+		articleService:   articleService,
+		renderService:    renderService,
+		publisherService: services.NewPublisherService(queries, config, articleService, renderService),
 	}
 
 	server := &http.Server{

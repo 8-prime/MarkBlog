@@ -84,7 +84,7 @@ func CreateArticleHandler(articleService *services.ArticleService) http.HandlerF
 	}
 }
 
-func UpdateArticleHandler(articleService *services.ArticleService) http.HandlerFunc {
+func UpdateArticleHandler(articleService *services.ArticleService, publishService *services.PublisherService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		decoder := json.NewDecoder(r.Body)
 		var articleUpdate models.ArticleDto
@@ -92,6 +92,10 @@ func UpdateArticleHandler(articleService *services.ArticleService) http.HandlerF
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
+		}
+
+		if articleUpdate.ScheduledAt != nil {
+			publishService.Publish(articleUpdate.ID, articleUpdate.ScheduledAt)
 		}
 
 		err = articleService.UpdateArticle(&articleUpdate, r.Context())
@@ -104,12 +108,18 @@ func UpdateArticleHandler(articleService *services.ArticleService) http.HandlerF
 	}
 }
 
-func DeleteArticleHandler(articleService *services.ArticleService) http.HandlerFunc {
+func DeleteArticleHandler(articleService *services.ArticleService, publishService *services.PublisherService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		articleId := chi.URLParam(r, "id")
 		id, err := strconv.ParseInt(articleId, 10, 64)
 		if err != nil {
 			http.Error(w, "Invalid article id", http.StatusBadRequest)
+			return
+		}
+
+		err = publishService.Unpublish(id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 

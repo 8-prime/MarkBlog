@@ -240,6 +240,22 @@ func (q *Queries) GetArticleTags(ctx context.Context, articleID int64) ([]string
 	return items, nil
 }
 
+const getArticleTitle = `-- name: GetArticleTitle :one
+SELECT
+    title
+FROM
+    articles
+WHERE
+    id = ?
+`
+
+func (q *Queries) GetArticleTitle(ctx context.Context, id int64) (string, error) {
+	row := q.db.QueryRowContext(ctx, getArticleTitle, id)
+	var title string
+	err := row.Scan(&title)
+	return title, err
+}
+
 const getScheduledArticleTimes = `-- name: GetScheduledArticleTimes :many
 SELECT
     id,

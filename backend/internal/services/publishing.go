@@ -18,7 +18,7 @@ type PublishRequest struct {
 
 type Publisher interface {
 	Publish(articleId int64, publishAt *time.Time)
-	Unpublish(articleId int64)
+	Unpublish(articleId int64) error
 }
 
 type PublisherService struct {
@@ -51,7 +51,7 @@ func (s *PublisherService) publish(article *models.ArticleDto) error {
 
 	articleFileName := path.Join(s.config.ArticlesDir, article.Title+".html")
 
-	file, err := os.Open(articleFileName)
+	file, err := os.Create(articleFileName)
 	if err != nil {
 		return err
 	}
@@ -97,7 +97,7 @@ func (s *PublisherService) watchPublishRequests() {
 			log.Printf("Error getting article %d: %v", req.id, err)
 			continue
 		}
-		if article.ScheduledAt == nil || article.PublishedAt != nil {
+		if article.ScheduledAt == nil {
 			continue
 		}
 
@@ -123,6 +123,20 @@ func (s *PublisherService) Publish(articleId int64, publishAt *time.Time) {
 	}
 }
 
-func (s *PublisherService) Unpublish(articleId int64) {
-
+func (s *PublisherService) Unpublish(articleId int64) error {
+	timer := s.timers[articleId]
+	if timer != nil {
+		timer.Stop()
+		delete(s.timers, articleId)
+	}
+	title, err := s.queries.GetArticleTitle(context.Background(), articleId)
+	if err != nil {
+		return err
+	}
+	articleFileName := path.Join(s.config.ArticlesDir, title+".html")
+	err = os.Remove(articleFileName)
+	if os.IsNotExist(err) {
+		return nil
+	}
+	return err
 }
