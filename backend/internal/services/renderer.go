@@ -28,7 +28,7 @@ type RendererService struct {
 }
 
 func NewRendererService(config *models.Configuration) (*RendererService, error) {
-	htmlFormatter := html.New(html.WithClasses(true), html.TabWidth(2))
+	htmlFormatter := html.New(html.Standalone(true), html.TabWidth(2))
 	if htmlFormatter == nil {
 		return nil, fmt.Errorf("couldn't create html formatter")
 	}
