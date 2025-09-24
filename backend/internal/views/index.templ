@@ -1,0 +1,243 @@
+package views
+
+import (
+    "backend/internal/database"
+)
+
+templ Index(articles []database.GetArticleInfosRow) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>My Blog</title>
+			<style>
+				body {
+					font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+					max-width: 800px;
+					margin: 0 auto;
+					padding: 20px;
+					line-height: 1.6;
+					background-color: #fafafa;
+				}
+				
+				header {
+					text-align: center;
+					margin-bottom: 2rem;
+					padding-bottom: 1rem;
+					border-bottom: 2px solid #e5e5e5;
+				}
+				
+				header h1 {
+					color: #1a1a1a;
+					margin: 0;
+					font-size: 2.5rem;
+				}
+				
+				.loading {
+					display: none;
+					text-align: center;
+					padding: 20px;
+					color: #666;
+					font-style: italic;
+				}
+				
+				.loading.show {
+					display: block;
+				}
+				
+				.article-item {
+					background: white;
+					margin-bottom: 1.5rem;
+					padding: 1.5rem;
+					border: 1px solid #e5e5e5;
+					border-radius: 8px;
+					box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+					transition: box-shadow 0.2s ease;
+				}
+				
+				.article-item:hover {
+					box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+				}
+				
+				.article-item h2 {
+					margin: 0 0 0.75rem 0;
+					font-size: 1.4rem;
+					font-weight: 600;
+					line-height: 1.3;
+				}
+				
+				.article-item a {
+					color: #2563eb;
+					text-decoration: none;
+				}
+				
+				.article-item a:hover {
+					color: #1d4ed8;
+					text-decoration: underline;
+				}
+				
+				.article-item p {
+					color: #4b5563;
+					margin: 0 0 1rem 0;
+					font-size: 1rem;
+				}
+				
+				.article-meta {
+					font-size: 0.875rem;
+					color: #6b7280;
+					display: flex;
+					gap: 1rem;
+					flex-wrap: wrap;
+				}
+				
+				.meta-item {
+					display: flex;
+					align-items: center;
+					gap: 0.25rem;
+				}
+				
+				#end-marker {
+					height: 1px;
+					margin-top: 2rem;
+				}
+				
+				@media (max-width: 640px) {
+					body {
+						padding: 1rem;
+					}
+					
+					header h1 {
+						font-size: 2rem;
+					}
+					
+					.article-item {
+						padding: 1rem;
+					}
+					
+					.article-item h2 {
+						font-size: 1.25rem;
+					}
+				}
+			</style>
+		</head>
+		<body>
+			<header>
+				<h1>My Blog</h1>
+			</header>
+			
+			<main>
+				<div id="articles-container">
+					@ArticlesInfo(articles)
+				</div>
+				
+				<div id="loading" class="loading">
+					Loading more articles...
+				</div>
+				
+				<div id="end-marker"></div>
+			</main>
+
+			<script>
+				const articlesContainer = document.getElementById('articles-container');
+				const loadingIndicator = document.getElementById('loading');
+				const endMarker = document.getElementById('end-marker');
+
+				let currentPage = 1;
+				let isLoading = false;
+				let hasMorePages = getArticlesCount() % 10 == 0;
+
+				// Intersection Observer for infinite scroll
+				const observer = new IntersectionObserver((entries) => {
+					entries.forEach(entry => {
+						if (entry.isIntersecting && !isLoading && hasMorePages) {
+							loadMoreArticles();
+						}
+					});
+				}, {
+					rootMargin: '200px' // Start loading 200px before the marker comes into view
+				});
+
+				observer.observe(endMarker);
+
+                function getArticlesCount(){
+                    const articleElements = articlesContainer.querySelectorAll('.article-item');
+                    return articleElements.length;
+                }
+
+				async function loadMoreArticles() {
+					if (isLoading || !hasMorePages) return;
+					
+					isLoading = true;
+					loadingIndicator.classList.add('show');
+					
+					try {
+						const response = await fetch(`/info?page=${currentPage + 1}`);
+						
+						if (!response.ok) {
+							throw new Error(`HTTP error! status: ${response.status}`);
+						}
+						
+						const html = await response.text();
+						
+						// If response is empty, we've reached the end
+						if (html.trim().length === 0) {
+							hasMorePages = false;
+							observer.disconnect();
+							loadingIndicator.textContent = 'No more articles to load';
+							setTimeout(() => {
+								loadingIndicator.classList.remove('show');
+							}, 2000);
+							return;
+						}
+						
+						// Create a temporary container to parse the HTML
+						const tempDiv = document.createElement('div');
+						tempDiv.innerHTML = html;
+						
+						// Count the number of article elements returned
+						const articleElements = tempDiv.querySelectorAll('.article-item');
+						const articlesCount = articleElements.length;
+						
+						// If we got fewer than 10 articles, we've reached the end
+						if (articlesCount < 10) {
+							hasMorePages = false;
+							observer.disconnect();
+						}
+						
+						// Append all article elements to the main container
+						while (tempDiv.firstChild) {
+							articlesContainer.appendChild(tempDiv.firstChild);
+						}
+						
+						// Show end message if this was the last page
+						if (!hasMorePages) {
+							loadingIndicator.textContent = 'No more articles to load';
+							setTimeout(() => {
+								loadingIndicator.classList.remove('show');
+							}, 2000);
+						}
+						
+						currentPage++;
+						
+					} catch (error) {
+						console.error('Error loading more articles:', error);
+						loadingIndicator.textContent = 'Error loading articles. Please try refreshing the page.';
+						hasMorePages = false;
+						setTimeout(() => {
+							loadingIndicator.classList.remove('show');
+						}, 4000);
+					} finally {
+						isLoading = false;
+						if (hasMorePages) {
+							loadingIndicator.classList.remove('show');
+						}
+					}
+				}
+
+				// Optional: Add smooth scroll behavior for better UX
+				// document.documentElement.style.scrollBehavior = 'smooth';
+			</script>
+		</body>
+	</html>
+}

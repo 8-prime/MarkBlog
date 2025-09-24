@@ -24,7 +24,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 		MaxAge:           300,
 	}))
 
-	r.Get("/", s.HelloWorldHandler)
+	r.Get("/", handlers.MainPageHandler(s.articleService))
+	r.Get("/{id}", handlers.ViewArticleHandler(s.config, s.queries))
+	r.Get("/info", handlers.ArticleInfos(s.articleService))
 	r.Get("/scalar", handlers.ScalarHandler())
 	r.Route("/api", func(r chi.Router) {
 		r.Get("/user", handlers.GetUserHandler())
