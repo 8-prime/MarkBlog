@@ -88,7 +88,13 @@ body {
     gap: 0.25rem;
     background-color: #060606;
     padding: 1rem;
-    box-shadow: 0 0 10px rgba(0, 255, 0, 0.1);
+    box-shadow: 5px 5px 3px rgba(0, 255, 0, 0.1);
+}
+
+.article-info:hover {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 rgba(0, 255, 0, 0.1);
+    transition: transform 0.2s;
 }
 
 /* .article-info:visited {
