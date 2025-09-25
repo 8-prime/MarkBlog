@@ -31,14 +31,14 @@ func ArticleInfos(articleService *services.ArticleService) http.HandlerFunc {
 	}
 }
 
-func MainPageHandler(articleService *services.ArticleService) http.HandlerFunc {
+func MainPageHandler(articleService *services.ArticleService, config *models.Configuration) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		articles, err := articleService.GetArticleInfos(1, r.Context())
 		if err != nil {
 			articles = make([]models.ArticleInfo, 0)
 		}
 
-		views.Index(articles).Render(r.Context(), w)
+		views.Index(articles, config).Render(r.Context(), w)
 	}
 }
 

@@ -23,7 +23,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 		AllowCredentials: true,
 		MaxAge:           300,
 	}))
-	r.Get("/", handlers.MainPageHandler(s.articleService))
+	r.Get("/", handlers.MainPageHandler(s.articleService, s.config))
 	r.Handle("/static/*", handlers.StaticFilesHandler())
 	r.Get("/articles/{id}", handlers.ViewArticleHandler(s.config, s.queries))
 	r.Get("/info", handlers.ArticleInfos(s.articleService))

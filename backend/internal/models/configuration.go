@@ -21,6 +21,7 @@ type Configuration struct {
 	ConnectionString   string
 	Port               int
 	Style              string
+	AuthorName         string
 }
 
 func LoadConfiguration() (*Configuration, error) {
@@ -66,5 +67,6 @@ func LoadConfiguration() (*Configuration, error) {
 		ConnectionString:   conn,
 		Port:               port,
 		Style:              style,
+		AuthorName:         os.Getenv("AUTHOR_NAME"),
 	}, nil
 }
