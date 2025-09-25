@@ -8,7 +8,7 @@ templ ArticlesInfo(articles []models.ArticleInfo) {
 	for _, article := range articles {
 		<article class="article-item mb-6 p-4 border border-gray-200 rounded-lg">
 			<h2 class="text-xl font-bold mb-2">
-				<a href={ templ.SafeURL(article.Filename) } class="text-blue-600 hover:text-blue-800">
+				<a href={ templ.SafeURL("/articles/" + article.Filename) } class="text-blue-600 hover:text-blue-800">
 					{ article.Title }
 				</a>
 			</h2>
