@@ -3,6 +3,7 @@ package services
 import (
 	"backend/internal/database"
 	"backend/internal/models"
+	"backend/internal/utils"
 	"context"
 	"database/sql"
 	"fmt"
@@ -204,13 +205,26 @@ func (a *ArticleService) UpdateArticle(article *models.ArticleDto, ctx context.C
 	return tx.Commit()
 }
 
-func (a *ArticleService) GetArticleInfos(page int, ctx context.Context) ([]database.GetArticleInfosRow, error) {
-	infos, err := a.Queries.GetArticleInfos(ctx, database.GetArticleInfosParams{
+func (a *ArticleService) GetArticleInfos(page int, ctx context.Context) ([]models.ArticleInfo, error) {
+	infos, err := a.Queries.GetPublishedArticleInfos(ctx, database.GetPublishedArticleInfosParams{
 		Limit:  10,
 		Offset: int64((page - 1) * 10),
 	})
+	if err != nil {
+		return nil, err
+	}
 
-	return infos, err
+	result := make([]models.ArticleInfo, len(infos))
+	for i, info := range infos {
+		result[i] = models.ArticleInfo{
+			Filename:    info.Filename,
+			Title:       info.Title,
+			Description: info.Description,
+			PublishedAt: utils.TimeFromDb(info.PublishedAt),
+			UpdatedAt:   info.UpdatedAt,
+		}
+	}
+	return result, err
 }
 
 func (a *ArticleService) GetArticleDto(id int64, ctx context.Context) (models.ArticleDto, error) {

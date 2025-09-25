@@ -1,4 +1,3 @@
--- Article CRUD Operations
 -- name: CreateArticle :one
 INSERT INTO
     articles (title, filename, description, body)
@@ -19,7 +18,6 @@ SET
 WHERE
     id = ?;
 
--- Create tag
 -- name: CreateTag :exec
 INSERT
     OR IGNORE INTO tags (name)
@@ -58,21 +56,6 @@ FROM
     article_tags
 WHERE
     article_id = ?;
-
--- name: GetArticleInfos :many
-SELECT
-    id,
-    title,
-    filename,
-    description,
-    created_at,
-    updated_at,
-    scheduled_at,
-    published_at
-FROM
-    articles
-LIMIT
-    ? OFFSET ?;
 
 -- name: ClearArticleTags :exec
 DELETE FROM
@@ -125,3 +108,34 @@ FROM
     articles
 WHERE
     id = ?;
+
+-- name: GetPublishedArticleInfos :many
+SELECT
+    filename,
+    title,
+    description,
+    published_at,
+    updated_at
+FROM
+    articles
+WHERE
+    published_at < CURRENT_TIMESTAMP
+    AND deleted_at IS NULL
+LIMIT
+    ? OFFSET ?;
+
+-- name: GetAdminArticleInfos :many
+SELECT
+    id,
+    filename,
+    title,
+    description,
+    published_at,
+    updated_at,
+    scheduled_at
+FROM
+    articles
+WHERE
+    deleted_at IS NULL
+LIMIT
+    ? OFFSET ?;

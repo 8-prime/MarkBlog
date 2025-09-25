@@ -1,10 +1,10 @@
 package views
 
 import (
-    "backend/internal/database"
+	"backend/internal/models"
 )
 // Component that renders a list of 10 articles
-templ ArticlesInfo(articles []database.GetArticleInfosRow) {
+templ ArticlesInfo(articles []models.ArticleInfo) {
 	for _, article := range articles {
 		<article class="article-item mb-6 p-4 border border-gray-200 rounded-lg">
 			<h2 class="text-xl font-bold mb-2">
@@ -14,12 +14,12 @@ templ ArticlesInfo(articles []database.GetArticleInfosRow) {
 			</h2>
 			<p class="text-gray-600 mb-3">{ article.Description }</p>
 			<div class="text-sm text-gray-500">
-                if article.PublishedAt.Valid {
-                    <time datetime={ article.PublishedAt.Time.Format("2006-01-02T15:04:05Z07:00") }>
-						Published:	{ article.PublishedAt.Time.Format("January 2, 2006") }
+                if article.PublishedAt != nil {
+                    <time datetime={ article.PublishedAt.Format("2006-01-02T15:04:05Z07:00") }>
+						Published:	{ article.PublishedAt.Format("January 2, 2006") }
                     </time>
                 }
-				if !article.PublishedAt.Time.Equal(article.UpdatedAt)  {
+				if !article.PublishedAt.Equal(article.UpdatedAt)  {
                     <time datetime={ article.UpdatedAt.Format("2006-01-02T15:04:05Z07:00") }>
 						Updated:	{ article.UpdatedAt.Format("January 2, 2006") }
                     </time>

@@ -1,10 +1,10 @@
 package views
 
 import (
-    "backend/internal/database"
+	"backend/internal/models"
 )
 
-templ Index(articles []database.GetArticleInfosRow) {
+templ Index(articles []models.ArticleInfo) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>

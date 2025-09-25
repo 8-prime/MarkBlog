@@ -53,7 +53,6 @@ type CreateArticleParams struct {
 	Body        string
 }
 
-// Article CRUD Operations
 func (q *Queries) CreateArticle(ctx context.Context, arg CreateArticleParams) (int64, error) {
 	row := q.db.QueryRowContext(ctx, createArticle,
 		arg.Title,
@@ -90,10 +89,72 @@ VALUES
     (?)
 `
 
-// Create tag
 func (q *Queries) CreateTag(ctx context.Context, name string) error {
 	_, err := q.db.ExecContext(ctx, createTag, name)
 	return err
+}
+
+const getAdminArticleInfos = `-- name: GetAdminArticleInfos :many
+SELECT
+    id,
+    filename,
+    title,
+    description,
+    published_at,
+    updated_at,
+    scheduled_at
+FROM
+    articles
+WHERE
+    deleted_at IS NULL
+LIMIT
+    ? OFFSET ?
+`
+
+type GetAdminArticleInfosParams struct {
+	Limit  int64
+	Offset int64
+}
+
+type GetAdminArticleInfosRow struct {
+	ID          int64
+	Filename    string
+	Title       string
+	Description string
+	PublishedAt sql.NullTime
+	UpdatedAt   time.Time
+	ScheduledAt sql.NullTime
+}
+
+func (q *Queries) GetAdminArticleInfos(ctx context.Context, arg GetAdminArticleInfosParams) ([]GetAdminArticleInfosRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAdminArticleInfos, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAdminArticleInfosRow
+	for rows.Next() {
+		var i GetAdminArticleInfosRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Filename,
+			&i.Title,
+			&i.Description,
+			&i.PublishedAt,
+			&i.UpdatedAt,
+			&i.ScheduledAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getArticle = `-- name: GetArticle :one
@@ -132,70 +193,6 @@ func (q *Queries) GetArticle(ctx context.Context, id int64) (Article, error) {
 		&i.DeletedAt,
 	)
 	return i, err
-}
-
-const getArticleInfos = `-- name: GetArticleInfos :many
-SELECT
-    id,
-    title,
-    filename,
-    description,
-    created_at,
-    updated_at,
-    scheduled_at,
-    published_at
-FROM
-    articles
-LIMIT
-    ? OFFSET ?
-`
-
-type GetArticleInfosParams struct {
-	Limit  int64
-	Offset int64
-}
-
-type GetArticleInfosRow struct {
-	ID          int64
-	Title       string
-	Filename    string
-	Description string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	ScheduledAt sql.NullTime
-	PublishedAt sql.NullTime
-}
-
-func (q *Queries) GetArticleInfos(ctx context.Context, arg GetArticleInfosParams) ([]GetArticleInfosRow, error) {
-	rows, err := q.db.QueryContext(ctx, getArticleInfos, arg.Limit, arg.Offset)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetArticleInfosRow
-	for rows.Next() {
-		var i GetArticleInfosRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.Title,
-			&i.Filename,
-			&i.Description,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.ScheduledAt,
-			&i.PublishedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
 }
 
 const getArticleTags = `-- name: GetArticleTags :many
@@ -244,6 +241,64 @@ func (q *Queries) GetArticleTitle(ctx context.Context, id int64) (string, error)
 	var title string
 	err := row.Scan(&title)
 	return title, err
+}
+
+const getPublishedArticleInfos = `-- name: GetPublishedArticleInfos :many
+SELECT
+    filename,
+    title,
+    description,
+    published_at,
+    updated_at
+FROM
+    articles
+WHERE
+    published_at < CURRENT_TIMESTAMP
+    AND deleted_at IS NULL
+LIMIT
+    ? OFFSET ?
+`
+
+type GetPublishedArticleInfosParams struct {
+	Limit  int64
+	Offset int64
+}
+
+type GetPublishedArticleInfosRow struct {
+	Filename    string
+	Title       string
+	Description string
+	PublishedAt sql.NullTime
+	UpdatedAt   time.Time
+}
+
+func (q *Queries) GetPublishedArticleInfos(ctx context.Context, arg GetPublishedArticleInfosParams) ([]GetPublishedArticleInfosRow, error) {
+	rows, err := q.db.QueryContext(ctx, getPublishedArticleInfos, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetPublishedArticleInfosRow
+	for rows.Next() {
+		var i GetPublishedArticleInfosRow
+		if err := rows.Scan(
+			&i.Filename,
+			&i.Title,
+			&i.Description,
+			&i.PublishedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getScheduledArticleTimes = `-- name: GetScheduledArticleTimes :many

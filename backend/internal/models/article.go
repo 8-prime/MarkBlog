@@ -21,3 +21,11 @@ type ArticleDto struct {
 	PublishedAt *time.Time `json:"published_at"`
 	Tags        []string   `json:"tags"`
 }
+
+type ArticleInfo struct {
+	Filename    string
+	Title       string
+	Description string
+	PublishedAt *time.Time
+	UpdatedAt   time.Time
+}

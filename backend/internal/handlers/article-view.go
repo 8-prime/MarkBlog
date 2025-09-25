@@ -35,7 +35,7 @@ func MainPageHandler(articleService *services.ArticleService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		articles, err := articleService.GetArticleInfos(1, r.Context())
 		if err != nil {
-			articles = make([]database.GetArticleInfosRow, 0)
+			articles = make([]models.ArticleInfo, 0)
 		}
 
 		views.Index(articles).Render(r.Context(), w)
