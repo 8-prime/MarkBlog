@@ -3,43 +3,43 @@ package views
 import "backend/internal/models"
 
 templ Article(article models.ArticleDto, renderedBody string) {
-	<article class="max-w-4xl mx-auto p-6">
-		<header class="mb-8 border-b pb-6">
-			<h1 class="text-3xl font-bold text-gray-900 mb-4">
+	<article class="article-page">
+		<header class="article-header">
+			<h1 class="article-title">
 				{ article.Title }
 			</h1>
-			<p class="text-lg text-gray-600 mb-6">
+			<p class="article-description">
 				{ article.Description }
 			</p>
-			<div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-				<div class="flex items-center gap-1">
-					<span class="font-medium">Published:</span>
-					if  article.PublishedAt != nil {
-						<time datetime={ article.PublishedAt.Format("2006-01-02T15:04:05Z07:00") }>
+			<div class="article-meta">
+				<div class="meta-item">
+					<span class="meta-label">Published:</span>
+					if article.PublishedAt != nil {
+						<time class="time" datetime={ article.PublishedAt.Format("2006-01-02T15:04:05Z07:00") }>
 							{ article.PublishedAt.Format("January 2, 2006") }
 						</time>
 					}
 				</div>
 				if article.CreatedAt != article.UpdatedAt {
-					<div class="flex items-center gap-1">
-						<span class="font-medium">Updated:</span>
-						<time datetime={ article.UpdatedAt }>
+					<div class="meta-item">
+						<span class="meta-label">Updated:</span>
+						<time class="time-updated" datetime={ article.UpdatedAt }>
 							{ article.UpdatedAt }
 						</time>
 					</div>
 				}
 			</div>
 			if len(article.Tags) > 0 {
-				<div class="flex flex-wrap gap-2 mt-4">
+				<div class="tags">
 					for _, tag := range article.Tags {
-						<span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors">
-							{ tag }
+						<span class="tag">
+							#{ tag }
 						</span>
 					}
 				</div>
 			}
 		</header>
-		<div class="prose prose-lg max-w-none">
+		<div class="article-content">
 			@templ.Raw(renderedBody)
 		</div>
 	</article>

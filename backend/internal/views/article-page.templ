@@ -13,22 +13,26 @@ templ Layout(title string, content templ.Component) {
 			<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png"/>
 			<link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png"/>
 			<link rel="manifest" href="/static/site.webmanifest"/>
+			<link rel="stylesheet" href="/static/styles.css"/>
 			<title>{ title }</title>
-			<script src="https://cdn.tailwindcss.com"></script>
-			<!-- Add any other CSS/JS here -->
 		</head>
-		<body class="bg-gray-50 min-h-screen">
-			<nav class="bg-white shadow-sm border-b">
-				<div class="max-w-6xl mx-auto px-4 py-3">
-					<a href="/" class="text-xl font-bold text-gray-900">Home</a>
+		<body>
+			<nav class="site-nav">
+				<div class="nav-container">
+					<a href="/" class="nav-home">
+						<span class="terminal-prompt">Home</span>
+					</a>
 				</div>
 			</nav>
-			<main class="py-8">
+			<main class="main-content">
 				@content
 			</main>
-			<footer class="bg-gray-800 text-white py-8 mt-16">
-				<div class="max-w-6xl mx-auto px-4 text-center">
-					<p>&copy; 2025. All rights reserved.</p>
+			<footer class="site-footer">
+				<div class="footer-container">
+					<p class="footer-text">
+						<span class="terminal-prompt">Thanks for visiting</span>
+						<span class="terminal-cursor"></span>
+					</p>
 				</div>
 			</footer>
 		</body>

@@ -48,7 +48,7 @@ func LoadConfiguration() (*Configuration, error) {
 
 	style, found := os.LookupEnv("CODE_HIGHLIGHT_STYLE")
 	if !found {
-		style = "monokailight"
+		style = "github-dark"
 	}
 
 	hostingUrl := os.Getenv("HOSTING_URL")
