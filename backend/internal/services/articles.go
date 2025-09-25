@@ -216,12 +216,19 @@ func (a *ArticleService) GetArticleInfos(page int, ctx context.Context) ([]model
 
 	result := make([]models.ArticleInfo, len(infos))
 	for i, info := range infos {
+
+		tags, err := a.Queries.GetArticleTags(ctx, info.ID)
+		if err != nil {
+			continue
+		}
+
 		result[i] = models.ArticleInfo{
 			Filename:    info.Filename,
 			Title:       info.Title,
 			Description: info.Description,
 			PublishedAt: utils.TimeFromDb(info.PublishedAt),
 			UpdatedAt:   info.UpdatedAt,
+			Tags:        tags,
 		}
 	}
 	return result, err

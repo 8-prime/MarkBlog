@@ -111,6 +111,7 @@ WHERE
 
 -- name: GetPublishedArticleInfos :many
 SELECT
+    id,
     filename,
     title,
     description,

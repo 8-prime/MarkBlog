@@ -1,28 +1,38 @@
 package views
 
-import (
-	"backend/internal/models"
-)
+import "backend/internal/models"
+
 // Component that renders a list of 10 articles
 templ ArticlesInfo(articles []models.ArticleInfo) {
 	for _, article := range articles {
-		<article class="article-item mb-6 p-4 border border-gray-200 rounded-lg">
-			<h2 class="text-xl font-bold mb-2">
-				<a href={ templ.SafeURL("/articles/" + article.Filename) } class="text-blue-600 hover:text-blue-800">
-					{ article.Title }
-				</a>
-			</h2>
-			<p class="text-gray-600 mb-3">{ article.Description }</p>
-			<div class="text-sm text-gray-500">
-                if article.PublishedAt != nil {
-                    <time datetime={ article.PublishedAt.Format("2006-01-02T15:04:05Z07:00") }>
-						Published:	{ article.PublishedAt.Format("January 2, 2006") }
-                    </time>
-                }
-				if !article.PublishedAt.Equal(article.UpdatedAt)  {
-                    <time datetime={ article.UpdatedAt.Format("2006-01-02T15:04:05Z07:00") }>
-						Updated:	{ article.UpdatedAt.Format("January 2, 2006") }
-                    </time>
+		<article class="article-info">
+			<div class="article-info-header">
+				<h2 class="article-info-title">
+					<a href={ templ.SafeURL("/articles/" + article.Filename) }>
+						{ article.Title }
+					</a>
+				</h2>
+				<div class="time-container">
+					if article.PublishedAt != nil {
+						<time lass="time" datetime={ article.PublishedAt.Format("2006-01-02T15:04:05Z07:00") }>
+							Published:	{ article.PublishedAt.Format("January 2, 2006") }
+						</time>
+					}
+					if article.UpdatedAt.After(*article.PublishedAt) {
+						<time class="time-updated" datetime={ article.UpdatedAt.Format("2006-01-02T15:04:05Z07:00") }>
+							Updated:	{ article.UpdatedAt.Format("January 2, 2006") }
+						</time>
+					}
+				</div>
+			</div>
+			<div class="description-container">
+				<p class="description">{ article.Description }</p>
+			</div>
+			<div class="tags">
+				for _, tag := range article.Tags {
+					<span class="tag">
+						#{ tag }
+					</span>
 				}
 			</div>
 		</article>

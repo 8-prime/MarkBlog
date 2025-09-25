@@ -245,6 +245,7 @@ func (q *Queries) GetArticleTitle(ctx context.Context, id int64) (string, error)
 
 const getPublishedArticleInfos = `-- name: GetPublishedArticleInfos :many
 SELECT
+    id,
     filename,
     title,
     description,
@@ -265,6 +266,7 @@ type GetPublishedArticleInfosParams struct {
 }
 
 type GetPublishedArticleInfosRow struct {
+	ID          int64
 	Filename    string
 	Title       string
 	Description string
@@ -282,6 +284,7 @@ func (q *Queries) GetPublishedArticleInfos(ctx context.Context, arg GetPublished
 	for rows.Next() {
 		var i GetPublishedArticleInfosRow
 		if err := rows.Scan(
+			&i.ID,
 			&i.Filename,
 			&i.Title,
 			&i.Description,

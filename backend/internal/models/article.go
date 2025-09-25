@@ -28,4 +28,5 @@ type ArticleInfo struct {
 	Description string
 	PublishedAt *time.Time
 	UpdatedAt   time.Time
+	Tags        []string
 }
