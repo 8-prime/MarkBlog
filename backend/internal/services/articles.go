@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
-	"time"
 	"unicode"
 
 	_ "modernc.org/sqlite"
@@ -234,6 +233,35 @@ func (a *ArticleService) GetArticleInfos(page int, ctx context.Context) ([]model
 	return result, err
 }
 
+func (a *ArticleService) GetAdminArticleInfos(page int, ctx context.Context) ([]models.AdminArticleInfo, error) {
+	infos, err := a.Queries.GetAdminArticleInfos(ctx, database.GetAdminArticleInfosParams{
+		Limit:  10,
+		Offset: int64((page - 1) * 10),
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]models.AdminArticleInfo, len(infos))
+	for _, info := range infos {
+		tags, err := a.Queries.GetArticleTags(ctx, info.ID)
+		if err != nil {
+			continue
+		}
+		result = append(result, models.AdminArticleInfo{
+			ID:          info.ID,
+			Title:       info.Title,
+			Description: info.Description,
+			UpdatedAt:   info.UpdatedAt,
+			PublishedAt: utils.TimeFromDb(info.PublishedAt),
+			ScheduledAt: utils.TimeFromDb(info.ScheduledAt),
+			Tags:        tags,
+		})
+	}
+	return result, err
+}
+
 func (a *ArticleService) GetArticleDto(id int64, ctx context.Context) (models.ArticleDto, error) {
 	article, err := a.Queries.GetArticle(ctx, id)
 	if err != nil {
@@ -251,8 +279,8 @@ func (a *ArticleService) GetArticleDto(id int64, ctx context.Context) (models.Ar
 		Filename:    article.Filename,
 		Description: article.Description,
 		Body:        article.Body,
-		CreatedAt:   article.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:   article.UpdatedAt.Format(time.RFC3339),
+		CreatedAt:   article.CreatedAt,
+		UpdatedAt:   article.UpdatedAt,
 		Tags:        tags,
 	}
 

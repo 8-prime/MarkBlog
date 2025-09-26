@@ -128,7 +128,6 @@ LIMIT
 -- name: GetAdminArticleInfos :many
 SELECT
     id,
-    filename,
     title,
     description,
     published_at,

@@ -15,8 +15,8 @@ type ArticleDto struct {
 	Filename    string     `json:"-"`
 	Description string     `json:"description"`
 	Body        string     `json:"body"`
-	CreatedAt   string     `json:"created_at"`
-	UpdatedAt   string     `json:"updated_at"`
+	CreatedAt   time.Time  `json:"created_at"`
+	UpdatedAt   time.Time  `json:"updated_at"`
 	ScheduledAt *time.Time `json:"scheduled_at"`
 	PublishedAt *time.Time `json:"published_at"`
 	Tags        []string   `json:"tags"`
@@ -29,4 +29,14 @@ type ArticleInfo struct {
 	PublishedAt *time.Time
 	UpdatedAt   time.Time
 	Tags        []string
+}
+
+type AdminArticleInfo struct {
+	ID          int64      `json:"id"`
+	Title       string     `json:"title"`
+	Description string     `json:"description"`
+	UpdatedAt   time.Time  `json:"updated_at"`
+	PublishedAt *time.Time `json:"published_at"`
+	ScheduledAt *time.Time `json:"scheduled_at"`
+	Tags        []string   `json:"tags"`
 }

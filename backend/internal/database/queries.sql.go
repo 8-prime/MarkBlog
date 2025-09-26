@@ -97,7 +97,6 @@ func (q *Queries) CreateTag(ctx context.Context, name string) error {
 const getAdminArticleInfos = `-- name: GetAdminArticleInfos :many
 SELECT
     id,
-    filename,
     title,
     description,
     published_at,
@@ -118,7 +117,6 @@ type GetAdminArticleInfosParams struct {
 
 type GetAdminArticleInfosRow struct {
 	ID          int64
-	Filename    string
 	Title       string
 	Description string
 	PublishedAt sql.NullTime
@@ -137,7 +135,6 @@ func (q *Queries) GetAdminArticleInfos(ctx context.Context, arg GetAdminArticleI
 		var i GetAdminArticleInfosRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.Filename,
 			&i.Title,
 			&i.Description,
 			&i.PublishedAt,
