@@ -243,13 +243,13 @@ func (a *ArticleService) GetAdminArticleInfos(page int, ctx context.Context) ([]
 		return nil, err
 	}
 
-	result := make([]models.AdminArticleInfo, len(infos))
-	for _, info := range infos {
+	results := make([]models.AdminArticleInfo, len(infos))
+	for i, info := range infos {
 		tags, err := a.Queries.GetArticleTags(ctx, info.ID)
 		if err != nil {
 			continue
 		}
-		result = append(result, models.AdminArticleInfo{
+		results[i] = models.AdminArticleInfo{
 			ID:          info.ID,
 			Title:       info.Title,
 			Description: info.Description,
@@ -257,9 +257,9 @@ func (a *ArticleService) GetAdminArticleInfos(page int, ctx context.Context) ([]
 			PublishedAt: utils.TimeFromDb(info.PublishedAt),
 			ScheduledAt: utils.TimeFromDb(info.ScheduledAt),
 			Tags:        tags,
-		})
+		}
 	}
-	return result, err
+	return results, err
 }
 
 func (a *ArticleService) GetArticleDto(id int64, ctx context.Context) (models.ArticleDto, error) {
