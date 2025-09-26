@@ -22,17 +22,15 @@ func GetArticlesHandler(articleService *services.ArticleService) http.HandlerFun
 			http.Error(w, "Invalid page number", http.StatusBadRequest)
 			return
 		}
-		//TODO Get ADMIN article infos
-		// articleInfos, err := articleService.GetArticleInfos(p, r.Context())
 
-		// if err != nil {
-		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-		// 	return
-		// }
-
-		// w.Header().Set("Content-Type", "application/json")
-		// w.WriteHeader(http.StatusOK)
-		// json.NewEncoder(w).Encode(articleInfos)
+		articles, err := articleService.GetAdminArticleInfos(p, r.Context())
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(articles)
 	}
 }
 
