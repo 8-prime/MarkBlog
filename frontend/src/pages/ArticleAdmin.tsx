@@ -1,5 +1,5 @@
 import { Calendar, Plus, Save, Tag, X } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchAdminArticle, fetchAdminArticles, updateArticle } from '../api/endpoints';
 import Editor from '../components/Editor';
 
@@ -37,60 +37,8 @@ type Article = {
 // Union type for the form
 type ArticleFormData = CreateArticle | (Article & { isNew?: false });
 
-// Mock data
-const mockArticles: ArticleInfo[] = [
-    {
-        id: 1,
-        title: "Getting Started with React",
-        description: "A comprehensive guide to React fundamentals",
-        updated_at: "2024-01-15T10:30:00Z",
-        published_at: "2024-01-10T08:00:00Z",
-        scheduled_at: null,
-        tags: ["react", "javascript", "tutorial"]
-    },
-    {
-        id: 2,
-        title: "TypeScript Best Practices",
-        description: "Tips and tricks for writing better TypeScript code",
-        updated_at: "2024-01-20T14:15:00Z",
-        published_at: null,
-        scheduled_at: "2024-01-25T09:00:00Z",
-        tags: ["typescript", "best-practices"]
-    },
-    {
-        id: 3,
-        title: "State Management in Modern Apps",
-        description: "Comparing different state management solutions",
-        updated_at: "2024-01-12T16:45:00Z",
-        published_at: "2024-01-11T12:00:00Z",
-        scheduled_at: null,
-        tags: ["state-management", "redux", "zustand"]
-    }
-];
-
-const mockFullArticles: { [key: number]: Article } = {
-    1: {
-        ...mockArticles[0],
-        filename: "getting-started-react.md",
-        body: "This is the full body content of the React article. It covers components, hooks, and state management in detail.",
-        created_at: "2024-01-10T07:30:00Z"
-    },
-    2: {
-        ...mockArticles[1],
-        filename: "typescript-best-practices.md",
-        body: "TypeScript best practices include proper typing, interface usage, and avoiding any types whenever possible.",
-        created_at: "2024-01-19T13:00:00Z"
-    },
-    3: {
-        ...mockArticles[2],
-        filename: "state-management-modern-apps.md",
-        body: "State management is crucial for modern applications. This article compares Redux, Zustand, and Context API.",
-        created_at: "2024-01-11T10:15:00Z"
-    }
-};
-
 const ArticleAdmin = () => {
-    const [articles, setArticles] = useState<ArticleInfo[]>(mockArticles);
+    const [articles, setArticles] = useState<ArticleInfo[]>([]);
     const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
     const [isCreatingNew, setIsCreatingNew] = useState(false);
     const [formData, setFormData] = useState<ArticleFormData | null>(null);
@@ -120,7 +68,6 @@ const ArticleAdmin = () => {
 
     const handleArticleSelect = (articleInfo: ArticleInfo) => {
         setIsCreatingNew(false);
-        // Mock API call to get full article
         fetchAdminArticle(articleInfo.id).then(fullArticle => {
             setSelectedArticle(fullArticle);
         }).catch(err => console.error('Error fetching article:', err));
@@ -222,7 +169,7 @@ const ArticleAdmin = () => {
                         <div
                             key={article.id}
                             onClick={() => handleArticleSelect(article)}
-                            className={`p-4 bg-background border  ${selectedArticle?.id === article.id ? 'border-primary bg-background/90' : 'border-border-text'
+                            className={`p-4 bg-background border  ${selectedArticle?.id === article.id ? 'border-primary bg-background/90 shadow-sm shadow-primary' : 'border-border-text'
                                 }`}
                         >
                             <div className="flex items-start justify-between mb-2">
@@ -360,13 +307,13 @@ const ArticleAdmin = () => {
                         </div>
                     </div>
                 ) : (
-                    <div className="flex items-center justify-center h-full text-gray-500">
-                        <div className="text-center">
+                    <div className="flex items-center justify-center h-full text-text">
+                        <div className="text-center flex flex-col items-center">
                             <h3 className="text-lg font-medium mb-2">No Article Selected</h3>
                             <p className="mb-4">Select an article from the sidebar to edit, or create a new one.</p>
                             <button
                                 onClick={handleCreateNew}
-                                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white  hover:bg-blue-700 transition-colors mx-auto"
+                                className="flex items-center gap-2 px-3 py-2 bg-primary text-background hover:bg-primary/80 transition-colors"
                             >
                                 <Plus className="w-4 h-4" />
                                 Create New Article
