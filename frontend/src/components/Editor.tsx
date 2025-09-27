@@ -1,10 +1,13 @@
-import { useState } from "react";
 import MDEditor from '@uiw/react-md-editor';
 
 
-export default function Editor() {
+export type EditorProps = {
+    articleText: string;
+    setArticleText: (text: string | undefined) => void;
+}
 
-    const [articleText, setArticleText] = useState<string | undefined>('');
+export default function Editor({ articleText, setArticleText }: EditorProps) {
+
 
     const handlePaste = async (e: React.ClipboardEvent<HTMLDivElement>) => {
         const items = e.clipboardData?.items;

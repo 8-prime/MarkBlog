@@ -30,3 +30,17 @@ export async function createArticle(article: CreateArticle): Promise<Article> {
     }
     return res.json();
 }
+
+export async function updateArticle(article: Article): Promise<Article> {
+    const res = await fetch(`/api/articles/${article.id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(article),
+    });
+    if (!res.ok) {
+        throw new Error(`Failed to update article: ${res.statusText}`);
+    }
+    return res.json();
+}

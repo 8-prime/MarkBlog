@@ -1,6 +1,7 @@
 import { Calendar, Plus, Save, Tag, X } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
-import { fetchAdminArticle, fetchAdminArticles } from '../api/endpoints';
+import { fetchAdminArticle, fetchAdminArticles, updateArticle } from '../api/endpoints';
+import Editor from '../components/Editor';
 
 // Your types
 type ArticleInfo = {
@@ -174,14 +175,10 @@ const ArticleAdmin = () => {
             setArticles(prev => [...prev, newArticle]);
             setIsCreatingNew(false);
         } else {
-            // Handle updating existing article
+            if (!selectedArticle) return;
+            updateArticle(selectedArticle);
+
             console.log('Updating article:', formData);
-            // Mock update
-            setArticles(prev => prev.map(a =>
-                a.id === (formData as Article).id
-                    ? { ...a, title: formData.title, description: formData.description, tags: formData.tags }
-                    : a
-            ));
         }
     };
 
@@ -319,13 +316,8 @@ const ArticleAdmin = () => {
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Content
                                 </label>
-                                <textarea
-                                    value={formData.body}
-                                    onChange={(e) => handleInputChange('body', e.target.value)}
-                                    rows={12}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="Write your article content here..."
-                                />
+                                <Editor articleText={selectedArticle?.body ?? ''} setArticleText={(text) => setSelectedArticle(prev => prev ? { ...prev, body: text ?? '' } : null)
+                                } />
                             </div>
 
                             {/* Tags */}
