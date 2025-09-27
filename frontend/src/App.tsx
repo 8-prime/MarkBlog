@@ -11,7 +11,7 @@ function App() {
   const loggedIn = isLoggedIn();
 
   return (
-    <div>
+    <div className='bg-background'>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={
