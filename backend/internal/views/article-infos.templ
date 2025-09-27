@@ -5,7 +5,7 @@ import "backend/internal/models"
 // Component that renders a list of 10 articles
 templ ArticlesInfo(articles []models.ArticleInfo) {
 	for _, article := range articles {
-		<article class="article-info">
+		<article class="article-info article-item">
 			<div class="article-info-header">
 				<h2 class="article-info-title">
 					<a href={ templ.SafeURL("/articles/" + article.Filename) }>
@@ -14,13 +14,13 @@ templ ArticlesInfo(articles []models.ArticleInfo) {
 				</h2>
 				<div class="time-container">
 					if article.PublishedAt != nil {
-						<time lass="time" datetime={ article.PublishedAt.Format("2006-01-02T15:04:05Z07:00") }>
-							Published:	{ article.PublishedAt.Format("January 2, 2006") }
+						<time class="time" datetime={ article.PublishedAt.Format("2006-01-02T15:04:05Z07:00") }>
+							Published: { article.PublishedAt.Format("January 2, 2006") }
 						</time>
 					}
 					if article.UpdatedAt.After(*article.PublishedAt) {
 						<time class="time-updated" datetime={ article.UpdatedAt.Format("2006-01-02T15:04:05Z07:00") }>
-							Updated:	{ article.UpdatedAt.Format("January 2, 2006") }
+							Updated: { article.UpdatedAt.Format("January 2, 2006") }
 						</time>
 					}
 				</div>
