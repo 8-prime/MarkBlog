@@ -5,8 +5,6 @@ import AuthGuard from './AuthGuard'
 import isLoggedIn from './hooks/auth'
 import ArticleAdmin from './pages/ArticleAdmin'
 
-// const queryClient = new QueryClient();
-
 function App() {
   const loggedIn = isLoggedIn();
 
@@ -23,8 +21,6 @@ function App() {
           <Route path="/bad" element={<div>bad</div>} />
         </Routes>
       </BrowserRouter>
-      {/* <QueryClientProvider client={queryClient}>
-      </QueryClientProvider> */}
     </div>
   )
 }

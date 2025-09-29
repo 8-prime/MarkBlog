@@ -221,6 +221,10 @@ func (a *ArticleService) GetArticleInfos(page int, ctx context.Context) ([]model
 			continue
 		}
 
+		if tags == nil {
+			tags = make([]string, 0)
+		}
+
 		result[i] = models.ArticleInfo{
 			Filename:    info.Filename,
 			Title:       info.Title,
@@ -249,6 +253,11 @@ func (a *ArticleService) GetAdminArticleInfos(page int, ctx context.Context) ([]
 		if err != nil {
 			continue
 		}
+
+		if tags == nil {
+			tags = make([]string, 0)
+		}
+
 		results[i] = models.AdminArticleInfo{
 			ID:          info.ID,
 			Title:       info.Title,
@@ -271,6 +280,10 @@ func (a *ArticleService) GetArticleDto(id int64, ctx context.Context) (models.Ar
 	tags, err := a.Queries.GetArticleTags(ctx, id)
 	if err != nil {
 		return models.ArticleDto{}, err
+	}
+
+	if tags == nil {
+		tags = make([]string, 0)
 	}
 
 	articleDto := models.ArticleDto{
