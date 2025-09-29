@@ -17,6 +17,7 @@ type Configuration struct {
 	CallbackUrl        string
 	AuthEnabled        bool
 	ImagesDir          string
+	FrontendDir        string
 	ArticlesDir        string
 	ConnectionString   string
 	Port               int
@@ -68,5 +69,6 @@ func LoadConfiguration() (*Configuration, error) {
 		Port:               port,
 		Style:              style,
 		AuthorName:         os.Getenv("AUTHOR_NAME"),
+		FrontendDir:        os.Getenv("FRONTEND_DIR"),
 	}, nil
 }

@@ -9,7 +9,7 @@ export type ArticlesListProps = {
 
 function ArticlesList({ onSelectArticle }: ArticlesListProps) {
 
-    const [page, setPage] = useState(1);
+    const [page, _] = useState(1);
     const [articles, setArticles] = useState<ArticleInfo[]>([]);
 
     useEffect(() => {

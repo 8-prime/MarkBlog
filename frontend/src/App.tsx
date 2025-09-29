@@ -12,7 +12,7 @@ function App() {
 
   return (
     <div className='bg-background'>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <Routes>
           <Route path="/" element={
             <AuthGuard loggedIn={loggedIn} >
