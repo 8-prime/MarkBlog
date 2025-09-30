@@ -12,7 +12,6 @@ import (
 
 const (
 	MaxAge = 86400 * 30
-	IsProd = false
 )
 
 func NewAuth(config *models.Configuration) {
@@ -21,8 +20,8 @@ func NewAuth(config *models.Configuration) {
 
 	store.Options.Path = "/"
 	store.Options.HttpOnly = true
-	store.Options.Secure = IsProd
-	if IsProd {
+	store.Options.Secure = false
+	if config.IsProd {
 		store.Options.SameSite = http.SameSiteStrictMode
 	} else {
 		store.Options.SameSite = http.SameSiteLaxMode

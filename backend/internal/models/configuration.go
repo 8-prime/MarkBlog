@@ -8,6 +8,7 @@ import (
 )
 
 type Configuration struct {
+	IsProd             bool
 	AdminEmail         string
 	ClientUrl          string
 	HostingUrl         string
@@ -26,9 +27,17 @@ type Configuration struct {
 }
 
 func LoadConfiguration() (*Configuration, error) {
-	err := godotenv.Load()
+	prod := os.Getenv("IS_PROD")
+	isProd, err := strconv.ParseBool(prod)
 	if err != nil {
 		return nil, err
+	}
+
+	if !isProd {
+		err := godotenv.Load()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	authEnabled := os.Getenv("AUTH_ENABLED")
@@ -70,5 +79,6 @@ func LoadConfiguration() (*Configuration, error) {
 		Style:              style,
 		AuthorName:         os.Getenv("AUTHOR_NAME"),
 		FrontendDir:        os.Getenv("FRONTEND_DIR"),
+		IsProd:             isProd,
 	}, nil
 }

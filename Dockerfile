@@ -1,5 +1,5 @@
 # ---------- Stage 1: Build Go backend ----------
-FROM golang:1.23 AS backend-build
+FROM golang:1.25 AS backend-build
 
 WORKDIR /app
 
@@ -15,7 +15,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /out/app ./cmd/api/main.go
 
 
 # ---------- Stage 2: Build React frontend with pnpm ----------
-FROM node:20 AS frontend-build
+FROM node:24 AS frontend-build
 
 WORKDIR /app
 
@@ -55,6 +55,8 @@ ENV FRONTEND_DIR=/app/frontend \
     IMAGES_DIR=/app/data/images \
     CONNECTION_STRING=/app/data/data.db \
     ARTICLES_DIR=/app/data/articles \
+    AUTH_ENABLED=true \
+    IS_PROD=true \
     PORT=8080
 
 # Create directories for mounted volumes (optional)
