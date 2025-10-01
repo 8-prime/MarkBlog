@@ -44,9 +44,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 		})
 		r.Route("/images", func(r chi.Router) {
 			if s.config.AuthEnabled {
-				r.Use(authMiddleware.AuthMiddleware)
+				r.With(authMiddleware.AuthMiddleware).Post("/", handlers.ImageUploadHandler(s.config))
+			} else {
+				r.Post("/", handlers.ImageUploadHandler(s.config))
 			}
-			r.Post("/", handlers.ImageUploadHandler(s.config))
+
 			r.Get("/{imageId}", handlers.ImageDownloadHandler(s.config))
 		})
 	})

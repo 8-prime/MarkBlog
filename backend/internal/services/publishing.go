@@ -45,7 +45,10 @@ func NewPublisherService(queries *database.Queries, config *models.Configuration
 
 func (s *PublisherService) writeArticle(article *models.ArticleDto) error {
 	articleFileName := path.Join(s.config.ArticlesDir, article.Filename+".html")
-
+	err := os.MkdirAll(s.config.ArticlesDir, 0755)
+	if err != nil {
+		return err
+	}
 	file, err := os.Create(articleFileName)
 	if err != nil {
 		return err

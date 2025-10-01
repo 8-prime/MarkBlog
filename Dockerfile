@@ -32,38 +32,35 @@ RUN pnpm install --frozen-lockfile
 COPY frontend/ .
 RUN pnpm build
 
-
 # ---------- Stage 3: Final runtime ----------
-FROM debian:stable-slim AS runtime
+FROM alpine:3.20 AS runtime
 
 WORKDIR /app
 
-# Install minimal certs (useful for https calls)
-RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+# Add certs for HTTPS calls
+RUN apk --no-cache add ca-certificates
 
 # Copy Go binary
 COPY --from=backend-build /out/app ./app
 
-# Copy frontend build into /app/frontend
+# Copy frontend build
 COPY --from=frontend-build /app/dist ./frontend
 
-# Copy backend/public into /app/public
+# Copy backend/public
 COPY backend/public ./public
 
-# --- Environment variables ---
+# Environment variables
 ENV FRONTEND_DIR=/app/frontend \
-    IMAGES_DIR=/app/data/images \
-    CONNECTION_STRING=/app/data/data.db \
-    ARTICLES_DIR=/app/data/articles \
-    AUTH_ENABLED=true \
-    IS_PROD=true \
-    PORT=8080
+        IMAGES_DIR=/app/data/images \
+        CONNECTION_STRING=/app/data/data.db \
+        ARTICLES_DIR=/app/data/articles \
+        AUTH_ENABLED=true \
+        IS_PROD=true \
+        PORT=8080
 
-# Create directories for mounted volumes (optional)
+# Create data dirs
 RUN mkdir -p /app/data/images /app/data/articles
 
-# Expose app port (adjust if needed)
 EXPOSE 8080
 
-# Run the app
 CMD ["./app"]
