@@ -122,6 +122,8 @@ FROM
 WHERE
     published_at < CURRENT_TIMESTAMP
     AND deleted_at IS NULL
+ORDER BY
+    published_at DESC
 LIMIT
     ? OFFSET ?;
 
