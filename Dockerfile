@@ -14,15 +14,13 @@ RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 COPY backend/ .
 
 # Generate code from SQL queries
-RUN sqlc generate .\sqlc.yml
+RUN sqlc generate ./sqlc.yml
 
 # Generate HTML templates
-RUN templ generate .\internal\views\
+RUN templ generate ./internal/views/
 
 # Build static binary
 RUN CGO_ENABLED=0 GOOS=linux go build -o /out/app ./cmd/api/main.go
-
-
 # ---------- Stage 2: Build React frontend with pnpm ----------
 FROM node:24 AS frontend-build
 
