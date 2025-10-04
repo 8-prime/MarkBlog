@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 
 	"github.com/markbates/goth/gothic"
 )
@@ -15,7 +16,11 @@ func LoginHandler(config *models.Configuration) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if user, err := gothic.CompleteUserAuth(w, r); err == nil {
 			if user.Email != config.AdminEmail {
-				http.Redirect(w, r, "/bad", http.StatusSeeOther)
+				u, err := url.JoinPath(config.ClientUrl, "unauthorized")
+				if err != nil {
+					http.Redirect(w, r, config.CallbackUrl, http.StatusSeeOther)
+				}
+				http.Redirect(w, r, u, http.StatusSeeOther)
 				return
 			}
 
@@ -43,7 +48,11 @@ func AuthCallbackHandler(config *models.Configuration) http.HandlerFunc {
 		}
 		fmt.Println(user)
 		if user.Email != config.AdminEmail {
-			http.Redirect(w, r, "/bad", http.StatusSeeOther)
+			u, err := url.JoinPath(config.ClientUrl, "unauthorized")
+			if err != nil {
+				http.Redirect(w, r, config.CallbackUrl, http.StatusSeeOther)
+			}
+			http.Redirect(w, r, u, http.StatusSeeOther)
 		}
 
 		err = gothic.StoreInSession(userSessionKey, user.UserID, r, w)

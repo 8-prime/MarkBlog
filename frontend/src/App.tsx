@@ -4,6 +4,7 @@ import Login from './pages/Login'
 import AuthGuard from './AuthGuard'
 import isLoggedIn from './hooks/auth'
 import ArticleAdmin from './pages/ArticleAdmin'
+import Unauthorized from './pages/Unauthorized'
 
 function App() {
   const loggedIn = isLoggedIn();
@@ -18,7 +19,7 @@ function App() {
             </AuthGuard>
           } />
           <Route path="/login" element={<Login />} />
-          <Route path="/bad" element={<div>bad</div>} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>
       </BrowserRouter>
     </div>
