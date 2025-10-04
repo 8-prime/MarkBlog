@@ -3,3 +3,5 @@ images/
 *.db
 articles/
 docker-compose.yml
+#Ignore saved docker images
+*.tar
