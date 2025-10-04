@@ -64,13 +64,7 @@ const ArticleAdmin = () => {
                 setArticles((prev) => [...prev, newArticleInfo]);
             } else if (selectedArticle) {
                 // Update existing article
-                const updated = await updateArticle(selectedArticle);
-                setSelectedArticle(updated);
-
-                // Update sidebar list
-                setArticles((prev) =>
-                    prev.map((a) => (a.id === updated.id ? { ...a, ...updated } : a))
-                );
+                await updateArticle(selectedArticle);
             }
         } catch (err) {
             console.error("Error saving article:", err);

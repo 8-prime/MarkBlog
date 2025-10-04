@@ -1,4 +1,4 @@
-import { Save, Tag, X } from "lucide-react";
+import { LoaderCircle, Save, Tag, X } from "lucide-react";
 import type { CreateArticle } from "../models";
 import { useState } from "react";
 import Editor from "./Editor";
@@ -7,11 +7,12 @@ type Props = {
     formData: CreateArticle;
     setFormData: React.Dispatch<React.SetStateAction<CreateArticle>>;
     onCancel: () => void;
-    onSave: () => void;
+    onSave: () => Promise<void>;
 };
 
 const ArticleCreateForm: React.FC<Props> = ({ formData, setFormData, onCancel, onSave }) => {
     const [newTag, setNewTag] = useState("");
+    const [saving, setSaving] = useState(false);
 
     const handleInputChange = (field: keyof CreateArticle, value: any) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
@@ -27,6 +28,12 @@ const ArticleCreateForm: React.FC<Props> = ({ formData, setFormData, onCancel, o
         handleInputChange("tags", formData.tags.filter((t) => t !== tagToRemove));
     };
 
+    function handleSave() {
+        if (saving) return;
+        setSaving(true);
+        onSave().finally(() => setSaving(false));
+    }
+
     return (
         <div className="flex flex-col h-full">
             {/* Header */}
@@ -41,10 +48,15 @@ const ArticleCreateForm: React.FC<Props> = ({ formData, setFormData, onCancel, o
                         Cancel
                     </button>
                     <button
-                        onClick={onSave}
+                        onClick={handleSave}
                         className="flex items-center gap-2 px-3 py-2 bg-primary text-background hover:bg-primary/80 transition-colors"
                     >
-                        <Save className="w-4 h-4" />
+                        {!saving && (
+                            <Save className="w-4 h-4" />)
+                        }
+                        {saving && (
+                            <LoaderCircle className="animate-spin w-4 h-4" />
+                        )}
                         Create Article
                     </button>
                 </div>

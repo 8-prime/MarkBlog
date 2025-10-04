@@ -1,4 +1,4 @@
-import { Save, Tag, X, Clock } from "lucide-react";
+import { Save, Tag, X, Clock, LoaderCircle } from "lucide-react";
 import type { Article } from "../models";
 import { useState } from "react";
 import Editor from "./Editor";
@@ -7,7 +7,7 @@ type Props = {
     formData: Article;
     setFormData: React.Dispatch<React.SetStateAction<Article | null>>;
     onCancel: () => void;
-    onSave: () => void;
+    onSave: () => Promise<void>;
 };
 
 const pad = (n: number) => n.toString().padStart(2, "0");
@@ -22,6 +22,7 @@ function formatForDateTimeLocal(iso?: string | null) {
 
 const ArticleEditForm: React.FC<Props> = ({ formData, setFormData, onCancel, onSave }) => {
     const [newTag, setNewTag] = useState("");
+    const [saving, setSaving] = useState(false);
 
     const handleInputChange = (field: keyof Article, value: any) => {
         setFormData((prev) => (prev ? { ...prev, [field]: value } : null));
@@ -37,6 +38,12 @@ const ArticleEditForm: React.FC<Props> = ({ formData, setFormData, onCancel, onS
         handleInputChange("tags", formData.tags.filter((t) => t !== tagToRemove));
     };
 
+    function handleSave() {
+        if (saving) return;
+        setSaving(true);
+        onSave().finally(() => setSaving(false));
+    }
+
     return (
         <div className="flex flex-col h-full">
             {/* Header */}
@@ -51,10 +58,15 @@ const ArticleEditForm: React.FC<Props> = ({ formData, setFormData, onCancel, onS
                         Cancel
                     </button>
                     <button
-                        onClick={onSave}
+                        onClick={handleSave}
                         className="flex items-center gap-2 px-3 py-2 bg-primary text-background hover:bg-primary/80 transition-colors"
                     >
-                        <Save className="w-4 h-4" />
+                        {!saving && (
+                            <Save className="w-4 h-4" />)
+                        }
+                        {saving && (
+                            <LoaderCircle className="animate-spin w-4 h-4" />
+                        )}
                         Save Changes
                     </button>
                 </div>

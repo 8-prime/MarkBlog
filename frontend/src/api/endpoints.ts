@@ -31,7 +31,7 @@ export async function createArticle(article: CreateArticle): Promise<Article> {
     return res.json();
 }
 
-export async function updateArticle(article: Article): Promise<Article> {
+export async function updateArticle(article: Article): Promise<void> {
     const res = await fetch(`/api/articles/${article.id}`, {
         method: 'PUT',
         headers: {
