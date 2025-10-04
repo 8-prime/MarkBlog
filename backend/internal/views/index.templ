@@ -20,7 +20,7 @@ templ Index(articles []models.ArticleInfo, config *models.Configuration) {
 				> { config.AuthorName }'s Blog<span class="terminal-cursor"></span>
 			</header>
 			<main>
-				<div id="articles-container">
+				<div class="articles-container" id="articles-container">
 					@ArticlesInfo(articles)
 				</div>
 				<div id="loading" class="loading">

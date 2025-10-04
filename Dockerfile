@@ -7,8 +7,17 @@ WORKDIR /app
 COPY backend/go.mod backend/go.sum ./
 RUN go mod download
 
+RUN go install github.com/a-h/templ/cmd/templ@latest
+RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+
 # Copy backend source
 COPY backend/ .
+
+# Generate code from SQL queries
+RUN sqlc generate .\sqlc.yml
+
+# Generate HTML templates
+RUN templ generate .\internal\views\
 
 # Build static binary
 RUN CGO_ENABLED=0 GOOS=linux go build -o /out/app ./cmd/api/main.go
