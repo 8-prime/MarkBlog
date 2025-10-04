@@ -21,11 +21,7 @@ func NewAuth(config *models.Configuration) {
 	store.Options.Path = "/"
 	store.Options.HttpOnly = true
 	store.Options.Secure = config.IsProd
-	if config.IsProd {
-		store.Options.SameSite = http.SameSiteStrictMode
-	} else {
-		store.Options.SameSite = http.SameSiteLaxMode
-	}
+	store.Options.SameSite = http.SameSiteLaxMode
 
 	gothic.Store = store
 
