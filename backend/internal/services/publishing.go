@@ -60,7 +60,7 @@ func (s *PublisherService) writeArticle(article *models.ArticleDto) error {
 		return err
 	}
 
-	err = s.renderer.Render(*article, file)
+	err = s.renderer.Render(article, file, s.config)
 	if err != nil {
 		return err
 	}

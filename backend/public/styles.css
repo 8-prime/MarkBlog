@@ -38,6 +38,23 @@ body {
     color: var(--primary);
 }
 
+.terminal-back {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+    display: inline-block;
+}
+
+.terminal-back::before {
+    content: "../";
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+    display: inline-block;
+}
+
 .terminal-window {
     border: 2px solid var(--border);
     box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
@@ -360,7 +377,7 @@ body {
 .article-content img {
     max-width: 100%;
     height: auto;
-    margin: 1rem 0;
+    margin: 1rem auto;
     border: 1px solid var(--border);
     border-radius: 8px;
     display: block;

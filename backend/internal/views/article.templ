@@ -2,7 +2,7 @@ package views
 
 import "backend/internal/models"
 
-templ Article(article models.ArticleDto, renderedBody string) {
+templ Article(article *models.ArticleDto, renderedBody string) {
 	<article class="article-page">
 		<header class="article-header">
 			<h1 class="article-title">
