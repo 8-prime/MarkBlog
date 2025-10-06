@@ -1,20 +1,27 @@
 package views
 
 import "backend/internal/models"
+import "backend/internal/utils"
 
 // Base layout template that provides the full HTML structure
-templ Layout(title string, content templ.Component) {
+templ Layout(article *models.ArticleDto, renderedBody string, config *models.Configuration) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta name="description" content={ article.Description }/>
 			<link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png"/>
 			<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png"/>
 			<link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png"/>
 			<link rel="manifest" href="/static/site.webmanifest"/>
 			<link rel="stylesheet" href="/static/styles.css"/>
-			<title>{ title }</title>
+			<meta property="og:site_name" content={ utils.BlogName(config) }/>
+			<meta property="og:description" content={ article.Description }/>
+			<meta property="og:type" content="article"/>
+			<meta property="og:url" content={ utils.ArticleUrl(config, article.Filename) }/>
+			<meta property="og:image" content={ utils.BlogImage(config) }/>
+			<title>{ article.Title }</title>
 		</head>
 		<body>
 			<nav class="site-nav">
@@ -25,13 +32,16 @@ templ Layout(title string, content templ.Component) {
 				</div>
 			</nav>
 			<main class="main-content">
-				@content
+				@Article(article, renderedBody)
 			</main>
 			<footer class="site-footer">
 				<div class="footer-container">
 					<p class="footer-text">
 						<span class="terminal-prompt">Thanks for visiting</span>
 						<span class="terminal-cursor"></span>
+					</p>
+					<p class="footer-text">
+						<a class="terminal-back" href="/">articles</a>
 					</p>
 				</div>
 			</footer>
@@ -40,6 +50,6 @@ templ Layout(title string, content templ.Component) {
 }
 
 // Article page template that combines layout with article content
-templ ArticlePage(article models.ArticleDto, renderedBody string) {
-	@Layout(article.Title, Article(article, renderedBody))
+templ ArticlePage(article *models.ArticleDto, renderedBody string, config *models.Configuration) {
+	@Layout(article, renderedBody, config)
 }
