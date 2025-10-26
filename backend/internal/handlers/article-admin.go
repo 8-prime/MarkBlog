@@ -132,3 +132,22 @@ func DeleteArticleHandler(articleService *services.ArticleService, publishServic
 		w.WriteHeader(http.StatusOK)
 	}
 }
+
+func GetArticleStatsHandler(articleService *services.ArticleService) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		articleId := chi.URLParam(r, "id")
+		id, err := strconv.ParseInt(articleId, 10, 64)
+		if err != nil {
+			http.Error(w, "Invalid article id", http.StatusBadRequest)
+			return
+		}
+		stats, err := articleService.GetArticleStats(id, r.Context())
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(stats)
+	}
+}

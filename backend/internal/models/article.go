@@ -40,3 +40,16 @@ type AdminArticleInfo struct {
 	ScheduledAt *time.Time `json:"scheduled_at"`
 	Tags        []string   `json:"tags"`
 }
+
+type ArticleStats struct {
+	ID        int64      `json:"id"`
+	Views     int64      `json:"views"`
+	FirstRead string     `json:"first_read"`
+	LastRead  string     `json:"last_read"`
+	AllReads  []ReadInfo `json:"all_reads"`
+}
+
+type ReadInfo struct {
+	Timestamp string `json:"timestamp"`
+	Reads     int64  `json:"reads"`
+}

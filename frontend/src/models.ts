@@ -27,3 +27,16 @@ export type Article = {
     published_at: string | null;
     tags: string[];
 }
+
+export type ArticleStats = {
+    id: number;
+    views: number;
+    first_read: string | null;
+    last_read: string | null;
+    all_reads: ReadInfo[];
+}
+
+export type ReadInfo = {
+    timestamp: string;
+    reads: number;
+}

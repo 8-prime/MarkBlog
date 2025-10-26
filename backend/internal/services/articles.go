@@ -315,3 +315,41 @@ func (a *ArticleService) GetArticleDto(id int64, ctx context.Context) (models.Ar
 func (a *ArticleService) DeleteArticle(id int64, ctx context.Context) error {
 	return a.Queries.SetArticleDeleted(ctx, id)
 }
+
+func (a *ArticleService) GetArticleStats(id int64, ctx context.Context) (*models.ArticleStats, error) {
+	summaryData, err := a.Queries.GetArticleReadSummary(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("could not load article summary data: %w", err)
+	}
+
+	readBuckets, err := a.Queries.GetArticleReadsOverTime(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("could not load article read buckets: %w", err)
+	}
+
+	if len(readBuckets) == 0 {
+		return &models.ArticleStats{
+			ID:        id,
+			Views:     summaryData.TotalReads,
+			FirstRead: summaryData.FirstRead,
+			LastRead:  summaryData.LastRead,
+			AllReads:  make([]models.ReadInfo, 0),
+		}, nil
+	}
+
+	allReads := make([]models.ReadInfo, len(readBuckets))
+	for i, b := range readBuckets {
+		allReads[i] = models.ReadInfo{
+			Timestamp: b.BucketTime,
+			Reads:     b.ReadCount,
+		}
+	}
+
+	return &models.ArticleStats{
+		ID:        id,
+		Views:     summaryData.TotalReads,
+		FirstRead: summaryData.FirstRead,
+		LastRead:  summaryData.LastRead,
+		AllReads:  allReads,
+	}, nil
+}

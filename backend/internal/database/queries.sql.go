@@ -192,6 +192,93 @@ func (q *Queries) GetArticle(ctx context.Context, id int64) (Article, error) {
 	return i, err
 }
 
+const getArticleReadSummary = `-- name: GetArticleReadSummary :one
+SELECT
+    CAST(MIN(read_at) as TEXT) as first_read,
+    CAST(MAX(read_at) as TEXT) as last_read,
+    COUNT(*) as total_reads
+FROM
+    article_reads
+WHERE
+    article_id = ?
+`
+
+type GetArticleReadSummaryRow struct {
+	FirstRead  string
+	LastRead   string
+	TotalReads int64
+}
+
+func (q *Queries) GetArticleReadSummary(ctx context.Context, articleID int64) (GetArticleReadSummaryRow, error) {
+	row := q.db.QueryRowContext(ctx, getArticleReadSummary, articleID)
+	var i GetArticleReadSummaryRow
+	err := row.Scan(&i.FirstRead, &i.LastRead, &i.TotalReads)
+	return i, err
+}
+
+const getArticleReadsOverTime = `-- name: GetArticleReadsOverTime :many
+WITH time_range AS (
+    SELECT
+        MIN(read_at) as first_read,
+        MAX(read_at) as last_read,
+        (
+            CAST(strftime('%s', MAX(read_at)) AS INTEGER) - CAST(strftime('%s', MIN(read_at)) AS INTEGER)
+        ) / 100 as bucket_seconds
+    FROM
+        article_reads
+    WHERE
+        article_id = ?1
+)
+SELECT
+    CAST(
+        datetime(
+            (
+                CAST(strftime('%s', ar.read_at) AS INTEGER) / tr.bucket_seconds
+            ) * tr.bucket_seconds,
+            'unixepoch'
+        ) AS TEXT
+    ) as bucket_time,
+    COUNT(*) as read_count
+FROM
+    article_reads ar
+    CROSS JOIN time_range tr
+WHERE
+    ar.article_id = ?1
+    AND tr.bucket_seconds > 0
+GROUP BY
+    bucket_time
+ORDER BY
+    bucket_time
+`
+
+type GetArticleReadsOverTimeRow struct {
+	BucketTime string
+	ReadCount  int64
+}
+
+func (q *Queries) GetArticleReadsOverTime(ctx context.Context, articleID int64) ([]GetArticleReadsOverTimeRow, error) {
+	rows, err := q.db.QueryContext(ctx, getArticleReadsOverTime, articleID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetArticleReadsOverTimeRow
+	for rows.Next() {
+		var i GetArticleReadsOverTimeRow
+		if err := rows.Scan(&i.BucketTime, &i.ReadCount); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getArticleTags = `-- name: GetArticleTags :many
 SELECT
     tag_name

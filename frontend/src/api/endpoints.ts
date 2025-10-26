@@ -1,4 +1,4 @@
-import type { Article, ArticleInfo, CreateArticle } from "../models";
+import type { Article, ArticleInfo, ArticleStats, CreateArticle } from "../models";
 
 
 export async function fetchAdminArticles(page: number): Promise<ArticleInfo[]> {
@@ -31,7 +31,7 @@ export async function createArticle(article: CreateArticle): Promise<Article> {
     return res.json();
 }
 
-export async function updateArticle(article: Article): Promise<void> {
+export async function updateArticle(article: Article): Promise<Article> {
     const res = await fetch(`/api/articles/${article.id}`, {
         method: 'PUT',
         headers: {
@@ -41,6 +41,14 @@ export async function updateArticle(article: Article): Promise<void> {
     });
     if (!res.ok) {
         throw new Error(`Failed to update article: ${res.statusText}`);
+    }
+    return res.json();
+}
+
+export async function getArticleStats(id: number): Promise<ArticleStats> {
+    const res = await fetch(`/api/articles/${id}/stats`);
+    if (!res.ok) {
+        throw new Error(`Failed to fetch article stats: ${res.statusText}`);
     }
     return res.json();
 }

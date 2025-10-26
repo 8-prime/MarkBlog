@@ -8,7 +8,7 @@ import {
 } from "../api/endpoints";
 import type { Article, ArticleInfo, CreateArticle } from "../models";
 import ArticleCreateForm from "../components/ArticleCreateForm";
-import ArticleEditForm from "../components/ArticleEditForm";
+import ArticleDetails from "../components/ArticleDetails";
 
 const ArticleAdmin = () => {
     const [articles, setArticles] = useState<ArticleInfo[]>([]);
@@ -131,12 +131,7 @@ const ArticleAdmin = () => {
                         onSave={handleSave}
                     />
                 ) : selectedArticle ? (
-                    <ArticleEditForm
-                        formData={selectedArticle}
-                        setFormData={setSelectedArticle}
-                        onCancel={handleCancel}
-                        onSave={handleSave}
-                    />
+                    <ArticleDetails formData={selectedArticle} setFormData={setSelectedArticle} onCancel={handleCancel} onSave={handleSave} />
                 ) : (
                     <div className="flex items-center justify-center h-full text-text">
                         <div className="text-center flex flex-col items-center">
