@@ -87,12 +87,12 @@ func (s *RendererService) newCustomizedRender() *mdhtml.Renderer {
 	}
 	return mdhtml.NewRenderer(opts)
 }
-func (s *RendererService) Render(article models.ArticleDto, w io.Writer) error {
+func (s *RendererService) Render(article *models.ArticleDto, w io.Writer, config *models.Configuration) error {
 	md := []byte(article.Body)
 
 	html := string(markdown.ToHTML(md, nil, s.renderer))
 
-	page := views.ArticlePage(article, html)
+	page := views.ArticlePage(article, html, config)
 
 	return page.Render(context.Background(), w)
 }

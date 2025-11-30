@@ -126,7 +126,7 @@ const ArticleCreateForm: React.FC<Props> = ({ formData, setFormData, onCancel, o
                 </div>
 
                 {/* Right: Editor */}
-                <div className="flex-1 p-6 overflow-y-auto">
+                <div className="flex-1 overflow-y-auto">
                     <Editor
                         articleText={formData.body}
                         setArticleText={(text) => handleInputChange("body", text ?? "")}
