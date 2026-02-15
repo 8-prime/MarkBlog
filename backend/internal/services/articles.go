@@ -237,6 +237,22 @@ func (a *ArticleService) GetArticleInfos(page int, ctx context.Context) ([]model
 	return result, err
 }
 
+func (a *ArticleService) GetSitemapArticleInfos(ctx context.Context) ([]models.SiteMapArticleInfo, error) {
+	infos, err := a.Queries.GetAllSitemapArticleInfos(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	sitemapInfos := make([]models.SiteMapArticleInfo, len(infos))
+	for i := 0; i < len(infos); i++ {
+		sitemapInfos[i] = models.SiteMapArticleInfo{
+			Filename:  infos[i].Filename,
+			UpdatedAt: infos[i].UpdatedAt,
+		}
+	}
+	return sitemapInfos, nil
+}
+
 func (a *ArticleService) GetAdminArticleInfos(page int, ctx context.Context) ([]models.AdminArticleInfo, error) {
 	infos, err := a.Queries.GetAdminArticleInfos(ctx, database.GetAdminArticleInfosParams{
 		Limit:  10,

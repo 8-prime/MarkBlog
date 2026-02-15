@@ -127,6 +127,18 @@ ORDER BY
 LIMIT
     ? OFFSET ?;
 
+-- name: GetAllSitemapArticleInfos :many
+SELECT
+    filename,
+    updated_at
+FROM
+    articles
+WHERE
+    published_at < CURRENT_TIMESTAMP
+    AND deleted_at IS NULL
+ORDER BY
+    published_at DESC;
+
 -- name: GetAdminArticleInfos :many
 SELECT
     id,
