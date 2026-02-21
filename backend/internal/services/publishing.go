@@ -27,15 +27,23 @@ type PublisherService struct {
 	requests       chan *PublishRequest
 	articleService *ArticleService
 	renderer       *RendererService
+	atomService    *AtomService
 	timers         map[int64]*time.Timer
 }
 
-func NewPublisherService(queries *database.Queries, config *models.Configuration, articleService *ArticleService, renderer *RendererService) *PublisherService {
+func NewPublisherService(
+	queries *database.Queries,
+	config *models.Configuration,
+	articleService *ArticleService,
+	renderer *RendererService,
+	atomService *AtomService,
+) *PublisherService {
 	service := &PublisherService{
 		queries:        queries,
 		config:         config,
 		articleService: articleService,
 		renderer:       renderer,
+		atomService:    atomService,
 		requests:       make(chan *PublishRequest, 100),
 		timers:         make(map[int64]*time.Timer),
 	}
@@ -65,6 +73,7 @@ func (s *PublisherService) writeArticle(article *models.ArticleDto) error {
 		return err
 	}
 
+	s.atomService.Generate()
 	return nil
 }
 
@@ -138,8 +147,9 @@ func (s *PublisherService) Unpublish(articleId int64) error {
 	}
 	articleFileName := path.Join(s.config.ArticlesDir, title+".html")
 	err = os.Remove(articleFileName)
-	if os.IsNotExist(err) {
-		return nil
+	if err != nil && !os.IsNotExist(err) {
+		return err
 	}
-	return err
+	s.atomService.Generate()
+	return nil
 }
