@@ -30,6 +30,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/articles/{id}", handlers.ViewArticleHandler(s.config, s.queries))
 	r.Get("/info", handlers.ArticleInfos(s.articleService))
 	r.Get("/scalar", handlers.ScalarHandler())
+	r.Get("/sitemap.xml", handlers.SitemapHandler(s.articleService, s.config))
 	r.Route("/api", func(r chi.Router) {
 		r.Get("/user", handlers.GetUserHandler())
 		r.Get("/auth/{provider}", handlers.LoginHandler(s.config))

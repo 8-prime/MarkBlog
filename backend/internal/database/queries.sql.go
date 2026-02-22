@@ -154,6 +154,47 @@ func (q *Queries) GetAdminArticleInfos(ctx context.Context, arg GetAdminArticleI
 	return items, nil
 }
 
+const getAllSitemapArticleInfos = `-- name: GetAllSitemapArticleInfos :many
+SELECT
+    filename,
+    updated_at
+FROM
+    articles
+WHERE
+    published_at < CURRENT_TIMESTAMP
+    AND deleted_at IS NULL
+ORDER BY
+    published_at DESC
+`
+
+type GetAllSitemapArticleInfosRow struct {
+	Filename  string
+	UpdatedAt time.Time
+}
+
+func (q *Queries) GetAllSitemapArticleInfos(ctx context.Context) ([]GetAllSitemapArticleInfosRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAllSitemapArticleInfos)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAllSitemapArticleInfosRow
+	for rows.Next() {
+		var i GetAllSitemapArticleInfosRow
+		if err := rows.Scan(&i.Filename, &i.UpdatedAt); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getArticle = `-- name: GetArticle :one
 SELECT
     id,
