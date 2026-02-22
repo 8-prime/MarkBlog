@@ -26,13 +26,6 @@ body {
     --card-bg: #060606;
 }
 
-/* Terminal-specific styles */
-.terminal-cursor::after {
-    content: "█";
-    animation: blink 1s infinite;
-    color: var(--primary);
-}
-
 .terminal-prompt::before {
     content: "> ";
     color: var(--primary);
@@ -92,11 +85,21 @@ body {
 }
 
 /* Blog header with improved mobile scaling */
-.blog-header {
+.blog-header h1 {
     color: var(--primary);
     font-size: clamp(1.75rem, 5vw, 2.25rem);
     font-weight: 700;
     word-break: break-word;
+}
+
+.blog-header h1::before {
+    content: "> ";
+}
+
+.blog-header h1::after {
+    content: "█";
+    animation: blink 1s infinite;
+    color: var(--primary);
 }
 
 .articles-container {
