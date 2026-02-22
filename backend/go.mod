@@ -39,6 +39,7 @@ require (
 	github.com/gomarkdown/markdown v0.0.0-20250810172220-2e2c11897d1a // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/context v1.1.1 // indirect
+	github.com/gorilla/feeds v1.2.0 // indirect
 	github.com/gorilla/mux v1.6.2 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gorilla/sessions v1.4.0 // indirect

@@ -15,15 +15,13 @@ import (
 )
 
 type ArticleService struct {
-	Queries *database.Queries
-	Db      *sql.DB
+	Queries     *database.Queries
+	Db          *sql.DB
+	atomService *AtomService
 }
 
-func NewArticleService(queries *database.Queries, db *sql.DB) *ArticleService {
-	return &ArticleService{
-		Queries: queries,
-		Db:      db,
-	}
+func NewArticleService(queries *database.Queries, db *sql.DB, atomService *AtomService) *ArticleService {
+	return &ArticleService{Queries: queries, Db: db, atomService: atomService}
 }
 
 // titleToFilename converts an article title to a URL-safe filename
@@ -201,7 +199,10 @@ func (a *ArticleService) UpdateArticle(article *models.ArticleDto, ctx context.C
 		return err
 	}
 
-	return tx.Commit()
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (a *ArticleService) GetArticleInfos(page int, ctx context.Context) ([]models.ArticleInfo, error) {
@@ -313,5 +314,9 @@ func (a *ArticleService) GetArticleDto(id int64, ctx context.Context) (models.Ar
 }
 
 func (a *ArticleService) DeleteArticle(id int64, ctx context.Context) error {
-	return a.Queries.SetArticleDeleted(ctx, id)
+	if err := a.Queries.SetArticleDeleted(ctx, id); err != nil {
+		return err
+	}
+	a.atomService.Generate()
+	return nil
 }

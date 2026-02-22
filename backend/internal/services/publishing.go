@@ -27,15 +27,23 @@ type PublisherService struct {
 	requests       chan *PublishRequest
 	articleService *ArticleService
 	renderer       *RendererService
+	atomService    *AtomService
 	timers         map[int64]*time.Timer
 }
 
-func NewPublisherService(queries *database.Queries, config *models.Configuration, articleService *ArticleService, renderer *RendererService) *PublisherService {
+func NewPublisherService(
+	queries *database.Queries,
+	config *models.Configuration,
+	articleService *ArticleService,
+	renderer *RendererService,
+	atomService *AtomService,
+) *PublisherService {
 	service := &PublisherService{
 		queries:        queries,
 		config:         config,
 		articleService: articleService,
 		renderer:       renderer,
+		atomService:    atomService,
 		requests:       make(chan *PublishRequest, 100),
 		timers:         make(map[int64]*time.Timer),
 	}
@@ -104,13 +112,18 @@ func (s *PublisherService) watchPublishRequests() {
 
 			if article.ScheduledAt.Before(time.Now()) {
 				log.Printf("Publishing article %d immediately", req.id)
-				s.writeArticle(&article)
+				if err := s.writeArticle(&article); err != nil {
+					log.Printf("Error publishing article %d: %v", req.id, err)
+				} else {
+					s.atomService.Generate()
+				}
 			} else {
 				duration := time.Until(*article.ScheduledAt)
 				s.timers[req.id] = time.AfterFunc(duration, func() {
-					err := s.writeArticle(&article)
-					if err != nil {
+					if err := s.writeArticle(&article); err != nil {
 						log.Printf("Error publishing article %d: %v", req.id, err)
+					} else {
+						s.atomService.Generate()
 					}
 					delete(s.timers, req.id)
 				})
@@ -138,8 +151,8 @@ func (s *PublisherService) Unpublish(articleId int64) error {
 	}
 	articleFileName := path.Join(s.config.ArticlesDir, title+".html")
 	err = os.Remove(articleFileName)
-	if os.IsNotExist(err) {
-		return nil
+	if err != nil && !os.IsNotExist(err) {
+		return err
 	}
-	return err
+	return nil
 }
