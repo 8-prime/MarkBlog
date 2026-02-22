@@ -4,7 +4,6 @@ import (
 	"backend/internal/models"
 	"backend/internal/services"
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -94,15 +93,11 @@ func UpdateArticleHandler(articleService *services.ArticleService, publishServic
 		}
 
 		err = articleService.UpdateArticle(&articleUpdate, r.Context())
-		if articleUpdate.ScheduledAt != nil {
-			log.Printf("Scheduling article %d for publishing", articleUpdate.ID)
-			publishService.Publish(articleUpdate.ID, articleUpdate.ScheduledAt)
-		}
-
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		publishService.Publish(articleUpdate.ID, articleUpdate.ScheduledAt)
 
 		w.WriteHeader(http.StatusOK)
 	}
