@@ -34,6 +34,12 @@ type ArticleTag struct {
 	TagName   string
 }
 
+type Setting struct {
+	Key       string
+	Value     string
+	UpdatedAt time.Time
+}
+
 type Tag struct {
 	Name string
 }

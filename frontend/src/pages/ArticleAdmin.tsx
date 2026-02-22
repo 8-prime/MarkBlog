@@ -1,5 +1,6 @@
-import { Plus } from "lucide-react";
+import { Plus, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 import {
     fetchAdminArticle,
     fetchAdminArticles,
@@ -82,13 +83,22 @@ const ArticleAdmin = () => {
             <div className="w-1/5 border-r border-text overflow-y-auto">
                 <div className="p-4 border-b border-text flex items-center justify-between">
                     <h2 className="text-lg font-semibold text-text">Articles</h2>
-                    <button
-                        onClick={handleCreateNew}
-                        className="flex items-center gap-2 px-3 py-2 bg-primary text-background hover:bg-primary/80 transition-colors"
-                    >
-                        <Plus className="w-4 h-4" />
-                        New Article
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <Link
+                            to="/settings"
+                            className="flex items-center p-2 border border-text text-text hover:bg-text hover:text-background transition-colors"
+                            title="Settings"
+                        >
+                            <Settings className="w-4 h-4" />
+                        </Link>
+                        <button
+                            onClick={handleCreateNew}
+                            className="flex items-center gap-2 px-3 py-2 bg-primary text-background hover:bg-primary/80 transition-colors"
+                        >
+                            <Plus className="w-4 h-4" />
+                            New Article
+                        </button>
+                    </div>
                 </div>
 
                 <div className="p-4 space-y-3">

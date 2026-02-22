@@ -385,6 +385,17 @@ func (q *Queries) GetScheduledArticleTimes(ctx context.Context) ([]GetScheduledA
 	return items, nil
 }
 
+const getSetting = `-- name: GetSetting :one
+SELECT value FROM settings WHERE key = ? LIMIT 1
+`
+
+func (q *Queries) GetSetting(ctx context.Context, key string) (string, error) {
+	row := q.db.QueryRowContext(ctx, getSetting, key)
+	var value string
+	err := row.Scan(&value)
+	return value, err
+}
+
 const publishArticle = `-- name: PublishArticle :exec
 UPDATE
     articles
@@ -410,6 +421,22 @@ WHERE
 
 func (q *Queries) SetArticleDeleted(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, setArticleDeleted, id)
+	return err
+}
+
+const setSetting = `-- name: SetSetting :exec
+INSERT INTO settings (key, value, updated_at)
+VALUES (?, ?, CURRENT_TIMESTAMP)
+ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
+`
+
+type SetSettingParams struct {
+	Key   string
+	Value string
+}
+
+func (q *Queries) SetSetting(ctx context.Context, arg SetSettingParams) error {
+	_, err := q.db.ExecContext(ctx, setSetting, arg.Key, arg.Value)
 	return err
 }
 
