@@ -17,7 +17,9 @@ func getUrlsFromArticleInfos(infos []models.SiteMapArticleInfo, config *models.C
 			continue
 		}
 		urls = append(urls, models.SitemapUrl{
-			Location: loc,
+			Location:        loc,
+			Modification:    info.UpdatedAt,
+			ChangeFrequency: models.Monthly,
 		})
 	}
 	return urls
