@@ -73,7 +73,6 @@ func (s *PublisherService) writeArticle(article *models.ArticleDto) error {
 		return err
 	}
 
-	s.atomService.Generate()
 	return nil
 }
 
@@ -113,13 +112,18 @@ func (s *PublisherService) watchPublishRequests() {
 
 			if article.ScheduledAt.Before(time.Now()) {
 				log.Printf("Publishing article %d immediately", req.id)
-				s.writeArticle(&article)
+				if err := s.writeArticle(&article); err != nil {
+					log.Printf("Error publishing article %d: %v", req.id, err)
+				} else {
+					s.atomService.Generate()
+				}
 			} else {
 				duration := time.Until(*article.ScheduledAt)
 				s.timers[req.id] = time.AfterFunc(duration, func() {
-					err := s.writeArticle(&article)
-					if err != nil {
+					if err := s.writeArticle(&article); err != nil {
 						log.Printf("Error publishing article %d: %v", req.id, err)
+					} else {
+						s.atomService.Generate()
 					}
 					delete(s.timers, req.id)
 				})
@@ -150,6 +154,5 @@ func (s *PublisherService) Unpublish(articleId int64) error {
 	if err != nil && !os.IsNotExist(err) {
 		return err
 	}
-	s.atomService.Generate()
 	return nil
 }

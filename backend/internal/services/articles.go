@@ -202,7 +202,6 @@ func (a *ArticleService) UpdateArticle(article *models.ArticleDto, ctx context.C
 	if err := tx.Commit(); err != nil {
 		return err
 	}
-	a.atomService.Generate()
 	return nil
 }
 
