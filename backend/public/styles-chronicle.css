@@ -1,3 +1,4 @@
+/* Universal box-sizing */
 *,
 *::before,
 *::after {
@@ -11,23 +12,12 @@ body {
 }
 
 :root {
-    --primary: #1a1a1a;
-    --border: #e0e0e0;
-    --background: #ffffff;
-    --text-primary: #1a1a1a;
-    --text-secondary: #888888;
-    --card-bg: #f5f5f5;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --primary: #d4d4d4;
-        --border: #222222;
-        --background: #111111;
-        --text-primary: #d4d4d4;
-        --text-secondary: #666666;
-        --card-bg: #1a1a1a;
-    }
+    --background: #0d0b08;
+    --text-primary: #e8dcc8;
+    --text-secondary: #7a6a4f;
+    --accent: #c8892a;
+    --border: #2a2218;
+    --card-bg: #131109;
 }
 
 /* Stub out terminal-specific classes used in shared templates */
@@ -36,21 +26,31 @@ body {
 }
 
 .terminal-back {
-    color: var(--text-primary);
+    color: var(--accent);
     text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    display: inline-block;
+    font-family: Georgia, 'Times New Roman', serif;
 }
 
 .terminal-back::before {
     content: "← ";
 }
 
+.terminal-back:hover {
+    color: var(--text-primary);
+}
+
 .terminal-window {
     border: 1px solid var(--border);
 }
 
+/* Base body */
 body {
     background-color: var(--background);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: Georgia, 'Times New Roman', serif;
+    color: var(--text-primary);
     width: 100%;
     margin: 0 auto;
     padding: 1rem;
@@ -59,18 +59,25 @@ body {
     flex-direction: column;
     gap: 2rem;
     line-height: 1.6;
-    color: var(--text-primary);
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    overflow-x: hidden;
 }
 
-/* Blog header */
+/* Blog header — centered, amber rule below */
+.blog-header {
+    text-align: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--accent);
+}
+
 .blog-header h1 {
     color: var(--text-primary);
-    font-size: clamp(1.25rem, 3vw, 1.5rem);
-    font-weight: 400;
-    letter-spacing: -0.01em;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 600;
     margin: 0;
+    letter-spacing: -0.01em;
+    font-family: Georgia, 'Times New Roman', serif;
 }
 
 .blog-header h1::before,
@@ -78,30 +85,29 @@ body {
     content: "";
 }
 
-/* Article list — no gap between rows, border-bottom acts as divider */
+/* Article list */
 .articles-container {
     display: flex;
+    gap: 1rem;
     flex-direction: column;
 }
 
 /* ----------------------------------------------------------------
-   Single-row article entry
-   display:contents on .article-info-header "unwraps" it so that
-   .article-info-title and .time-container become direct flex
-   children of .article-info, alongside .description-container.
+   Logbook entry layout — date at top, then title, then description
+   .article-info-header { display: contents } unwraps the wrapper
+   so title and time become direct flex children of .article-info
    ---------------------------------------------------------------- */
 .article-info {
     display: flex;
-    flex-direction: row;
-    align-items: baseline;
-    gap: 0.75rem;
-    padding: 0.45rem 0;
-    border-bottom: 1px solid var(--border);
+    flex-direction: column;
+    border-left: 2px solid var(--accent);
+    padding-left: 1rem;
     background: none;
-    transition: none;
+    transition: border-color 0.2s ease;
 }
 
 .article-info:hover {
+    border-color: var(--text-primary);
     box-shadow: none;
     transform: none;
 }
@@ -110,64 +116,84 @@ body {
     display: contents;
 }
 
-/* Title — order 1, no shrink so it stays readable */
-.article-info-title {
+/* Date — order 1, small amber monospace */
+.time-container {
     order: 1;
-    flex-shrink: 0;
-    margin: 0;
-    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.time {
+    color: var(--accent);
+    font-size: 0.8125rem;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    letter-spacing: 0.02em;
+}
+
+/* Hide updated time in list view */
+.time-updated {
+    display: none;
+}
+
+/* Title — order 2 */
+.article-info-title {
+    order: 2;
+    margin: 0.2rem 0 0.35rem;
+    line-height: 1.3;
 }
 
 .article-info-title a {
     text-decoration: none;
     color: var(--text-primary);
-    font-size: 0.9375rem;
-    font-weight: 500;
+    font-size: 1.125rem;
+    font-weight: 600;
     display: inline;
-    transition: none;
+    font-family: Georgia, 'Times New Roman', serif;
+    transition: color 0.2s ease;
 }
 
 .article-info-title a:hover {
-    text-decoration: underline;
-    color: var(--text-primary);
+    color: var(--accent);
 }
 
-/* Description — order 2, takes remaining space, truncates */
+/* Description — order 3 */
 .description-container {
-    order: 2;
-    flex: 1;
-    min-width: 0; /* required for text-overflow inside flex */
-    overflow: hidden;
+    order: 3;
 }
 
 .description {
     margin: 0;
     color: var(--text-secondary);
     font-size: 0.9375rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    word-break: break-word;
+    font-style: italic;
 }
 
-/* Date — order 3, pushed to the far right */
-.time-container {
-    order: 3;
-    flex-shrink: 0;
-    white-space: nowrap;
-}
-
-.time {
-    color: var(--text-secondary);
-    font-size: 0.8125rem;
-}
-
-/* Hide updated time and tags in this layout */
-.time-updated {
-    display: none;
-}
-
+/* Tags — order 4, inline muted pills */
 .tags {
-    display: none;
+    order: 4;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+}
+
+.tag {
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    background-color: var(--card-bg);
+    padding: 0.2rem 0.55rem;
+    font-size: 0.75rem;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    white-space: nowrap;
+    line-height: 1;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.tag:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background-color: var(--card-bg);
+    transform: none;
 }
 
 /* Loading indicator */
@@ -208,6 +234,7 @@ body {
     margin: 0 0 0.75rem 0;
     line-height: 1.25;
     word-break: break-word;
+    font-family: Georgia, 'Times New Roman', serif;
 }
 
 .article-description {
@@ -216,6 +243,7 @@ body {
     margin: 0 0 1.25rem 0;
     line-height: 1.6;
     word-break: break-word;
+    font-style: italic;
 }
 
 .article-meta {
@@ -237,22 +265,26 @@ body {
 
 .meta-label {
     font-weight: 600;
-    color: var(--text-secondary);
+    color: var(--accent);
     text-transform: uppercase;
     font-size: 0.75rem;
     letter-spacing: 0.04em;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
 }
 
 .time,
 .time-updated {
     color: var(--text-secondary);
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.8125rem;
 }
 
 /* Article content */
 .article-content {
     color: var(--text-primary);
-    line-height: 1.75;
+    line-height: 1.8;
     font-size: 1rem;
+    font-family: Georgia, 'Times New Roman', serif;
     word-break: break-word;
     overflow-wrap: break-word;
     hyphens: auto;
@@ -272,6 +304,7 @@ body {
     font-weight: 600;
     line-height: 1.3;
     word-break: break-word;
+    font-family: Georgia, 'Times New Roman', serif;
 }
 
 .article-content h1 {
@@ -280,20 +313,30 @@ body {
     padding-bottom: 0.5rem;
 }
 
-.article-content h2 { font-size: clamp(1.25rem, 4vw, 1.5rem); }
-.article-content h3 { font-size: clamp(1.125rem, 3.5vw, 1.25rem); }
-.article-content h4 { font-size: 1.125rem; }
+.article-content h2 {
+    font-size: clamp(1.25rem, 4vw, 1.5rem);
+}
 
-.article-content p { margin-bottom: 1rem; }
+.article-content h3 {
+    font-size: clamp(1.125rem, 3.5vw, 1.25rem);
+}
+
+.article-content h4 {
+    font-size: 1.125rem;
+}
+
+.article-content p {
+    margin-bottom: 1.1rem;
+}
 
 .article-content a {
-    color: var(--text-primary);
+    color: var(--accent);
     text-decoration: underline;
     word-break: break-word;
 }
 
 .article-content a:hover {
-    color: var(--text-secondary);
+    color: var(--text-primary);
 }
 
 .article-content ul,
@@ -302,10 +345,12 @@ body {
     padding-left: 1.5rem;
 }
 
-.article-content li { margin-bottom: 0.5rem; }
+.article-content li {
+    margin-bottom: 0.5rem;
+}
 
 .article-content blockquote {
-    border-left: 2px solid var(--border);
+    border-left: 2px solid var(--accent);
     padding: 0.5rem 1rem;
     margin: 1.5rem 0;
     color: var(--text-secondary);
@@ -330,7 +375,7 @@ body {
     font-size: 0.875rem;
     font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
     border: 1px solid var(--border);
-    color: var(--text-primary);
+    color: var(--accent);
     word-break: break-all;
 }
 
@@ -339,6 +384,7 @@ body {
     padding: 0;
     border: none;
     word-break: normal;
+    color: var(--text-primary);
 }
 
 .article-content img {
@@ -346,6 +392,7 @@ body {
     height: auto;
     margin: 1rem auto;
     display: block;
+    border: 1px solid var(--border);
 }
 
 .article-content table {
@@ -368,7 +415,8 @@ body {
 
 .article-content th {
     font-weight: 600;
-    border-bottom: 2px solid var(--border);
+    border-bottom: 2px solid var(--accent);
+    color: var(--accent);
 }
 
 .article-content hr {
@@ -395,16 +443,18 @@ body {
 }
 
 .nav-home {
-    color: var(--text-primary);
+    color: var(--text-secondary);
     text-decoration: none;
-    font-size: 0.9375rem;
-    font-weight: 500;
+    font-size: 0.875rem;
+    font-weight: 400;
     display: inline-block;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    letter-spacing: 0.02em;
+    transition: color 0.2s ease;
 }
 
 .nav-home:hover {
-    text-decoration: underline;
-    color: var(--text-primary);
+    color: var(--accent);
 }
 
 .main-content {
@@ -428,7 +478,7 @@ body {
 .footer-text {
     color: var(--text-secondary);
     font-size: 0.875rem;
-    margin: 0 0 0.5rem;
+    margin: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -437,7 +487,7 @@ body {
 }
 
 /* ----------------------------------------------------------------
-   Mobile — stack the row on narrow screens
+   Mobile
    ---------------------------------------------------------------- */
 @media (max-width: 640px) {
     body {
@@ -446,33 +496,7 @@ body {
     }
 
     .article-info {
-        flex-wrap: wrap;
-        row-gap: 0.1rem;
-        padding: 0.6rem 0;
-    }
-
-    /* Title row takes full width */
-    .article-info-title {
-        order: 1;
-        flex-basis: 100%;
-    }
-
-    /* Description takes full width, can wrap */
-    .description-container {
-        order: 2;
-        flex-basis: 100%;
-    }
-
-    .description {
-        white-space: normal;
-        overflow: visible;
-        text-overflow: clip;
-        font-size: 0.875rem;
-    }
-
-    /* Date at the end of the description row */
-    .time-container {
-        order: 3;
+        margin-bottom: 1.25rem;
     }
 
     .article-page {

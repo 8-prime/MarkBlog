@@ -17,7 +17,7 @@ type Theme struct {
 var themes = []Theme{
 	{"terminal", "Terminal", "Dark hacker aesthetic with green-on-black styling"},
 	{"minimal", "Minimal", "Clean editorial light theme with navy accents"},
-	{"dusk", "Dusk", "Dark sophisticated theme with violet accents"},
+	{"chronicle", "Chronicle", "Warm amber logbook — date-first entries on a near-black canvas"},
 }
 
 var validThemes = func() map[string]bool {
