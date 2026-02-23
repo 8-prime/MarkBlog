@@ -175,8 +175,8 @@ function DuskCard({ active, onClick, disabled }: { active: boolean; onClick: () 
 // ─── Card dispatch ────────────────────────────────────────────────────────────
 function ThemeCard({ id, active, onClick, disabled }: { id: string; active: boolean; onClick: () => void; disabled: boolean }) {
     if (id === "terminal") return <TerminalCard active={active} onClick={onClick} disabled={disabled} />;
-    if (id === "minimal")  return <MinimalCard  active={active} onClick={onClick} disabled={disabled} />;
-    if (id === "dusk")     return <DuskCard     active={active} onClick={onClick} disabled={disabled} />;
+    if (id === "minimal") return <MinimalCard active={active} onClick={onClick} disabled={disabled} />;
+    if (id === "dusk") return <DuskCard active={active} onClick={onClick} disabled={disabled} />;
     // fallback for any future theme unknown to this client
     return (
         <button
