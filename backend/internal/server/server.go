@@ -15,9 +15,11 @@ import (
 type Server struct {
 	port             int
 	config           *models.Configuration
+	atomService      *services.AtomService
 	articleService   *services.ArticleService
 	renderService    *services.RendererService
 	publisherService *services.PublisherService
+	settingsService  *services.SettingsService
 	db               *sql.DB
 	queries          *database.Queries
 }
@@ -40,17 +42,23 @@ func NewServer(config *models.Configuration) (*http.Server, error) {
 		return nil, err
 	}
 
-	articleService := services.NewArticleService(queries, db)
+	atomService := services.NewAtomService(queries, config)
+	articleService := services.NewArticleService(queries, db, atomService)
 
 	serverConfig := &Server{
 		db:               db,
 		queries:          queries,
 		port:             config.Port,
 		config:           config,
+		atomService:      atomService,
 		articleService:   articleService,
 		renderService:    renderService,
-		publisherService: services.NewPublisherService(queries, config, articleService, renderService),
+		publisherService: services.NewPublisherService(queries, config, articleService, renderService, atomService),
+		settingsService:  services.NewSettingsService(queries),
 	}
+
+	// Regenerate atom feed on startup so it is always fresh after a restart.
+	atomService.Generate()
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", serverConfig.port),

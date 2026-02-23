@@ -31,6 +31,11 @@ type ArticleInfo struct {
 	Tags        []string
 }
 
+type SiteMapArticleInfo struct {
+	Filename  string
+	UpdatedAt time.Time
+}
+
 type AdminArticleInfo struct {
 	ID          int64      `json:"id"`
 	Title       string     `json:"title"`

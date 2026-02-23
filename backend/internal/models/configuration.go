@@ -2,6 +2,7 @@ package models
 
 import (
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/joho/godotenv"
@@ -20,6 +21,7 @@ type Configuration struct {
 	ImagesDir          string
 	FrontendDir        string
 	ArticlesDir        string
+	AtomFilePath       string
 	ConnectionString   string
 	Port               int
 	Style              string
@@ -63,6 +65,11 @@ func LoadConfiguration() (*Configuration, error) {
 
 	hostingUrl := os.Getenv("HOSTING_URL")
 
+	atomFilePath, found := os.LookupEnv("ATOM_FILE_PATH")
+	if !found {
+		atomFilePath = filepath.Join(os.Getenv("ARTICLES_DIR"), "atom.xml")
+	}
+
 	return &Configuration{
 		AdminEmail:         os.Getenv("ADMIN_EMAIL"),
 		ClientUrl:          os.Getenv("CLIENT_URL"),
@@ -74,6 +81,7 @@ func LoadConfiguration() (*Configuration, error) {
 		AuthEnabled:        authEnabledBool,
 		ImagesDir:          os.Getenv("IMAGES_DIR"),
 		ArticlesDir:        os.Getenv("ARTICLES_DIR"),
+		AtomFilePath:       atomFilePath,
 		ConnectionString:   conn,
 		Port:               port,
 		Style:              style,

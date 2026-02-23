@@ -44,3 +44,32 @@ export async function updateArticle(article: Article): Promise<void> {
     }
     return res.json();
 }
+
+export async function getThemes(): Promise<{ id: string; name: string; description: string }[]> {
+    const res = await fetch('/api/settings/themes');
+    if (!res.ok) {
+        throw new Error(`Failed to get themes: ${res.statusText}`);
+    }
+    return res.json();
+}
+
+export async function getTheme(): Promise<{ theme: string }> {
+    const res = await fetch('/api/settings/theme');
+    if (!res.ok) {
+        throw new Error(`Failed to get theme: ${res.statusText}`);
+    }
+    return res.json();
+}
+
+export async function setTheme(theme: string): Promise<void> {
+    const res = await fetch('/api/settings/theme', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ theme }),
+    });
+    if (!res.ok) {
+        throw new Error(`Failed to set theme: ${res.statusText}`);
+    }
+}

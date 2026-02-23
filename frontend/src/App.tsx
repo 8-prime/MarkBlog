@@ -4,6 +4,7 @@ import Login from './pages/Login'
 import AuthGuard from './AuthGuard'
 import isLoggedIn from './hooks/auth'
 import ArticleAdmin from './pages/ArticleAdmin'
+import Settings from './pages/Settings'
 import Unauthorized from './pages/Unauthorized'
 
 function App() {
@@ -16,6 +17,11 @@ function App() {
           <Route path="/" element={
             <AuthGuard loggedIn={loggedIn} >
               <ArticleAdmin />
+            </AuthGuard>
+          } />
+          <Route path="/settings" element={
+            <AuthGuard loggedIn={loggedIn}>
+              <Settings />
             </AuthGuard>
           } />
           <Route path="/login" element={<Login />} />
