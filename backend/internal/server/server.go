@@ -19,6 +19,7 @@ type Server struct {
 	articleService   *services.ArticleService
 	renderService    *services.RendererService
 	publisherService *services.PublisherService
+	settingsService  *services.SettingsService
 	db               *sql.DB
 	queries          *database.Queries
 }
@@ -53,6 +54,7 @@ func NewServer(config *models.Configuration) (*http.Server, error) {
 		articleService:   articleService,
 		renderService:    renderService,
 		publisherService: services.NewPublisherService(queries, config, articleService, renderService, atomService),
+		settingsService:  services.NewSettingsService(queries),
 	}
 
 	// Regenerate atom feed on startup so it is always fresh after a restart.

@@ -26,6 +26,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/", handlers.MainPageHandler(s.articleService, s.config))
 	r.Get("/atom.xml", handlers.AtomFeedHandler(s.config))
 	r.Handle("/admin/*", handlers.AdminPageHandler(s.config))
+	r.Get("/static/styles.css", handlers.StylesHandler(s.settingsService))
 	r.Handle("/static/*", handlers.StaticFilesHandler())
 	r.Get("/articles/{id}", handlers.ViewArticleHandler(s.config, s.queries))
 	r.Get("/info", handlers.ArticleInfos(s.articleService))
@@ -52,6 +53,16 @@ func (s *Server) RegisterRoutes() http.Handler {
 			}
 
 			r.Get("/{imageId}", handlers.ImageDownloadHandler(s.config))
+		})
+		r.Route("/settings", func(r chi.Router) {
+			r.Get("/themes", handlers.GetThemesHandler())
+			r.Group(func(r chi.Router) {
+				if s.config.AuthEnabled {
+					r.Use(authMiddleware.AuthMiddleware)
+				}
+				r.Get("/theme", handlers.GetThemeHandler(s.settingsService))
+				r.Put("/theme", handlers.SetThemeHandler(s.settingsService))
+			})
 		})
 	})
 	r.Get("/auth/{provider}/callback", handlers.AuthCallbackHandler(s.config))
