@@ -1,3 +1,5 @@
+export type Theme = { id: string; name: string; description: string };
+
 export type ArticleInfo = {
     id: number;
     title: string;
