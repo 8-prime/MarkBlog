@@ -30,6 +30,10 @@ func NewServer(config *models.Configuration) (*http.Server, error) {
 	if err != nil {
 		return nil, err
 	}
+	//Required until ro and rw db split can be implemented
+	db.SetMaxOpenConns(1)
+	db.Exec("PRAGMA journal_mode=WAL;")
+	db.Exec("PRAGMA busy_timeout=5000;")
 	err = database.RunMigrations(db)
 	if err != nil {
 		return nil, err
