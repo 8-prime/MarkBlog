@@ -18,105 +18,185 @@ function lintColor(kind: string): string {
   return "#7c3aed";
 }
 
-type Segment =
-  | { type: "text"; content: string }
-  | { type: "mark"; content: string; lint: Lint };
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
 
-function buildSegments(text: string, lints: Lint[]): Segment[] {
+function buildHtml(text: string, lints: Lint[]): string {
   const sorted = [...lints].sort((a, b) => a.span().start - b.span().start);
-  const segments: Segment[] = [];
+  let html = "";
   let cursor = 0;
+  for (let i = 0; i < sorted.length; i++) {
+    const lint = sorted[i];
+    const { start, end } = lint.span();
+    if (start < cursor) continue;
+    if (start > cursor) html += escapeHtml(text.slice(cursor, start));
+    const color = lintColor(lint.lint_kind());
+    html += `<span data-lint-index="${i}" style="text-decoration:underline wavy ${color};cursor:pointer">${escapeHtml(text.slice(start, end))}</span>`;
+    cursor = end;
+  }
+  if (cursor < text.length) html += escapeHtml(text.slice(cursor));
+  return html;
+}
 
-  for (const lint of sorted) {
-    const span = lint.span();
-    if (span.start < cursor) continue;
-    if (span.start > cursor) {
-      segments.push({ type: "text", content: text.slice(cursor, span.start) });
+function getCursorOffset(el: HTMLElement): number | null {
+  const sel = window.getSelection();
+  if (!sel || !sel.rangeCount) return null;
+  const range = sel.getRangeAt(0);
+  if (!el.contains(range.startContainer)) return null;
+  const pre = document.createRange();
+  pre.setStart(el, 0);
+  pre.setEnd(range.startContainer, range.startOffset);
+  return pre.toString().length;
+}
+
+function setCursorOffset(el: HTMLElement, offset: number) {
+  const sel = window.getSelection();
+  if (!sel) return;
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  let count = 0;
+  let node: Text | null;
+  while ((node = walker.nextNode() as Text | null)) {
+    const len = node.textContent?.length ?? 0;
+    if (count + len >= offset) {
+      const range = document.createRange();
+      range.setStart(node, offset - count);
+      range.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(range);
+      return;
     }
-    segments.push({ type: "mark", content: text.slice(span.start, span.end), lint });
-    cursor = span.end;
+    count += len;
   }
-
-  if (cursor < text.length) {
-    segments.push({ type: "text", content: text.slice(cursor) });
-  }
-
-  return segments;
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  range.collapse(false);
+  sel.removeAllRanges();
+  sel.addRange(range);
 }
 
 export default function ProofRead({ text, onTextChange }: Props) {
+  const divRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef(text);
+  const lintsRef = useRef<Lint[]>([]);
+  const isFocusedRef = useRef(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [lints, setLints] = useState<Lint[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeLint, setActiveLint] = useState<ActiveLint | null>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     linter.setup().then(() => setLoading(false));
   }, []);
 
+  // Set initial innerHTML on mount
+  useEffect(() => {
+    if (divRef.current) divRef.current.innerHTML = buildHtml(text, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Run initial lint once WASM is ready
   useEffect(() => {
     if (loading) return;
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(async () => {
-      const results = await linter.lint(text, { language: "markdown" });
-      setLints(results);
-      setActiveLint(null);
-    }, 400);
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [text, loading]);
+    linter.lint(text, { language: "markdown" }).then(setLints);
+  }, [loading]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Rebuild innerHTML whenever lints change, preserving cursor if focused
+  useEffect(() => {
+    const div = divRef.current;
+    if (!div) return;
+    lintsRef.current = lints;
+    const html = buildHtml(textRef.current, lints);
+    if (isFocusedRef.current) {
+      const offset = getCursorOffset(div);
+      div.innerHTML = html;
+      if (offset !== null) setCursorOffset(div, offset);
+    } else {
+      div.innerHTML = html;
+    }
+    setActiveLint(null);
+  }, [lints]);
 
   useEffect(() => {
     if (!activeLint) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setActiveLint(null);
-    };
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") setActiveLint(null); };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [activeLint]);
 
-  const handleMarkClick = (lint: Lint, e: React.MouseEvent) => {
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    setActiveLint({ lint, rect });
+  const scheduleLint = () => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(async () => {
+      const results = await linter.lint(textRef.current, { language: "markdown" });
+      setLints(results);
+    }, 400);
+  };
+
+  const handleInput = () => {
+    const div = divRef.current;
+    if (!div) return;
+    // innerText respects white-space:pre-wrap but adds a trailing \n in Chrome
+    let newText = div.innerText ?? "";
+    if (newText.endsWith("\n")) newText = newText.slice(0, -1);
+    textRef.current = newText;
+    onTextChange(newText);
+    scheduleLint();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter") {
+      // Intercept Enter so the browser inserts a plain \n text node rather than
+      // a <div> or <br>, keeping innerText extraction consistent across browsers.
+      e.preventDefault();
+      document.execCommand("insertText", false, "\n");
+    }
+  };
+
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    const idx = target.getAttribute("data-lint-index");
+    if (idx === null) return;
+    const lint = lintsRef.current[parseInt(idx, 10)];
+    if (!lint) return;
+    setActiveLint({ lint, rect: target.getBoundingClientRect() });
   };
 
   const handleApply = async (suggestion: Suggestion) => {
     if (!activeLint) return;
-    const newText = await linter.applySuggestion(text, activeLint.lint, suggestion);
+    const newText = await linter.applySuggestion(textRef.current, activeLint.lint, suggestion);
+    textRef.current = newText;
     onTextChange(newText);
     setActiveLint(null);
+    const results = await linter.lint(newText, { language: "markdown" });
+    setLints(results);
   };
 
   const handleDismiss = async () => {
     if (!activeLint) return;
-    await linter.ignoreLint(text, activeLint.lint);
-    setLints((prev) => prev.filter((l) => l !== activeLint.lint));
+    await linter.ignoreLint(textRef.current, activeLint.lint);
+    setLints(lintsRef.current.filter((l) => l !== activeLint.lint));
     setActiveLint(null);
   };
 
-  const segments = buildSegments(text, lints);
-
   return (
-    <div className="h-full overflow-y-auto p-6 font-mono text-sm text-text whitespace-pre-wrap leading-relaxed">
+    <div className="h-full overflow-y-auto p-6 font-mono text-sm text-text leading-relaxed">
       {loading && (
         <p className="text-secondary text-xs mb-4">Loading grammar checker…</p>
       )}
-      {segments.map((seg, i) =>
-        seg.type === "text" ? (
-          <span key={i}>{seg.content}</span>
-        ) : (
-          <span
-            key={i}
-            style={{ textDecoration: `underline wavy ${lintColor(seg.lint.lint_kind())}` }}
-            className="cursor-pointer"
-            onClick={(e) => handleMarkClick(seg.lint, e)}
-          >
-            {seg.content}
-          </span>
-        )
-      )}
-
+      <div
+        ref={divRef}
+        contentEditable
+        suppressContentEditableWarning
+        spellCheck={false}
+        className="outline-none whitespace-pre-wrap min-h-full"
+        onInput={handleInput}
+        onKeyDown={handleKeyDown}
+        onClick={handleClick}
+        onFocus={() => { isFocusedRef.current = true; }}
+        onBlur={() => { isFocusedRef.current = false; }}
+      />
       {activeLint &&
         createPortal(
           <>
@@ -148,9 +228,7 @@ type PopupProps = {
 function SuggestionPopup({ activeLint, onApply, onDismiss, onClose }: PopupProps) {
   const { lint, rect } = activeLint;
   const suggestions = lint.suggestions();
-
-  const spaceBelow = window.innerHeight - rect.bottom;
-  const useBottom = spaceBelow < 220;
+  const useBottom = window.innerHeight - rect.bottom < 220;
 
   const style: React.CSSProperties = {
     position: "fixed",
@@ -179,12 +257,10 @@ function SuggestionPopup({ activeLint, onApply, onDismiss, onClose }: PopupProps
           ×
         </button>
       </div>
-
       <div
         className="text-sm text-text"
         dangerouslySetInnerHTML={{ __html: lint.message_html() }}
       />
-
       {suggestions.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-1">
           {suggestions.map((s, i) => (
@@ -198,12 +274,8 @@ function SuggestionPopup({ activeLint, onApply, onDismiss, onClose }: PopupProps
           ))}
         </div>
       )}
-
       <div className="flex justify-end border-t border-text pt-2 mt-1">
-        <button
-          onClick={onDismiss}
-          className="text-xs text-secondary hover:text-text"
-        >
+        <button onClick={onDismiss} className="text-xs text-secondary hover:text-text">
           Dismiss
         </button>
       </div>
