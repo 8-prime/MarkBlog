@@ -84,6 +84,8 @@ export default function ProofRead({ text, onTextChange }: Props) {
   const lintsRef = useRef<Lint[]>([]);
   const isFocusedRef = useRef(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const undoStack = useRef<string[]>([]);
+  const redoStack = useRef<string[]>([]);
   const [lints, setLints] = useState<Lint[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeLint, setActiveLint] = useState<ActiveLint | null>(null);
@@ -134,18 +136,50 @@ export default function ProofRead({ text, onTextChange }: Props) {
     }, 400);
   };
 
+  const applyText = (t: string) => {
+    textRef.current = t;
+    onTextChange(t);
+    if (divRef.current) divRef.current.innerHTML = buildHtml(t, lintsRef.current);
+    scheduleLint();
+  };
+
   const handleInput = () => {
     const div = divRef.current;
     if (!div) return;
     // innerText respects white-space:pre-wrap but adds a trailing \n in Chrome
     let newText = div.innerText ?? "";
     if (newText.endsWith("\n")) newText = newText.slice(0, -1);
+    undoStack.current.push(textRef.current);
+    if (undoStack.current.length > 200) undoStack.current.shift();
+    redoStack.current = [];
     textRef.current = newText;
     onTextChange(newText);
     scheduleLint();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const mod = e.ctrlKey || e.metaKey;
+
+    if (mod && e.key === "z" && !e.shiftKey) {
+      e.preventDefault();
+      const prev = undoStack.current.pop();
+      if (prev !== undefined) {
+        redoStack.current.push(textRef.current);
+        applyText(prev);
+      }
+      return;
+    }
+
+    if (mod && (e.key === "y" || (e.key === "z" && e.shiftKey))) {
+      e.preventDefault();
+      const next = redoStack.current.pop();
+      if (next !== undefined) {
+        undoStack.current.push(textRef.current);
+        applyText(next);
+      }
+      return;
+    }
+
     if (e.key === "Enter") {
       // Intercept Enter so the browser inserts a plain \n text node rather than
       // a <div> or <br>, keeping innerText extraction consistent across browsers.
@@ -166,6 +200,8 @@ export default function ProofRead({ text, onTextChange }: Props) {
   const handleApply = async (suggestion: Suggestion) => {
     if (!activeLint) return;
     const newText = await linter.applySuggestion(textRef.current, activeLint.lint, suggestion);
+    undoStack.current.push(textRef.current);
+    redoStack.current = [];
     textRef.current = newText;
     onTextChange(newText);
     setActiveLint(null);
