@@ -1,7 +1,8 @@
-import { Save, Tag, X, Clock, LoaderCircle } from "lucide-react";
+import { Save, Tag, X, Clock, LoaderCircle, SpellCheck, PenLine } from "lucide-react";
 import type { Article } from "../models";
 import { useState } from "react";
 import Editor from "./Editor";
+import ProofRead from "./ProofRead";
 
 type Props = {
     formData: Article;
@@ -23,6 +24,7 @@ function formatForDateTimeLocal(iso?: string | null) {
 const ArticleEditForm: React.FC<Props> = ({ formData, setFormData, onCancel, onSave }) => {
     const [newTag, setNewTag] = useState("");
     const [saving, setSaving] = useState(false);
+    const [proofread, setProofread] = useState(false);
 
     const handleInputChange = (field: keyof Article, value: any) => {
         setFormData((prev) => (prev ? { ...prev, [field]: value } : null));
@@ -56,6 +58,13 @@ const ArticleEditForm: React.FC<Props> = ({ formData, setFormData, onCancel, onS
                     >
                         <X className="w-4 h-4 mr-2 inline" />
                         Cancel
+                    </button>
+                    <button
+                        onClick={() => setProofread((p) => !p)}
+                        className="flex items-center gap-2 px-3 py-2 bg-background text-text border border-text hover:bg-primary/80 transition-colors"
+                    >
+                        {proofread ? <PenLine className="w-4 h-4" /> : <SpellCheck className="w-4 h-4" />}
+                        {proofread ? "Edit" : "Proofread"}
                     </button>
                     <button
                         onClick={handleSave}
@@ -162,12 +171,19 @@ const ArticleEditForm: React.FC<Props> = ({ formData, setFormData, onCancel, onS
                     </div>
                 </div>
 
-                {/* Right: Editor */}
-                <div className="flex-1 overflow-y-auto">
-                    <Editor
-                        articleText={formData.body}
-                        setArticleText={(text) => handleInputChange("body", text ?? "")}
-                    />
+                {/* Right: Editor / Proofread */}
+                <div className="flex-1 overflow-hidden">
+                    {proofread ? (
+                        <ProofRead
+                            text={formData.body}
+                            onTextChange={(t) => handleInputChange("body", t)}
+                        />
+                    ) : (
+                        <Editor
+                            articleText={formData.body}
+                            setArticleText={(text) => handleInputChange("body", text ?? "")}
+                        />
+                    )}
                 </div>
             </div>
         </div>
