@@ -1,5 +1,5 @@
 # ---------- Stage 1: Build Go backend ----------
-FROM golang:1.25 AS backend-build
+FROM golang:1.26.2 AS backend-build
 
 WORKDIR /app
 
